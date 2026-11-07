@@ -1,2 +1,67 @@
-# GoldenSunDJ
-One home for the whole GoldenSun music bench. GoldenSunDJ launches each app as you need it: Sampler for beats, Mic for recording, Mixer for live touch mixing and scratching, Player for setlists. All four interwoven, sourced from NakoGold, GoldenSunAI, and KikoMix
+# GoldenSunDJ 🎧
+
+> **Live site:** [sukonik.github.io/GoldenSunDJ](https://sukonik.github.io/GoldenSunDJ/)
+
+One home for the whole GoldenSun music bench. GoldenSunDJ launches each app as you need it: Sampler for beats, Mic for recording, Mixer for live touch mixing and scratching, Player for setlists. All four interwoven, sourced from NakoGold, GoldenSunAI, and KikoMix.
+
+GoldenSunDJ is a launcher: open the hub, pick the tool the moment calls for, and it loads — nothing installs, everything runs in the browser.
+
+---
+
+## The Apps
+
+### 🥁 GoldenSunSampler
+
+An MPC MkII-style pad board in your browser. Tap out beats on a 4×4 grid, load your own sounds onto any pad, chop samples, and build patterns with the step sequencer. Export beats and samples as WAV or MP4. No install — just open the link and play.
+
+### 🎙️ GoldenSunMic
+
+Your pocket recording studio. Hit record and capture vocals, freestyles, and found sounds straight from the mic — then save them as WAV or MP4, or send them straight into GoldenSunSampler as fresh pads. Clean takes anywhere, no gear required.
+
+### 🎚️ GoldenSunMixer
+
+A full touch DJ mixer that goes anywhere. Two decks, a crossfader, and per-channel EQ and filters — plus platters you can actually scratch with your fingers. Built modular: swap the FX rack, sampler strip, and other pieces in and out to make it yours.
+
+### 📋 GoldenSunPlayer
+
+The SetList maker, spun out of KikoMix. Drag tracks into running order, tag each with BPM and key so transitions blend, watch total runtime build as you go, and add performance notes. Export or share the finished set — then play it live.
+
+---
+
+## How They Interweave
+
+The four apps are one workflow, not four islands:
+
+- **GoldenSunMic → GoldenSunSampler** — record a sound, use it as a pad.
+- **GoldenSunSampler → GoldenSunMixer** — beats you build load onto the decks.
+- **KikoMix → GoldenSunPlayer** — setlists are built from the KikoMix catalog.
+- **GoldenSunPlayer → GoldenSunMixer** — the set you planned is the set you perform.
+
+All four share one design, one family navigation, and one source well:
+
+- **[NakoGold](https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L)** — the artist, the catalog, the reason the bench exists.
+- **[GoldenSunAI](https://github.com/Sukonik/goldensunai)** — the framework and design system underneath.
+- **[KikoMix](https://sukonik.github.io/kikomix/)** — the player and catalog the setlists draw from.
+
+## Design
+
+UI base: the **BASE3** plan from [GoldBrief](https://sukonik.github.io/goldbrief/) — clean, readable, proven on this stack — with each app carrying its own accent on top. Touch-first, responsive from phone to desktop, reduced motion respected.
+
+## Tech
+
+- Vanilla JavaScript + Web Audio API — no framework, no build step.
+- Mic capture via `getUserMedia` (works over HTTPS on GitHub Pages).
+- WAV export encoded in-browser; MP4 where the browser's recorder supports it.
+- Your recordings and samples live on your device — nothing is uploaded anywhere.
+
+## Roadmap
+
+1. **Hub + shell** — GoldenSunDJ launcher on the BASE3 base.
+2. **GoldenSunMic** — record, trim, export WAV/MP4.
+3. **GoldenSunSampler** — pad board + step sequencer; consumes Mic captures.
+4. **GoldenSunMixer** — decks, crossfader, scratch platters, modular slots.
+5. **GoldenSunPlayer** — setlist builder wired to the KikoMix catalog.
+
+## Status
+
+Planning — README first, build follows the roadmap above.
