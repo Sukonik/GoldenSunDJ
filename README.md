@@ -70,4 +70,12 @@ Touch-first, responsive from phone to desktop, reduced motion respected.
 
 ## Status
 
-Planning — README first, build follows the roadmap above.
+**v1.0 — built 2026-11-07.** The hub and all four apps are live, working pages (no mockups):
+
+- **Hub** — launcher with spinning star mark, sheen wordmark, live session chip, drawer navigation with theme swatches, and tiles for all four apps.
+- **GoldenSunSampler** — 4×4 pads with a fully synthesized drum kit, per-pad volume and pitch, load your own sounds onto any pad (file picker or drag and drop), a 16-step sequencer with tempo control, and one-bar pattern export as WAV.
+- **GoldenSunMic** — mic recording with a live level meter, a takes list with playback, WAV export, and original-format download.
+- **GoldenSunMixer** — two decks with synthesized demo loops built in (plus your own files), 3-band EQ per deck, crossfader, touch platter scratching, and an echo FX module.
+- **GoldenSunPlayer** — setlist builder with drag-to-reorder, BPM/key/duration/notes per track, total-runtime stats, localStorage saving, and text/JSON export plus a print view.
+
+Each app wears its own genre theme from DESIGN.md on the shared BASE3 shell, and the drawer's theme swatches re-skin any page live. Deployment runs through GitHub Actions (`.github/workflows/pages.yml`); the site goes live at the link above once Pages is set to Actions in the repo settings.

@@ -1,0 +1,396 @@
+/* ==========================================================================
+   GoldenSunDJ — components layer
+   Shared shell components: header, brand, session chip, drawer, buttons,
+   tiles, stats, modules, form primitives, footer.
+   ALL colors come from tokens.css — no hard-coded hex in this file.
+   ========================================================================== */
+
+/* -- Header ---------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 4rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  margin-right: auto;
+}
+.brand .mark-spin { width: 1.75rem; height: 1.75rem; }
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.wordmark--sheen {
+  background: var(--sheen);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* The spinning star/vinyl mark. One bold motion moment; reduced motion
+   stops it via base.css. */
+.mark-spin {
+  display: block;
+  flex: none;
+  color: var(--accent);
+  animation: mark-rotate 12s linear infinite;
+}
+@keyframes mark-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* -- Session chip ------------------------------------------------------------ */
+.session-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-raised);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.chip-dot.is-live {
+  background: var(--rec);
+  box-shadow: 0 0 8px var(--rec);
+}
+.chip-text { font-variant-numeric: tabular-nums; }
+
+/* -- Primary nav (desktop; visibility lives in responsive.css) --------------- */
+.main-nav ul {
+  display: flex;
+  gap: var(--space-2);
+}
+.main-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-weight: 500;
+  transition: color var(--duration-fast) var(--ease);
+}
+.main-nav a:hover { color: var(--text); }
+.main-nav a[aria-current="page"] { color: var(--accent); }
+
+.menu-btn,
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  color: var(--text);
+}
+
+/* -- Drawer + scrim ------------------------------------------------------------ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--scrim);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-normal) var(--ease), visibility 0s var(--duration-normal);
+}
+.scrim.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  width: min(20rem, 88vw);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg-raised);
+  border-left: 1px solid var(--border);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform var(--duration-normal) var(--ease), visibility 0s var(--duration-normal);
+}
+.drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  transition-delay: 0s;
+}
+.drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.drawer-group h2 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: normal;
+  color: var(--text-2);
+  margin-bottom: var(--space-2);
+}
+.drawer-group a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  transition: color var(--duration-fast) var(--ease);
+}
+.drawer-group a:hover { color: var(--accent); }
+.drawer-group a[aria-current="page"] { color: var(--accent); }
+
+/* Theme swatches: a labeled button per theme. The 28px dot carries the
+   theme's accent via the .sw-* utility classes below. */
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.swatch-dot {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+}
+.swatch[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Fixed per-app accent utilities (tokens: --acc-*). Use on .swatch-dot
+   spans and anywhere an app's own color must show regardless of theme. */
+.sw-master { background: var(--acc-master); }
+.sw-house { background: var(--acc-house); }
+.sw-synthpop { background: var(--acc-synthpop); }
+.sw-techno { background: var(--acc-techno); }
+.sw-eurodance { background: var(--acc-eurodance); }
+.kick-master { color: var(--acc-master); }
+.kick-house { color: var(--acc-house); }
+.kick-synthpop { color: var(--acc-synthpop); }
+.kick-techno { color: var(--acc-techno); }
+.kick-eurodance { color: var(--acc-eurodance); }
+
+/* -- Buttons ------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  font-size: var(--fs-base);
+  transition: background var(--duration-fast) var(--ease), box-shadow var(--duration-normal) var(--ease);
+}
+.btn:hover {
+  background: var(--accent-strong);
+  box-shadow: 0 0 18px var(--glow);
+}
+.btn--ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn--ghost:hover {
+  background: var(--bg-raised);
+  border-color: var(--accent-dim);
+  box-shadow: none;
+}
+
+/* -- Sections -------------------------------------------------------------------- */
+.section { padding-block: var(--space-10); }
+.section h2 { margin-bottom: var(--space-5); }
+
+.deco-bg { background-image: var(--deco); }
+
+/* -- Hero (hub) -------------------------------------------------------------------- */
+.hero { padding-block: var(--space-10) var(--space-8); }
+.hero-inner {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: start;
+}
+.hero-mark {
+  width: clamp(7rem, 28vw, 11rem);
+  height: auto;
+  color: var(--accent);
+  filter: drop-shadow(0 0 24px var(--glow));
+}
+.hero h1 { font-size: clamp(var(--fs-2xl), 9vw, var(--fs-3xl)); }
+.hero-copy {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--measure);
+}
+.hero-copy p { color: var(--text-2); font-size: var(--fs-md); }
+
+/* -- Tiles -------------------------------------------------------------------------- */
+.tiles {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--frame-r);
+  box-shadow: var(--frame-fx);
+}
+.tile-kick {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  line-height: 1;
+}
+.tile p { color: var(--text-2); }
+.tile .btn { margin-top: auto; align-self: flex-start; }
+
+/* -- Stats --------------------------------------------------------------------------- */
+.stat { display: grid; gap: var(--space-1); }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-note { font-size: var(--fs-sm); color: var(--text-muted); }
+
+/* -- Workflow list (hub) ---------------------------------------------------------------- */
+.flow {
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--measure);
+}
+.flow li {
+  padding-bottom: var(--space-3);
+  border-bottom: 1px var(--rule-style) var(--border);
+  color: var(--text-2);
+}
+.flow li:last-child { border-bottom: 0; padding-bottom: 0; }
+.flow strong { color: var(--text); font-weight: 600; }
+
+/* -- Module panel (Mixer-style layouts) --------------------------------------------------- */
+.module {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--frame-r);
+  padding: var(--space-4);
+}
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.module-kick { color: var(--accent); font-family: var(--font-display); }
+
+/* -- Form primitives ------------------------------------------------------------------------ */
+.field { display: grid; gap: var(--space-2); }
+.field label { font-size: var(--fs-sm); font-weight: 500; color: var(--text-2); }
+.field input,
+.field select,
+.field textarea {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: inherit;
+}
+.field textarea { min-height: 6rem; resize: vertical; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+input[type="range"] { accent-color: var(--accent); }
+
+/* -- Footer ----------------------------------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding-block: var(--space-6);
+  margin-top: var(--space-10);
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.footer-links a:hover { color: var(--accent); }
+.footer-note { color: var(--text-2); margin-bottom: var(--space-2); }
+.footer-small { font-size: var(--fs-sm); color: var(--text-muted); }

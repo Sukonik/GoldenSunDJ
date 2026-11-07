@@ -1,0 +1,205 @@
+/* GoldenSunSampler — app styles. Tokens only, no hard-coded colors. */
+
+.intro {
+  max-width: 36rem;
+  color: var(--text-2);
+  margin-bottom: var(--space-8);
+}
+
+.module { margin-bottom: var(--space-8); }
+.module h2 { margin: 0; }
+
+.module-note {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+/* ---------- Pads ---------- */
+
+.pad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.pad {
+  min-height: 88px;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--frame-r);
+  box-shadow: var(--frame-fx);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease),
+              border-color var(--duration-fast) var(--ease);
+}
+
+.pad:hover { border-color: var(--border-strong); }
+
+.pad-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-base);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pad-key {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.pad.is-selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.pad.is-hit {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.pad.is-hit .pad-key { color: var(--accent-ink); }
+
+.pad.is-drop {
+  border-color: var(--accent);
+  outline: 2px dashed var(--accent);
+  outline-offset: -6px;
+}
+
+/* ---------- Selected pad panel ---------- */
+
+.selected-name { margin: 0 0 var(--space-4); }
+.selected-name strong { font-family: var(--font-display); }
+
+.controls-row {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .controls-row { grid-template-columns: 1fr 1fr 1fr; align-items: end; }
+}
+
+.controls-row .field output {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.controls-row input[type="file"] {
+  width: 100%;
+  min-height: 44px;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Transport ---------- */
+
+.transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.play-btn {
+  min-height: 48px;
+  min-width: 7rem;
+  font-size: var(--fs-lg);
+}
+
+.tempo-field { min-width: 12rem; flex: 1 1 12rem; max-width: 20rem; }
+.tempo-field output { font-size: var(--fs-sm); color: var(--text-2); }
+
+/* ---------- Sequencer grid ---------- */
+
+.seq-scroll { overflow-x: auto; }
+
+.seq-grid {
+  display: grid;
+  grid-template-columns: 6.5rem repeat(16, minmax(36px, 1fr));
+  gap: var(--space-1);
+  min-width: 46rem;
+  align-items: stretch;
+}
+
+.seq-corner { min-height: 24px; }
+
+.seq-num {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-align: center;
+  align-self: end;
+  padding-bottom: var(--space-1);
+  border-radius: var(--radius-sm);
+}
+
+.seq-num.is-now { color: var(--accent); font-weight: 600; }
+
+.seq-rowhead {
+  min-height: 44px;
+  padding: 0 var(--space-2);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seq-rowhead:hover { border-color: var(--border); }
+.seq-rowhead.is-selected { color: var(--accent); border-color: var(--accent); }
+
+.seq-step {
+  min-width: 36px;
+  min-height: 44px;
+  padding: 0;
+  background: color-mix(in srgb, currentColor 6%, transparent);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease);
+}
+
+/* step groups of four: a breath of space before steps 5, 9 and 13 */
+.seq-step[data-group-start="true"] { margin-left: var(--space-2); }
+.seq-num[data-group-start="true"] { margin-left: var(--space-2); }
+
+.seq-step:hover { border-color: var(--border-strong); }
+
+.seq-step[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.seq-step.is-now { border-color: var(--accent-strong); box-shadow: 0 0 0 1px var(--accent-strong); }
+.seq-step[aria-pressed="true"].is-now { background: var(--accent-strong); }
+
+/* ---------- Status ---------- */
+
+.status {
+  min-height: 1.5em;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  margin: 0 0 var(--space-10);
+}

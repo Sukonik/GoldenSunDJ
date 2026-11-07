@@ -1,0 +1,39 @@
+/* ==========================================================================
+   GoldenSunDJ — responsive layer
+   Mobile-first, layout-critical rules only. Breakpoints:
+   40rem tiles open up · 48rem desktop nav replaces the menu button ·
+   56rem hub hero goes side-by-side.
+   ========================================================================== */
+
+/* Desktop nav hidden below 48rem; menu button hidden above it. */
+.main-nav { display: none; }
+@media (min-width: 48rem) {
+  .main-nav { display: block; }
+  .menu-btn { display: none; }
+}
+
+/* Tiles: one column on phones, two from 40rem up. */
+@media (min-width: 40rem) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Hub hero: stacked on phones, mark beside the copy from 56rem up. */
+@media (min-width: 56rem) {
+  .hero-inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+  .hero-mark { order: 2; }
+}
+
+/* Very small screens: keep the header on one line — the brand shrinks,
+   and the session chip text truncates instead of wrapping. */
+@media (max-width: 24rem) {
+  .wordmark { font-size: var(--fs-base); }
+  .session-chip { padding-inline: var(--space-2); }
+  .chip-text {
+    max-width: 6.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

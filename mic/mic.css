@@ -1,0 +1,141 @@
+/* GoldenSunMic — app styles. Tokens only, no hard-coded colors. */
+
+.mic-page {
+  display: grid;
+  gap: var(--space-8);
+  padding-block: var(--space-8) var(--space-6);
+}
+
+.mic-intro {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--measure);
+}
+
+.mic-intro p {
+  color: var(--text-2);
+  font-size: var(--fs-md);
+}
+
+.recorder-body {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.recorder-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.record-btn {
+  min-height: 64px;
+  min-width: 10rem;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--fs-md);
+  border-radius: var(--radius-md);
+}
+
+.record-btn.is-recording {
+  background: var(--rec);
+  color: var(--accent-ink);
+}
+
+.record-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.recorder-timer {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+}
+
+.meter {
+  height: var(--space-4);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-deep);
+}
+
+.meter-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+}
+
+.meter-fill.is-clipping {
+  background: var(--rec);
+}
+
+.mic-status {
+  min-height: var(--space-5);
+  color: var(--text-2);
+}
+
+.takes-section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.takes-empty {
+  color: var(--text-2);
+}
+
+.takes-list {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.take-card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--frame-r);
+  box-shadow: var(--frame-fx);
+}
+
+.take-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
+.take-head h3 {
+  margin-right: auto;
+}
+
+.take-meta {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.take-card audio {
+  width: 100%;
+  min-height: 44px;
+}
+
+.take-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.takes-note {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.mic-hint {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}

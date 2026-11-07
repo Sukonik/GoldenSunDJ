@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en" data-theme="eurodance">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050504">
+  <title>GoldenSunPlayer — GoldenSunDJ</title>
+  <meta name="description" content="The SetList maker, spun out of KikoMix. Drag tracks into running order, tag each with BPM and key so transitions blend, watch total runtime build as you go, and add performance notes. Export or share the finished set — then play it live.">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="player.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header-inner">
+      <a class="brand" href="../index.html" aria-label="GoldenSunDJ home">
+        <svg class="mark-spin" viewBox="0 0 100 100" aria-hidden="true"><polygon fill="currentColor" points="50,2 61.8,33.8 95.6,35.2 69,56.2 78.2,88.8 50,70 21.8,88.8 31,56.2 4.4,35.2 38.2,33.8"/></svg>
+        <span class="wordmark wordmark--sheen">GoldenSunDJ</span>
+      </a>
+      <nav class="main-nav" aria-label="Apps">
+        <ul>
+          <li><a href="../sampler/">Sampler</a></li>
+          <li><a href="../mic/">Mic</a></li>
+          <li><a href="../mixer/">Mixer</a></li>
+          <li><a href="../player/" aria-current="page">Player</a></li>
+        </ul>
+      </nav>
+      <span class="session-chip" id="session-chip" data-chip="★ Setlist">
+        <span class="chip-dot" aria-hidden="true"></span>
+        <span class="chip-text" id="session-chip-text">★ Setlist</span>
+      </span>
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="drawer-top">
+      <span class="wordmark wordmark--sheen">GoldenSunDJ</span>
+      <button class="icon-btn" type="button" data-drawer-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+    </div>
+    <nav class="drawer-group" aria-label="Apps">
+      <h2>Apps</h2>
+      <ul>
+        <li><a href="../sampler/">Sampler</a></li>
+        <li><a href="../mic/">Mic</a></li>
+        <li><a href="../mixer/">Mixer</a></li>
+        <li><a href="../player/" aria-current="page">Player</a></li>
+      </ul>
+    </nav>
+    <nav class="drawer-group" aria-label="Family">
+      <h2>Family</h2>
+      <ul>
+        <li><a href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold</a></li>
+        <li><a href="https://github.com/Sukonik/goldensunai" rel="noopener">GoldenSunAI</a></li>
+        <li><a href="https://sukonik.github.io/kikomix/" rel="noopener">KikoMix</a></li>
+      </ul>
+    </nav>
+    <div class="drawer-group">
+      <h2>Theme</h2>
+      <div class="swatches">
+        <button class="swatch" type="button" data-set-theme="master" aria-pressed="false"><span class="swatch-dot sw-master" aria-hidden="true"></span>GoldenSunDJ</button>
+        <button class="swatch" type="button" data-set-theme="house" aria-pressed="false"><span class="swatch-dot sw-house" aria-hidden="true"></span>Sampler</button>
+        <button class="swatch" type="button" data-set-theme="synthpop" aria-pressed="false"><span class="swatch-dot sw-synthpop" aria-hidden="true"></span>Mic</button>
+        <button class="swatch" type="button" data-set-theme="techno" aria-pressed="false"><span class="swatch-dot sw-techno" aria-hidden="true"></span>Mixer</button>
+        <button class="swatch" type="button" data-set-theme="eurodance" aria-pressed="false"><span class="swatch-dot sw-eurodance" aria-hidden="true"></span>Player</button>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main" class="wrap player-main">
+    <section class="player-head deco-bg">
+      <span class="player-star" aria-hidden="true">★</span>
+      <h1>GoldenSunPlayer</h1>
+      <p class="player-intro">The SetList maker, spun out of KikoMix. Drag tracks into running order, tag each with BPM and key so transitions blend, watch total runtime build as you go, and add performance notes. Export or share the finished set — then play it live.</p>
+    </section>
+
+    <section class="stats-row" aria-label="Setlist totals">
+      <div class="stat">
+        <span class="stat-num tnum" id="stat-tracks">0</span>
+        <span class="stat-note">Tracks</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num tnum" id="stat-runtime">0:00</span>
+        <span class="stat-note">Total runtime</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num tnum" id="stat-bpm">—</span>
+        <span class="stat-note">Average BPM</span>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="module add-module" aria-labelledby="add-heading">
+      <div class="module-head">
+        <span class="module-kick" aria-hidden="true">★</span>
+        <span id="add-heading">Add a track</span>
+      </div>
+      <form id="add-form" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-title">Title</label>
+            <input id="f-title" name="title" type="text" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label for="f-artist">Artist</label>
+            <input id="f-artist" name="artist" type="text" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="f-bpm">BPM</label>
+            <input id="f-bpm" name="bpm" type="number" min="40" max="240" step="1" inputmode="numeric" placeholder="Optional">
+          </div>
+          <div class="field">
+            <label for="f-key">Key</label>
+            <input id="f-key" name="key" type="text" autocomplete="off" placeholder="8A">
+            <span class="field-hint">Camelot like 8A, or a key like A minor</span>
+          </div>
+          <div class="field">
+            <label for="f-duration">Duration</label>
+            <input id="f-duration" name="duration" type="text" autocomplete="off" placeholder="5:30" required>
+            <span class="field-hint">Minutes:seconds, like 5:30</span>
+          </div>
+          <div class="field field--wide">
+            <label for="f-notes">Notes</label>
+            <textarea id="f-notes" name="notes" rows="2"></textarea>
+          </div>
+        </div>
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <div class="form-actions">
+          <button class="btn" type="submit">Add track</button>
+        </div>
+      </form>
+      <p class="status" id="status" aria-live="polite"></p>
+    </section>
+
+    <section class="list-section" aria-labelledby="list-heading">
+      <h2 id="list-heading">Your setlist</h2>
+
+      <div class="hint-bar" id="hint-bar" hidden>
+        <p>Three example entries show the format. Delete them and add your own tracks.</p>
+        <button class="btn btn--ghost" type="button" id="remove-examples">Remove examples</button>
+      </div>
+
+      <p class="empty-state" id="empty-state" hidden>No tracks yet. Add your first track with the form above — title and duration are all it needs.</p>
+
+      <ol class="track-list" id="track-list"></ol>
+    </section>
+
+    <section class="export-row" aria-label="Export">
+      <button class="btn" type="button" id="export-text">Export as text</button>
+      <button class="btn btn--ghost" type="button" id="export-json">Export as JSON</button>
+      <button class="btn btn--ghost" type="button" id="print-btn">Print</button>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="footer-note">Built on the GoldenSunAI framework.</p>
+      <nav class="footer-links" aria-label="Family">
+        <a href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold</a>
+        <a href="https://github.com/Sukonik/goldensunai" rel="noopener">GoldenSunAI</a>
+        <a href="https://sukonik.github.io/kikomix/" rel="noopener">KikoMix</a>
+      </nav>
+      <p class="footer-small">Recordings and samples never leave your device.</p>
+      <p class="footer-small">© <span id="year">2026</span> GoldenSunDJ</p>
+    </div>
+  </footer>
+
+  <script src="../js/shell.js"></script>
+  <script src="player.js"></script>
+</body>
+</html>
