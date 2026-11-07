@@ -45,7 +45,13 @@ All four share one design, one family navigation, and one source well:
 
 ## Design
 
-UI base: the **BASE3** plan from [GoldBrief](https://sukonik.github.io/goldbrief/) — clean, readable, proven on this stack — with each app carrying its own accent on top. Touch-first, responsive from phone to desktop, reduced motion respected.
+Full plan: **[DESIGN.md](DESIGN.md)**. In short, the system is assembled from three of Nathan's own projects:
+
+- **Formatting base — GoldBrief's BASE3 UI**: night-black surfaces, neon-yellow master accent, Outfit + Inter two-font system, BASE3 type/spacing scales. All identity lives in tokens; structure never changes.
+- **Character — nakogold V4**: each app gets its own genre theme (Sampler = house amber, Mic = synthpop pink, Mixer = techno lime, Player = eurodance gold ★), plus the metallic gold sheen for hero moments.
+- **Components — lbbikeclub**: live session chip in the header, drawer navigation, theme swatches, stat blocks, spinning mark.
+
+Touch-first, responsive from phone to desktop, reduced motion respected.
 
 ## Tech
 
