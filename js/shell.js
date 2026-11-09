@@ -1,261 +1,256 @@
 /* ==========================================================================
-   GoldenSunDJ — shell script. Vanilla, no dependencies.
-   Owns: the drawer, the theme switcher, the session chip, the footer year.
-   Exposes window.GSDJ = { setTheme(name), setChip({ text, live }), theme() }
-   for the app scripts. Every lookup is guarded — a page missing any piece
-   of the shell still runs without errors.
+   GoldenSunDJ shell (v3). Vanilla, no dependencies.
+   Owns: drawer, themes (swatches built here), session chip, journey bar,
+   weather (Open-Meteo, no key). Exposes window.GSDJ for the app scripts.
    ========================================================================== */
 (function () {
   "use strict";
 
-  var THEMES = ["master", "house", "synthpop", "techno", "eurodance"];
-  var STORAGE_KEY = "gsdj-theme";
+  var THEMES = [
+    { id: "master",    name: "Master",    sub: "Gold",   a: "#ffd84a", b: "#7be8ff", c: "#4a3a00" },
+    { id: "house",     name: "House",     sub: "Amber",  a: "#ffb876", b: "#ff7a4a", c: "#5a2410" },
+    { id: "synthpop",  name: "Synthpop",  sub: "Pink",   a: "#ff8bdb", b: "#b86bff", c: "#55164a" },
+    { id: "techno",    name: "Techno",    sub: "Lime",   a: "#c8ff62", b: "#3dffb0", c: "#1d4a08" },
+    { id: "eurodance", name: "Eurodance", sub: "Blue",   a: "#ffdf62", b: "#5ab0ff", c: "#14286e" },
+    { id: "trance",    name: "Trance",    sub: "Violet", a: "#6aa8ff", b: "#c06bff", c: "#12286e" },
+    { id: "chrome",    name: "Chrome",    sub: "Silver", a: "#dbe4ee", b: "#f0dcb8", c: "#3b4655" },
+    { id: "sunset",    name: "Sunset",    sub: "Coral",  a: "#ff5f6d", b: "#ffc371", c: "#5e0f2a" }
+  ];
+  var KEY = "gsdj-theme";
+  var root = document.documentElement;
 
-  function isTheme(name) {
-    return THEMES.indexOf(name) !== -1;
+  function store(k, v) {
+    try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {}
+    return null;
   }
+  function isTheme(id) { return THEMES.some(function (t) { return t.id === id; }); }
+  function currentTheme() { return root.getAttribute("data-theme") || "master"; }
 
-  function currentTheme() {
-    return document.documentElement.getAttribute("data-theme") || "master";
+  function markThemes() {
+    var id = currentTheme();
+    document.querySelectorAll("[data-set-theme]").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-set-theme") === id ? "true" : "false");
+    });
   }
-
-  function markSwatches() {
-    var active = currentTheme();
-    var swatches = document.querySelectorAll("[data-set-theme]");
-    for (var i = 0; i < swatches.length; i++) {
-      var on = swatches[i].getAttribute("data-set-theme") === active;
-      swatches[i].setAttribute("aria-pressed", on ? "true" : "false");
-    }
+  function setTheme(id) {
+    if (!isTheme(id)) return;
+    root.setAttribute("data-theme", id);
+    store(KEY, id);
+    markThemes();
   }
+  // Apply the saved choice immediately (page default otherwise).
+  (function () { var s = store(KEY); if (isTheme(s)) root.setAttribute("data-theme", s); })();
 
-  function setTheme(name) {
-    if (!isTheme(name)) return;
-    document.documentElement.setAttribute("data-theme", name);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, name);
-    } catch (err) {
-      /* storage unavailable (private mode, file://) — theme still applies */
-    }
-    markSwatches();
-  }
-
-  function storedTheme() {
-    try {
-      var saved = window.localStorage.getItem(STORAGE_KEY);
-      return isTheme(saved) ? saved : null;
-    } catch (err) {
-      return null;
-    }
+  function buildSwatches() {
+    document.querySelectorAll(".swatches").forEach(function (host) {
+      host.innerHTML = "";
+      THEMES.forEach(function (t) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "swatch"; b.setAttribute("data-set-theme", t.id);
+        b.style.setProperty("--sw-a", t.a); b.style.setProperty("--sw-b", t.b); b.style.setProperty("--sw-c", t.c);
+        b.innerHTML = '<span class="swatch-dot" aria-hidden="true"></span><span>' + t.name + "<small>" + t.sub + "</small></span>";
+        b.addEventListener("click", function () { setTheme(t.id); });
+        host.appendChild(b);
+      });
+    });
+    markThemes();
   }
 
   function setChip(opts) {
     if (!opts) return;
     var text = document.getElementById("session-chip-text");
-    var chip = document.getElementById("session-chip");
-    var dot = chip ? chip.querySelector(".chip-dot") : null;
-    if (!dot && !text) {
-      dot = document.querySelector("#session-chip .chip-dot");
-    }
-    if (typeof opts.text === "string" && text) {
-      text.textContent = opts.text;
-    }
-    if (typeof opts.live === "boolean" && dot) {
-      dot.classList.toggle("is-live", opts.live);
-    }
+    var dot = document.querySelector("#session-chip .chip-dot");
+    if (typeof opts.text === "string" && text) text.textContent = opts.text;
+    if (typeof opts.live === "boolean" && dot) dot.classList.toggle("is-live", opts.live);
   }
-
-  function initTheme() {
-    var saved = storedTheme();
-    if (saved) {
-      document.documentElement.setAttribute("data-theme", saved);
-    }
-    var swatches = document.querySelectorAll("[data-set-theme]");
-    for (var i = 0; i < swatches.length; i++) {
-      swatches[i].addEventListener("click", function () {
-        setTheme(this.getAttribute("data-set-theme"));
-      });
-    }
-    markSwatches();
-  }
-
   function initChipDefault() {
     var chip = document.getElementById("session-chip");
-    var from = null;
-    if (document.body && document.body.getAttribute("data-chip")) {
-      from = document.body.getAttribute("data-chip");
-    } else if (chip && chip.getAttribute("data-chip")) {
-      from = chip.getAttribute("data-chip");
-    }
-    if (from) {
-      setChip({ text: from });
-    }
+    var from = (document.body && document.body.getAttribute("data-chip")) || (chip && chip.getAttribute("data-chip"));
+    if (from) setChip({ text: from });
   }
 
+  var drawerApi = { open: function () {} };
   function initDrawer() {
     var drawer = document.getElementById("drawer");
     var scrim = document.getElementById("scrim");
     var openBtn = document.getElementById("menu-btn");
     if (!drawer) return;
-
     function setOpen(open) {
       drawer.classList.toggle("is-open", open);
       if (scrim) scrim.classList.toggle("is-open", open);
-      if (document.body) document.body.classList.toggle("drawer-open", open);
+      document.body.classList.toggle("drawer-open", open);
       if (openBtn) openBtn.setAttribute("aria-expanded", open ? "true" : "false");
-      if (open) {
-        var first = drawer.querySelector("a, button");
-        if (first) first.focus();
-      } else if (openBtn) {
-        openBtn.focus();
-      }
+      if (open) { var f = drawer.querySelector("a, button"); if (f) f.focus(); }
+      else if (openBtn) openBtn.focus();
     }
-
-    if (openBtn) {
-      openBtn.addEventListener("click", function () {
-        setOpen(!drawer.classList.contains("is-open"));
-      });
-    }
-    if (scrim) {
-      scrim.addEventListener("click", function () { setOpen(false); });
-    }
+    drawerApi.open = function () { setOpen(true); };
+    if (openBtn) openBtn.addEventListener("click", function () { setOpen(!drawer.classList.contains("is-open")); });
+    if (scrim) scrim.addEventListener("click", function () { setOpen(false); });
     var closeBtn = drawer.querySelector("[data-drawer-close]");
-    if (closeBtn) {
-      closeBtn.addEventListener("click", function () { setOpen(false); });
-    }
-    var links = drawer.querySelectorAll("a");
-    for (var i = 0; i < links.length; i++) {
-      links[i].addEventListener("click", function () { setOpen(false); });
-    }
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && drawer.classList.contains("is-open")) {
-        setOpen(false);
-      }
+    if (closeBtn) closeBtn.addEventListener("click", function () { setOpen(false); });
+    drawer.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setOpen(false); }); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && drawer.classList.contains("is-open")) setOpen(false); });
+  }
+
+  /* ---- weather ----------------------------------------------------------- */
+  var DEFAULT_PLACE = { name: "Long Beach, NY", lat: 40.5884, lon: -73.6579 };
+  var CACHE_MS = 10 * 60 * 1000;
+
+  function describe(c) {
+    if (c === 0) return "Clear"; if (c <= 2) return "Partly cloudy"; if (c === 3) return "Overcast";
+    if (c === 45 || c === 48) return "Fog"; if (c >= 51 && c <= 57) return "Drizzle";
+    if (c >= 61 && c <= 67) return "Rain"; if (c >= 71 && c <= 77) return "Snow";
+    if (c >= 80 && c <= 82) return "Showers"; if (c >= 95) return "Thunderstorm"; return "Cloudy";
+  }
+  function score(p) { // 0-100 "get out" score, inputs °F / mph / % / in
+    var s = 100;
+    s -= Math.max(0, p.wind - 8) * 2;
+    if (p.feels < 50) s -= (50 - p.feels) * 1.6; else if (p.feels > 82) s -= (p.feels - 82) * 2.2;
+    s -= (p.pop || 0) * 0.3;
+    if (p.precip > 0.01) s -= 20;
+    if (p.code >= 95) s -= 30;
+    if (!p.day) s -= 10;
+    s = Math.max(0, Math.min(100, Math.round(s)));
+    var tone = s >= 80 ? "prime" : s >= 60 ? "good" : s >= 40 ? "fair" : "skip";
+    var label = { prime: "Great day to record outside", good: "Good to get out", fair: "Short session outside", skip: "Stay in and mix" }[tone];
+    return { score: s, tone: tone, label: label };
+  }
+
+  function place() {
+    try { var p = JSON.parse(store("gsdj-place")); if (p && isFinite(p.lat) && isFinite(p.lon)) return p; } catch (e) {}
+    return DEFAULT_PLACE;
+  }
+  function fetchWeather(p) {
+    var key = "gsdj-wx-" + p.lat.toFixed(2) + "," + p.lon.toFixed(2);
+    try {
+      var hit = JSON.parse(sessionStorage.getItem(key));
+      if (hit && Date.now() - hit.t < CACHE_MS) return Promise.resolve(shape(hit.raw, p));
+    } catch (e) {}
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon +
+      "&current=temperature_2m,apparent_temperature,precipitation,weather_code,is_day,wind_speed_10m" +
+      "&hourly=temperature_2m,precipitation_probability,weather_code,is_day" +
+      "&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&forecast_days=2&timezone=auto";
+    var ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 9000);
+    return fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) throw new Error("status " + r.status);
+      return r.json();
+    }).then(function (raw) {
+      if (!raw.current || !raw.hourly) throw new Error("bad data");
+      try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), raw: raw })); } catch (e) {}
+      return shape(raw, p);
     });
   }
-
-  function initYear() {
-    var year = document.getElementById("year");
-    if (year) {
-      year.textContent = String(new Date().getFullYear());
+  function shape(raw, p) {
+    var c = raw.current;
+    var now = { temp: Math.round(c.temperature_2m), feels: c.apparent_temperature, wind: Math.round(c.wind_speed_10m),
+      code: c.weather_code, day: !!c.is_day, precip: c.precipitation || 0, pop: 0 };
+    now.ride = score(now);
+    var hours = [], h = raw.hourly, start = 0;
+    for (var i = 0; i < h.time.length; i++) { if (h.time[i] >= c.time.slice(0, 13)) { start = i; break; } }
+    for (var j = start + 1; j < Math.min(h.time.length, start + 7); j++) {
+      hours.push({ hour: new Date(h.time[j]).toLocaleTimeString("en-US", { hour: "numeric" }), temp: Math.round(h.temperature_2m[j]),
+        pop: h.precipitation_probability[j] || 0, code: h.weather_code[j] });
     }
+    return { place: p, now: now, hours: hours };
   }
 
+  var wxState = { data: null, error: null };
+  function paintWeather() {
+    var d = wxState.data;
+    document.querySelectorAll(".wx-chip").forEach(function (chip) {
+      var t = chip.querySelector(".wx-chip-text");
+      if (d) { chip.setAttribute("data-tone", d.now.ride.tone); t.innerHTML = d.now.temp + "°F<span class=\"wx-score\"> · " + d.now.ride.score + "</span>";
+        chip.setAttribute("aria-label", "Weather in " + d.place.name + ": " + d.now.temp + " degrees, " + describe(d.now.code) + ". " + d.now.ride.label + ". Tap to use your location."); }
+      else { chip.removeAttribute("data-tone"); t.textContent = wxState.error ? "Weather offline" : "Weather…"; }
+    });
+    var card = document.querySelector("[data-wx-card]");
+    if (!card) return;
+    var q = function (s) { return card.querySelector(s); };
+    if (!d) {
+      q("[data-wx-headline]").textContent = wxState.error || "Loading weather…";
+      return;
+    }
+    q("[data-wx-place]").textContent = d.place.name;
+    q("[data-wx-temp]").textContent = d.now.temp + "°F";
+    q("[data-wx-desc]").textContent = describe(d.now.code) + " · wind " + d.now.wind + " mph";
+    q("[data-wx-headline]").textContent = d.now.ride.label;
+    q("[data-wx-score]").textContent = d.now.ride.score + " / 100";
+    card.setAttribute("data-tone", d.now.ride.tone);
+    q("[data-wx-hours]").innerHTML = d.hours.map(function (h) {
+      return "<li><span>" + h.hour + "</span><strong>" + h.temp + "°</strong><span>" + h.pop + "%</span></li>";
+    }).join("");
+  }
+  function loadWeather(p) {
+    wxState.error = null;
+    return fetchWeather(p).then(function (d) { wxState.data = d; paintWeather(); })
+      .catch(function () { wxState.data = null; wxState.error = "Weather unavailable. Check your connection."; paintWeather(); });
+  }
+  function useMyLocation() {
+    if (!navigator.geolocation) { wxState.error = "Location not supported on this device."; paintWeather(); return; }
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var p = { name: "Your location", lat: pos.coords.latitude, lon: pos.coords.longitude };
+      store("gsdj-place", JSON.stringify(p));
+      loadWeather(p);
+    }, function () {
+      wxState.error = "Location is off, showing " + DEFAULT_PLACE.name + ".";
+      loadWeather(place());
+    }, { timeout: 8000, maximumAge: 600000 });
+  }
+  function initWeather() {
+    document.querySelectorAll("[data-wx-locate]").forEach(function (b) { b.addEventListener("click", useMyLocation); });
+    document.querySelectorAll(".wx-chip").forEach(function (b) { b.addEventListener("click", useMyLocation); });
+    loadWeather(place()); // never prompts; uses saved or default location
+  }
 
-  /* ---- Journey bar + weather (v2) ------------------------------------- */
+  /* ---- journey bar + header controls ------------------------------------------- */
   var STEPS = [
-    ["Get out", "weather"], ["Record", "mic/"], ["Produce", "sampler/"],
-    ["Master", null], ["Distribute", null], ["Mix", "mixer/"],
-    ["Play", "player/"], ["Get found", null]
+    ["Get out", "index.html#get-out"], ["Record", "mic/"], ["Produce", "sampler/"], ["Master", null],
+    ["Distribute", null], ["Mix", "mixer/"], ["Play", "player/"], ["Get found", null]
   ];
-
-  function rootPrefix() {
+  function prefix() {
     var a = document.querySelector(".brand");
     return a && /^\.\.\//.test(a.getAttribute("href") || "") ? "../" : "";
   }
-
-  var WX_CODES = {0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Fog",51:"Drizzle",53:"Drizzle",55:"Drizzle",61:"Rain",63:"Rain",65:"Heavy rain",71:"Snow",73:"Snow",75:"Heavy snow",80:"Showers",81:"Showers",82:"Heavy showers",95:"Thunderstorm",96:"Thunderstorm",99:"Thunderstorm"};
-
-  function verdict(w) {
-    if (w.code >= 95) return "Storm risk. Stay in and mix.";
-    if (w.code >= 51 || w.wind > 30) return "Wet or windy. Record indoors today.";
-    if (w.temp < 0 || w.temp > 35) return "Extreme temps. Short session outside.";
-    return "Good day to get out and record.";
-  }
-
-  function loadWeather(cb) {
-    function done(w) { cb(w); }
-    try {
-      var c = JSON.parse(localStorage.getItem("gsdj-wx") || "null");
-      if (c && Date.now() - c.t < 15 * 60 * 1000) return done(c.w);
-    } catch (e) {}
-    if (!navigator.geolocation) return cb(null, "Location not supported");
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      var u = "https://api.open-meteo.com/v1/forecast?latitude=" + pos.coords.latitude +
-        "&longitude=" + pos.coords.longitude +
-        "&current=temperature_2m,weather_code,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph";
-      fetch(u).then(function (r) { return r.json(); }).then(function (j) {
-        var cur = j.current;
-        var tempF = Math.round(cur.temperature_2m);
-        var w = { temp: Math.round((tempF - 32) * 5 / 9), tempF: tempF, wind: Math.round(cur.wind_speed_10m * 1.609),
-                  code: cur.weather_code, label: WX_CODES[cur.weather_code] || "Weather" };
-        try { localStorage.setItem("gsdj-wx", JSON.stringify({ t: Date.now(), w: w })); } catch (e) {}
-        done(w);
-      }).catch(function () { cb(null, "Weather unavailable"); });
-    }, function () { cb(null, "Location off. Tap to retry."); }, { timeout: 8000, maximumAge: 600000 });
-  }
-
-  function paintWeather(w, err) {
-    var nodes = document.querySelectorAll("[data-wx]");
-    for (var i = 0; i < nodes.length; i++) {
-      var kind = nodes[i].getAttribute("data-wx");
-      if (!w) { nodes[i].textContent = kind === "chip" ? "☀ Weather" : (err || "Tap to check the weather"); continue; }
-      nodes[i].textContent = kind === "chip"
-        ? "☀ " + w.tempF + "°F"
-        : w.tempF + "°F · " + w.label + " · wind " + w.wind + " km/h — " + verdict(w);
-    }
-  }
-
-  function initWeather() {
-    var targets = document.querySelectorAll("[data-wx-btn]");
-    for (var i = 0; i < targets.length; i++) {
-      targets[i].addEventListener("click", function () { loadWeather(paintWeather); });
-    }
-    try { if (localStorage.getItem("gsdj-wx")) loadWeather(paintWeather); } catch (e) {}
-  }
-
-  function initJourney() {
-    if (document.body.hasAttribute("data-no-journey")) return;
+  function initHeader() {
     var header = document.querySelector(".site-header");
-    if (!header) return;
-    var pre = rootPrefix();
-    var path = location.pathname;
-    var nav = document.createElement("nav");
-    nav.className = "journey-bar";
-    nav.setAttribute("aria-label", "Your session path");
-    var html = '<ol class="wrap journey-list">';
-    for (var i = 0; i < STEPS.length; i++) {
-      var name = STEPS[i][0], href = STEPS[i][1];
-      var num = '<span class="journey-num">' + (i + 1) + "</span>";
-      if (href && href !== "weather") {
-        var here = path.indexOf("/" + href) !== -1;
-        html += '<li><a href="' + pre + href + '"' + (here ? ' aria-current="step"' : "") + ">" + num + name + "</a></li>";
-      } else if (href === "weather") {
-        html += '<li><a href="' + pre + 'index.html#get-out">' + num + name + "</a></li>";
-      } else {
-        html += '<li><a href="' + pre + 'index.html#journey" class="is-soon">' + num + name + "</a></li>";
-      }
+    var inner = header && header.querySelector(".site-header-inner");
+    if (!inner) return;
+    var menu = document.getElementById("menu-btn");
+    if (!inner.querySelector(".wx-chip")) {
+      var w = document.createElement("button");
+      w.type = "button"; w.className = "wx-chip";
+      w.innerHTML = '<span class="wx-dot" aria-hidden="true"></span><span class="wx-chip-text">Weather…</span>';
+      inner.insertBefore(w, document.getElementById("session-chip") || menu);
     }
+    if (!inner.querySelector(".theme-btn")) {
+      var t = document.createElement("button");
+      t.type = "button"; t.className = "icon-btn theme-btn"; t.setAttribute("aria-label", "Choose theme");
+      t.innerHTML = '<span class="theme-dot"></span>';
+      t.addEventListener("click", function () { drawerApi.open(); });
+      inner.insertBefore(t, menu);
+    }
+    if (document.body.hasAttribute("data-no-journey")) return;
+    var pre = prefix(), path = location.pathname, html = '<ol class="wrap journey-list">';
+    STEPS.forEach(function (s, i) {
+      var num = '<span class="journey-num">' + (i + 1) + "</span>";
+      if (!s[1]) { html += '<li><a class="is-soon" href="' + pre + 'index.html#journey">' + num + s[0] + "</a></li>"; return; }
+      var here = s[1].indexOf("/") === s[1].length - 1 && path.indexOf("/" + s[1]) !== -1;
+      html += '<li><a href="' + pre + s[1] + '"' + (here ? ' aria-current="step"' : "") + ">" + num + s[0] + "</a></li>";
+    });
+    var nav = document.createElement("nav");
+    nav.className = "journey-bar"; nav.setAttribute("aria-label", "Your session path");
     nav.innerHTML = html + "</ol>";
     header.insertAdjacentElement("afterend", nav);
-    var inner = header.querySelector(".site-header-inner");
-    var chip = document.getElementById("session-chip");
-    if (inner && chip && !inner.querySelector("[data-wx='chip']")) {
-      var b = document.createElement("button");
-      b.type = "button"; b.className = "wx-chip"; b.setAttribute("data-wx", "chip");
-      b.setAttribute("data-wx-btn", ""); b.setAttribute("aria-label", "Check local weather");
-      b.textContent = "☀ Weather";
-      inner.insertBefore(b, chip);
-    }
   }
 
-  window.GSDJ = {
-    setTheme: setTheme,
-    setChip: setChip,
-    theme: currentTheme
-  };
+  function initYear() { var y = document.getElementById("year"); if (y) y.textContent = String(new Date().getFullYear()); }
+
+  window.GSDJ = { setTheme: setTheme, setChip: setChip, theme: currentTheme, themes: THEMES };
 
   function init() {
-    initTheme();
-    initChipDefault();
-    initDrawer();
-    initYear();
-    initJourney();
-    initWeather();
+    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initYear(); initWeather();
   }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

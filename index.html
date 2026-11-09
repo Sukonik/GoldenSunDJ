@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/hub.css">
 </head>
 <body data-no-journey>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -78,94 +79,103 @@
   </aside>
 
   <main id="main">
-    <!-- Hero: chrome deck -->
-    <section class="relative overflow-hidden border-b border-chromeedge bg-raised">
-      <div class="wrap grid items-center gap-8 py-12 grid-cols-[minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_auto] md:py-20">
-        <div class="max-w-2xl">
-          <p class="font-verdana-bold-pro mb-5 inline-block rounded-2xl border border-chromeedge px-3 py-1 text-sm font-bold tracking-wide text-ink2">GET OUT · RECORD · PRODUCE · MASTER · DISTRIBUTE · MIX · PLAY · GET FOUND</p>
-          <h1 class="chrome-text font-verdana-halfpixel! text-5xl font-bold leading-tight md:text-8xl">GoldenSunDJ</h1>
-          <p class="mt-5 text-lg text-ink2">Take your music from the street to the stream. Record outside, build beats, mix live, and get your tracks found — all from your phone, all in the browser.</p>
-          <div class="mt-7 flex flex-wrap gap-3">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="label"><b>01</b> &nbsp;Get out · record · produce · master · distribute · mix · play · get found</p>
+          <h1 class="display chrome-text">GoldenSunDJ</h1>
+          <p class="lede">Take your music from the street to the stream. Record outside, build beats, mix live and get found — all from your phone, all in the browser.</p>
+          <div class="btn-row">
             <a class="btn" href="mic/">● Start recording</a>
-            <a class="btn btn--ghost" href="#journey">See the whole path</a>
+            <a class="btn btn--ghost" href="#journey">See the path</a>
           </div>
         </div>
-        <!-- Y2K chrome disc -->
-        <svg class="mx-auto h-44 w-44 md:h-64 md:w-64" viewBox="0 0 200 200" role="img" aria-label="Chrome record disc">
-          <defs>
-            <radialGradient id="g1" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#cfd5dc"/><stop offset=".6" stop-color="#7d8590"/><stop offset="1" stop-color="#e8ebef"/></radialGradient>
-          </defs>
-          <circle cx="100" cy="100" r="92" fill="url(#g1)" stroke="#aeb5bf" stroke-width="3"/>
-          <circle cx="100" cy="100" r="62" fill="none" stroke="#14161a" stroke-opacity=".18" stroke-width="2"/>
-          <circle cx="100" cy="100" r="42" fill="none" stroke="#14161a" stroke-opacity=".18" stroke-width="2"/>
-          <circle cx="100" cy="100" r="22" fill="var(--accent)"/>
-          <circle cx="100" cy="100" r="5" fill="#14161a"/>
-        </svg>
-      </div>
-    </section>
-
-    <!-- Get out: weather -->
-    <section id="get-out" class="py-10" aria-labelledby="out-h">
-      <div class="wrap">
-        <div class="chrome-bezel flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 id="out-h" class="text-2xl">1 · Get out</h2>
-            <p class="mt-1 max-w-xl text-ink2">Check the weather where you are and pick your spot. Fresh air, new sounds.</p>
-            <p class="mt-3 text-lg font-bold" data-wx="card" aria-live="polite">Tap to check the weather</p>
-          </div>
-          <button class="btn" type="button" data-wx-btn>☀ Check my weather</button>
+        <div class="hero-disc" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <defs><radialGradient id="g1" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#cfd5dc"/><stop offset=".6" stop-color="#7d8590"/><stop offset="1" stop-color="#eef1f5"/></radialGradient></defs>
+            <circle cx="100" cy="100" r="94" fill="url(#g1)"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#0a0b0f" stroke-opacity=".16" stroke-width="1.5"/>
+            <circle cx="100" cy="100" r="52" fill="none" stroke="#0a0b0f" stroke-opacity=".16" stroke-width="1.5"/>
+            <circle cx="100" cy="100" r="34" fill="none" stroke="#0a0b0f" stroke-opacity=".16" stroke-width="1.5"/>
+            <circle cx="100" cy="100" r="22" style="fill:var(--a)"/>
+            <circle cx="100" cy="100" r="4" fill="#0a0b0f"/>
+          </svg>
         </div>
       </div>
     </section>
 
-    <!-- Journey -->
-    <section id="journey" class="py-10" aria-labelledby="journey-h">
+    <hr class="hairline">
+
+    <section id="get-out" class="section" aria-labelledby="out-h">
       <div class="wrap">
-        <h2 id="journey-h" class="mb-2 text-3xl">The path</h2>
-        <p class="mb-8 max-w-2xl text-ink2">Eight steps. The four tools below are live; the rest connect to the platforms you already use.</p>
-        <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <li class="chrome-bezel flex flex-col gap-2 p-5">
-            <span class="text-sm font-bold text-mute">2 · RECORD</span>
-            <h3 class="text-xl text-synthpop">Mic</h3>
-            <p class="text-ink2">Capture vocals and found sounds. Save as WAV, or send to the Sampler.</p>
-            <a class="btn mt-auto self-start" href="mic/">Open Mic</a>
-          </li>
-          <li class="chrome-bezel flex flex-col gap-2 p-5">
-            <span class="text-sm font-bold text-mute">3 · PRODUCE</span>
-            <h3 class="text-xl text-house">Sampler</h3>
-            <p class="text-ink2">Tap beats on a 4×4 pad grid, load sounds, and build patterns.</p>
-            <a class="btn mt-auto self-start" href="sampler/">Open Sampler</a>
-          </li>
-          <li class="chrome-bezel flex flex-col gap-2 p-5">
-            <span class="text-sm font-bold text-mute">6 · MIX</span>
-            <h3 class="text-xl text-techno">Mixer</h3>
-            <p class="text-ink2">Two decks, crossfader, EQ and scratch platters. Built for touch.</p>
-            <a class="btn mt-auto self-start" href="mixer/">Open Mixer</a>
-          </li>
-          <li class="chrome-bezel flex flex-col gap-2 p-5">
-            <span class="text-sm font-bold text-mute">7 · PLAY</span>
-            <h3 class="text-xl text-eurodance">Player</h3>
-            <p class="text-ink2">Build setlists with BPM and key, then play the set live.</p>
-            <a class="btn mt-auto self-start" href="player/">Open Player</a>
-          </li>
+        <p class="label"><b>02</b> &nbsp;Step one</p>
+        <h2 id="out-h" class="section-title">Get out</h2>
+        <div class="wx-card panel" data-wx-card data-tone="good">
+          <div class="wx-main">
+            <p class="label" data-wx-place>Locating…</p>
+            <p class="wx-temp" data-wx-temp>--°F</p>
+            <p class="wx-desc" data-wx-desc></p>
+          </div>
+          <div class="wx-verdict">
+            <p class="label">Get-out score <b data-wx-score>--</b></p>
+            <p class="wx-headline" data-wx-headline>Loading weather…</p>
+            <ul class="wx-hours" data-wx-hours aria-label="Next hours"></ul>
+            <button class="btn btn--ghost" type="button" data-wx-locate>◎ Use my location</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="hairline">
+
+    <section id="journey" class="section" aria-labelledby="journey-h">
+      <div class="wrap">
+        <p class="label"><b>03</b> &nbsp;The path</p>
+        <h2 id="journey-h" class="section-title">Eight steps</h2>
+        <p class="copy">The four tools are live. The rest connect to the platforms you already use.</p>
+        <ol class="steps-list">
+          <li><span class="index">01</span><strong>Get out</strong><span>Check the weather, pick your spot.</span></li>
+          <li><span class="index">02</span><strong>Record</strong><span><a href="mic/">Mic</a> — vocals, freestyles and found sounds.</span></li>
+          <li><span class="index">03</span><strong>Produce</strong><span><a href="sampler/">Sampler</a> — pads and a step sequencer. Bring ideas from Suno.</span></li>
+          <li><span class="index">04</span><strong>Master</strong><span>Final polish. Mastering partner coming soon.</span></li>
+          <li><span class="index">05</span><strong>Distribute</strong><span>Send releases out with DistroKid.</span></li>
+          <li><span class="index">06</span><strong>Mix</strong><span><a href="mixer/">Mixer</a> — two decks, crossfader, EQ, scratch.</span></li>
+          <li><span class="index">07</span><strong>Play</strong><span><a href="player/">Player</a> — setlists with BPM and key.</span></li>
+          <li><span class="index">08</span><strong>Get found</strong><span>YouTube, Spotify and SoundCloud.</span></li>
         </ol>
       </div>
     </section>
 
-    <!-- Integrations -->
-    <section class="py-10" aria-labelledby="int-h">
+    <hr class="hairline">
+
+    <section class="section" aria-labelledby="bench-h">
       <div class="wrap">
-        <h2 id="int-h" class="mb-2 text-3xl">Make it, release it, get found</h2>
-        <p class="mb-8 max-w-2xl text-ink2">Direct links today. Deeper hooks are planned — nothing here uploads your audio without you.</p>
-        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <li class="chrome-bezel p-5"><h3 class="text-lg">Suno</h3><p class="mb-3 text-ink2">Generate ideas and stems to bring into the Sampler.</p><a class="font-bold text-accent underline" href="https://suno.com" rel="noopener">Open Suno →</a></li>
-          <li class="chrome-bezel p-5"><h3 class="text-lg">4 · Master</h3><p class="mb-3 text-ink2">Final polish before release. Mastering partner coming soon.</p><span class="text-mute">Planned</span></li>
-          <li class="chrome-bezel p-5"><h3 class="text-lg">5 · DistroKid</h3><p class="mb-3 text-ink2">Send finished tracks to every store.</p><a class="font-bold text-accent underline" href="https://distrokid.com" rel="noopener">Open DistroKid →</a></li>
-          <li class="chrome-bezel p-5"><h3 class="text-lg">YouTube</h3><p class="mb-3 text-ink2">Post sets, sessions and visuals.</p><a class="font-bold text-accent underline" href="https://www.youtube.com" rel="noopener">Open YouTube →</a></li>
-          <li class="chrome-bezel p-5"><h3 class="text-lg">Spotify</h3><p class="mb-3 text-ink2">Where listeners find the release.</p><a class="font-bold text-accent underline" href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold on Spotify →</a></li>
-          <li class="chrome-bezel p-5"><h3 class="text-lg">SoundCloud</h3><p class="mb-3 text-ink2">Share works in progress and mixes.</p><a class="font-bold text-accent underline" href="https://soundcloud.com" rel="noopener">Open SoundCloud →</a></li>
-        </ul>
-        <p class="mt-8 text-ink2">Works hand in hand with <a class="font-bold text-accent underline" href="https://sukonik.github.io/nakogold/index.html" rel="noopener">NakoGold</a> — the artist, the catalog, the reason the bench exists.</p>
+        <p class="label"><b>04</b> &nbsp;The bench</p>
+        <h2 id="bench-h" class="section-title">Four tools</h2>
+        <div class="hub-grid hub-grid--4">
+          <article class="panel tool"><span class="tile-kick kick-synthpop" aria-hidden="true">✦</span><h3>Mic</h3><p>Hit record. Save as WAV, or send the take to the Sampler as a pad.</p><a class="btn" href="mic/">Open Mic</a></article>
+          <article class="panel tool"><span class="tile-kick kick-house" aria-hidden="true">●</span><h3>Sampler</h3><p>Tap a 4×4 pad grid, load sounds, build patterns and export beats.</p><a class="btn" href="sampler/">Open Sampler</a></article>
+          <article class="panel tool"><span class="tile-kick kick-techno" aria-hidden="true">//</span><h3>Mixer</h3><p>Two decks, crossfader, EQ and scratch platters made for touch.</p><a class="btn" href="mixer/">Open Mixer</a></article>
+          <article class="panel tool"><span class="tile-kick kick-eurodance" aria-hidden="true">★</span><h3>Player</h3><p>Drag tracks into a setlist, tag BPM and key, and play it live.</p><a class="btn" href="player/">Open Player</a></article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="hairline">
+
+    <section class="section" aria-labelledby="int-h">
+      <div class="wrap">
+        <p class="label"><b>05</b> &nbsp;Release and get found</p>
+        <h2 id="int-h" class="section-title">Your platforms</h2>
+        <p class="copy">Direct links today. Deeper hooks are planned — nothing uploads your audio without you.</p>
+        <div class="hub-grid hub-grid--3 int-grid">
+          <a class="panel int" href="https://suno.com" rel="noopener"><h3>Suno</h3><p>Generate ideas and stems to bring to the Sampler.</p><span class="label">Open →</span></a>
+          <a class="panel int" href="https://distrokid.com" rel="noopener"><h3>DistroKid</h3><p>Send finished tracks to every store.</p><span class="label">Open →</span></a>
+          <a class="panel int" href="https://www.youtube.com" rel="noopener"><h3>YouTube</h3><p>Post sets, sessions and visuals.</p><span class="label">Open →</span></a>
+          <a class="panel int" href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener"><h3>Spotify</h3><p>Where listeners find the release.</p><span class="label">NakoGold →</span></a>
+          <a class="panel int" href="https://soundcloud.com" rel="noopener"><h3>SoundCloud</h3><p>Share works in progress and mixes.</p><span class="label">Open →</span></a>
+          <a class="panel int" href="https://sukonik.github.io/nakogold/index.html" rel="noopener"><h3>NakoGold</h3><p>The artist, the catalog, the reason the bench exists.</p><span class="label">Visit →</span></a>
+        </div>
       </div>
     </section>
   </main>

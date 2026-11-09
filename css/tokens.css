@@ -1,228 +1,82 @@
 /* ==========================================================================
-   GoldenSunDJ — tokens layer
-   Adapted from GoldBrief BASE3 (goldbrief-tokens.css) + nakogold V4 genre
-   themes (nakogold-tokens.css). ALL identity lives here: raw BASE3 values
-   (--b3-*), the scales, and the semantic aliases components read.
-   Components must never hard-code a color — if a value is needed, it gets
-   a token here first.
-
-   Theming: set data-theme on <html> — "master" (default, BASE3 neon
-   yellow), "house" (Sampler), "synthpop" (Mic), "techno" (Mixer),
-   "eurodance" (Player). A theme overrides only the semantic aliases;
-   layout, spacing and type never change.
+   GoldenSunDJ — tokens (v3). Pearlescent chrome system modeled on
+   lbbikeclub: three colors per theme (--a primary, --b highlight, --c deep).
+   Legacy aliases (--accent, --bg, --bg-card ...) are derived from them so
+   every app stylesheet keeps working and follows the theme.
    ========================================================================== */
+@property --a { syntax: "<color>"; inherits: true; initial-value: #ffd84a; }
+@property --b { syntax: "<color>"; inherits: true; initial-value: #7be8ff; }
+@property --c { syntax: "<color>"; inherits: true; initial-value: #4a3a00; }
 
 :root {
-  /* -- BASE3 raw: night surfaces ---------------------------------------- */
-  --b3-black-950: #050504;
-  --b3-black-900: #0a0908;
-  --b3-black-800: #121009;
-  --b3-black-700: #1a160e;
-  --b3-line: #2a2418;
+  --a: #ffd84a; --b: #7be8ff; --c: #4a3a00;      /* Master Gold (default) */
+  --black: #04050a;
 
-  /* -- BASE3 raw: neon yellow (master accent) ---------------------------- */
-  --b3-yellow: #ffe81a;
-  --b3-yellow-bright: #fff45c;
-  --b3-yellow-dim: #d4c200;
-  --b3-yellow-glow: rgba(255, 232, 26, 0.45);
-  --b3-yellow-wash: rgba(255, 232, 26, 0.07);
+  /* Fixed per-app identities (tile kicks, swatch dots) */
+  --acc-master: #ffd84a; --acc-house: #ffb876; --acc-synthpop: #ff8bdb;
+  --acc-techno: #c8ff62; --acc-eurodance: #ffdf62;
 
-  /* -- BASE3 raw: neon traces (small doses only) ------------------------- */
-  --b3-cyan: #00e5ff;
-  --b3-magenta: #ff2ea6;
+  /* Semantic aliases derived from the theme */
+  --bg: var(--black);
+  --bg-raised: color-mix(in srgb, var(--c) 14%, #0a0c12);
+  --bg-card: color-mix(in srgb, var(--c) 22%, #0e1118);
+  --bg-deep: color-mix(in srgb, var(--c) 34%, #12151d);
+  --border: rgba(255, 255, 255, .12);
+  --border-strong: rgba(255, 255, 255, .26);
+  --hair: rgba(255, 255, 255, .10);
+  --text: #ffffff;
+  --text-2: rgba(255, 255, 255, .84);
+  --text-muted: rgba(255, 255, 255, .64);
+  --accent: var(--a);
+  --accent-strong: color-mix(in srgb, var(--a) 70%, #fff);
+  --accent-dim: color-mix(in srgb, var(--a) 55%, #000);
+  --accent-ink: #0a0b0f;
+  --focus: var(--a);
+  --glow: color-mix(in srgb, var(--a) 45%, transparent);
+  --rec: #ff4d6d;
+  --cyan: var(--b);
+  --scrim: rgba(0, 0, 0, .62);
+  --chrome: linear-gradient(180deg, #ffffff 0%, #eef3f9 38%, color-mix(in srgb, var(--a) 55%, #c5cfdb) 100%);
+  --chrome-edge: rgba(255, 255, 255, .28);
+  --chrome-ink: #0a0b0f;
+  --sheen: var(--chrome);
+  --pearl: linear-gradient(150deg, rgba(255,255,255,.08), rgba(255,255,255,.02) 45%, color-mix(in srgb, var(--c) 22%, transparent));
 
-  /* -- BASE3 raw: text ---------------------------------------------------- */
-  --b3-text-primary: #f6f1e6;
-  --b3-text-secondary: #c9c0a8;
-  --b3-text-muted: #b3ab97;
-  --b3-text-on-accent: #171300;
-
-  /* -- Per-app accents (fixed identities — tile kicks, swatch dots) -------
-     These do NOT change with the active theme: Sampler is always amber,
-     Mic always pink, Mixer always lime, Player always gold, hub always
-     BASE3 yellow. Utility classes in components.css read these. */
-  --acc-master: #ffe81a;
-  --acc-house: #ffb876;
-  --acc-synthpop: #ff8bdb;
-  --acc-techno: #c8ff62;
-  --acc-eurodance: #ffdf62;
-
-  /* -- Semantic aliases: master / BASE3 default --------------------------- */
-  --bg: var(--b3-black-950);
-  --bg-raised: var(--b3-black-900);
-  --bg-card: var(--b3-black-800);
-  --bg-deep: var(--b3-black-700);
-  --border: var(--b3-line);
-  --border-strong: #453a22;
-  --text: var(--b3-text-primary);
-  --text-2: var(--b3-text-secondary);
-  --text-muted: var(--b3-text-muted);
-  --accent: var(--b3-yellow);
-  --accent-strong: var(--b3-yellow-bright);
-  --accent-dim: var(--b3-yellow-dim);
-  --accent-ink: var(--b3-text-on-accent);
-  --focus: var(--b3-yellow-bright);
-  --glow: var(--b3-yellow-glow);
-  --rec: #ff2ea6;
-  --cyan: var(--b3-cyan);
-  --scrim: rgba(0, 0, 0, 0.62);
-  --sheen: linear-gradient(180deg, #ffffff 0%, #d9dde3 38%, #8d949e 52%, #e9ecf0 70%, #fff7b8 100%);
-  --chrome: linear-gradient(180deg, #f4f6f9 0%, #c3c9d1 45%, #8a919b 55%, #d7dce2 100%);
-  --chrome-edge: #aeb5bf;
-  --chrome-ink: #14161a;
-
-  /* -- Character (from nakogold V4) --------------------------------------- */
   --kick: "♪";
   --frame-r: 16px;
   --rule-style: solid;
-  --deco: radial-gradient(ellipse at 50% -10%, var(--b3-yellow-wash), transparent 55%);
-  --frame-fx: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-pop: 0 18px 48px rgba(0, 0, 0, 0.6);
+  --deco: none;
+  --frame-fx: none;
+  --shadow-pop: 0 18px 48px rgba(0, 0, 0, .6);
 
-  /* -- Shape ---------------------------------------------------------------- */
-  --radius-sm: 6px;
-  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-md: 999px;
   --radius-lg: 20px;
 
-  /* -- Typography ---------------------------------------------------------- */
   --font-display: Verdana, "Verdana Pro", "DejaVu Sans", Geneva, Tahoma, sans-serif;
   --font-sans: Verdana, "Verdana Pro", "DejaVu Sans", Geneva, Tahoma, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  --fs-xs: 0.8125rem;
-  --fs-sm: 0.9375rem;
-  --fs-base: 1.0625rem;
-  --fs-md: 1.125rem;
-  --fs-lg: 1.375rem;
-  --fs-xl: 1.875rem;
-  --fs-2xl: 2.5rem;
-  --fs-3xl: 3.25rem;
+  --fs-xs: .8125rem; --fs-sm: .9375rem; --fs-base: 1.0625rem; --fs-md: 1.1875rem;
+  --fs-lg: 1.4rem; --fs-xl: 1.9rem; --fs-2xl: 2.6rem; --fs-3xl: 3.4rem;
+  --lh-tight: 1.1; --lh-normal: 1.6; --measure: 38rem;
 
-  --lh-tight: 1.15;
-  --lh-normal: 1.6;
-  --measure: 36rem;
+  --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-5: 1.5rem;
+  --space-6: 2rem; --space-8: 3rem; --space-10: 4rem; --space-12: 6rem;
 
-  /* -- Spacing scale (BASE3 steps) ------------------------------------------ */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-8: 3rem;
-  --space-10: 4rem;
-  --space-12: 6rem;
-
-  /* -- Layout / motion -------------------------------------------------------- */
-  --container: 72rem;
-  --duration-fast: 120ms;
-  --duration-normal: 220ms;
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --container: 76rem;
+  --header-h: 68px;
+  --duration-fast: 120ms; --duration-normal: 240ms;
+  --ease: cubic-bezier(.22, .8, .24, 1);
+  color-scheme: dark;
 }
 
-/* ==========================================================================
-   Genre themes (adapted from nakogold V4 token sets).
-   Each one re-tints the night surfaces toward its genre and swaps accent,
-   kick glyph, frame radius, deco pattern and rule style. Nothing else.
-   ========================================================================== */
-
-[data-theme="house"] {
-  --bg: #080403;
-  --bg-raised: #130b09;
-  --bg-card: #1d120f;
-  --bg-deep: #291712;
-  --border: #33201b;
-  --border-strong: #64534c;
-  --text: #fff3e9;
-  --text-2: #e3c6ba;
-  --text-muted: #c7aca3;
-  --accent: #ffb876;
-  --accent-strong: #ffd4a6;
-  --accent-dim: #e08e4a;
-  --accent-ink: #26130c;
-  --focus: #ffd29a;
-  --glow: rgba(255, 184, 118, 0.45);
-  --sheen: linear-gradient(115deg, #ffe6c6 0%, #ffb876 38%, #ff7a4a 68%, #ffd2a1 100%);
-  --kick: "●";
-  --frame-r: 22px;
-  --rule-style: solid;
-  --deco: repeating-conic-gradient(from 0deg at 86% 22%, rgba(255, 184, 118, 0.075) 0 5deg, transparent 5deg 10deg);
-  --frame-fx: 0 24px 60px -28px rgba(255, 107, 75, 0.35);
-}
-
-[data-theme="synthpop"] {
-  --bg: #090309;
-  --bg-raised: #150a17;
-  --bg-card: #211024;
-  --bg-deep: #2c1733;
-  --border: #3a2040;
-  --border-strong: #69526d;
-  --text: #fff1fb;
-  --text-2: #ecc9e4;
-  --text-muted: #dabbd3;
-  --accent: #ff8bdb;
-  --accent-strong: #ffb7e9;
-  --accent-dim: #d95fb8;
-  --accent-ink: #311025;
-  --focus: #ffc4ee;
-  --glow: rgba(255, 139, 219, 0.45);
-  --sheen: linear-gradient(115deg, #ffdcf3 0%, #ff8bdb 38%, #b86bff 68%, #ffc7ec 100%);
-  --kick: "✦";
-  --frame-r: 28px;
-  --radius-sm: 10px;
-  --radius-md: 999px;
-  --radius-lg: 999px;
-  --rule-style: dotted;
-  --deco: repeating-linear-gradient(180deg, rgba(255, 139, 219, 0.11) 0 3px, transparent 3px 12px);
-  --frame-fx: 7px 7px 0 rgba(255, 139, 219, 0.3);
-}
-
-[data-theme="techno"] {
-  --bg: #010401;
-  --bg-raised: #080f09;
-  --bg-card: #0f180f;
-  --bg-deep: #16220f;
-  --border: #1d291c;
-  --border-strong: #505b4d;
-  --text: #f0f8e9;
-  --text-2: #ccd8c2;
-  --text-muted: #aebbaa;
-  --accent: #c8ff62;
-  --accent-strong: #e5ffad;
-  --accent-dim: #93cc3c;
-  --accent-ink: #142008;
-  --focus: #ceff8b;
-  --glow: rgba(200, 255, 98, 0.45);
-  --sheen: linear-gradient(115deg, #f1ffc9 0%, #c8ff62 38%, #6fe03c 68%, #dcff95 100%);
-  --kick: "//";
-  --frame-r: 3px;
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 3px;
-  --rule-style: dashed;
-  --deco: linear-gradient(rgba(200, 255, 98, 0.06) 1px, transparent 1px) 0 0 / 34px 34px, linear-gradient(90deg, rgba(200, 255, 98, 0.06) 1px, transparent 1px) 0 0 / 34px 34px;
-  --frame-fx: none;
-}
-
-[data-theme="eurodance"] {
-  --bg: #02051a;
-  --bg-raised: #091129;
-  --bg-card: #121c40;
-  --bg-deep: #1a2750;
-  --border: #25335a;
-  --border-strong: #59647e;
-  --text: #fffef1;
-  --text-2: #d3dae9;
-  --text-muted: #b9c2d8;
-  --accent: #ffdf62;
-  --accent-strong: #ffedaa;
-  --accent-dim: #e0b93c;
-  --accent-ink: #1e1c08;
-  --focus: #ffe58e;
-  --glow: rgba(255, 223, 98, 0.45);
-  --sheen: linear-gradient(115deg, #fff7c6 0%, #ffdf62 38%, #ffb23c 68%, #fff0a6 100%);
-  --kick: "★";
-  --frame-r: 10px;
-  --rule-style: solid;
-  --deco: repeating-linear-gradient(135deg, rgba(255, 223, 98, 0.07) 0 14px, transparent 14px 28px);
-  --frame-fx: 0 6px 0 var(--accent-dim);
-}
+/* Themes: three colors each. IDs kept from v1 so saved choices still work. */
+[data-theme="master"]    { --a: #ffd84a; --b: #7be8ff; --c: #4a3a00; }
+[data-theme="house"]     { --a: #ffb876; --b: #ff7a4a; --c: #5a2410; --kick: "●"; }
+[data-theme="synthpop"]  { --a: #ff8bdb; --b: #b86bff; --c: #55164a; --kick: "✦"; }
+[data-theme="techno"]    { --a: #c8ff62; --b: #3dffb0; --c: #1d4a08; --kick: "//"; }
+[data-theme="eurodance"] { --a: #ffdf62; --b: #5ab0ff; --c: #14286e; --kick: "★"; }
+[data-theme="trance"]    { --a: #6aa8ff; --b: #c06bff; --c: #12286e; }
+[data-theme="chrome"]    { --a: #dbe4ee; --b: #f0dcb8; --c: #3b4655; }
+[data-theme="sunset"]    { --a: #ff5f6d; --b: #ffc371; --c: #5e0f2a; }

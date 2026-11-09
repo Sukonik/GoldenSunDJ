@@ -33,8 +33,6 @@
   --color-synthpop: var(--acc-synthpop);
   --color-techno: var(--acc-techno);
   --color-eurodance: var(--acc-eurodance);
-  --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
 }
 
 @utility chrome-text {
