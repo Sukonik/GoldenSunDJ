@@ -11,7 +11,7 @@ Warm · Optimistic · Technical · Inventive · Human-directed · Music-forward 
 ## Visual language
 - **Primary symbol:** the GoldenSunAI "G" inside a solar / compass-like sunburst, unchanged.
 - **Wordmark:** `GoldenSun` + **`DJ`** (accent), set in Outfit 800, the same geometric style as the `GoldenSun AI` wordmark.
-- **Hero mark:** the chrome Y2K emblem, large, with halo, rotating rings and a shine sweep.
+- **Hero mark:** the emblem as a clean, solid shape on a transparent background, large, with a slow color-changing fill, halo and rotating rings.
 - **Sun mark:** the black emblem used as a mask, so it fills with the current theme's colors (footer, drawer, panels).
 - **Primary colors:** golden yellow, amber, deep brown / black.
 - **Themes:** headphone and CD colorways. Golden Hour (default), Moonchrome, Prism Pop, Blue Hour, Amber Studio, Bubblegum Bass, Mint Drop, Ember Cans. Each theme is three colors: primary, highlight, deep.
@@ -25,16 +25,27 @@ Warm · Optimistic · Technical · Inventive · Human-directed · Music-forward 
 4. Glowing forest version: launches, announcements, major milestones.
 
 ## Core copy
-GoldenSunDJ makes it easy to record, sample, mix and play, wherever you are.
+**Be the music.**
+
+GoldenSunDJ makes it easy to get outside, record, sample, mix and play, wherever you are.
 
 **Short:** Software for music, movement and everyday sound.
 
+## Page lines (coordinated across the site)
+- **Hub:** Get outside. Find your lyrics. Record what you hear, mix it like cookie batter, and play it out.
+- **Controller:** Build your controller.
+- **Weather:** Get outside. Find your lyrical inspiration. *(Storm verdict: When lightning strikes, record a sample!)*
+- **Notes:** What did you hear? Write it down, then record it.
+- **Mic:** Your mic is ready… use it.
+- **Sampler:** When lightning strikes, record a sample!
+- **Mixer:** Mix it, like cookie batter. 😉
+- **Player:** Whatcha playin?
+
 ## Development philosophy
-We don't just build tools that use AI.
-We make music with AI, and keep a human in charge.
+Small tools that get you making music fast, with a human in charge of every sound.
 
 ## Product philosophy
-Understand → Organize → Discover → Act, tuned for music:
+From the street to the stream:
 
 **Get out → Record → Produce → Master → Distribute → Mix → Play → Get found.**
 

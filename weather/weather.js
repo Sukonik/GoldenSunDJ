@@ -32,7 +32,7 @@
     if (!p.day) s -= 10;
     s = Math.max(0, Math.min(100, Math.round(s)));
     var tone = s >= 80 ? "prime" : s >= 60 ? "good" : s >= 40 ? "fair" : "skip";
-    return { score: s, tone: tone, label: { prime: "Great day to play outside", good: "Good to get out", fair: "Short session outside", skip: "Stay in and mix" }[tone] };
+    return { score: s, tone: tone, label: { prime: "Great day to play outside", good: "Good to get out", fair: "Short session outside", skip: p.code >= 95 ? "When lightning strikes, record a sample!" : "Stay in and mix" }[tone] };
   }
 
   /* ---- data ---- */

@@ -7,6 +7,8 @@
   <title>GoldenSunDJ — Sampler, Mic, Mixer, Player</title>
   <meta name="description" content="One home for the whole GoldenSun music bench. GoldenSunDJ launches each app as you need it: Sampler for beats, Mic for recording, Mixer for live touch mixing and scratching, Player for setlists. All four interwoven, sourced from NakoGold, GoldenSunAI, and KikoMix.">
   <link rel="icon" type="image/png" href="assets/brand/emblem-gold-64.png">
+  <meta name="apple-mobile-web-app-title" content="GoldenSunDJ">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,22 +94,19 @@
     <section class="hero">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="label"><b>Built by Team GoldenSun</b> &nbsp;☀️</p>
+          <p class="label"><b>Be the music</b> &nbsp;☀️</p>
           <h1 class="display chrome-text animate-rise">GoldenSun <span class="dj">DJ</span></h1>
-          <p class="lede">Software for music, movement and everyday sound. Get out, record, sample, mix and play — with AI tools like Suno in your corner and every step easy on your phone.</p>
+          <p class="lede">Get outside. Find your lyrics. Record what you hear, mix it like cookie batter, and play it out. Everything you need, right in your pocket.</p>
           <div class="btn-row">
-            <a class="btn" href="mic/">● Start recording</a>
-            <a class="btn btn--ghost" href="#journey">See the path</a>
+            <a class="btn" href="mic/">● Your mic is ready</a>
+            <a class="btn btn--ghost" href="controller/">Build your controller</a>
           </div>
         </div>
         <div class="hero-art" aria-hidden="true">
           <span class="halo animate-glow"></span>
           <span class="ring ring-1 animate-spin-slow"></span>
           <span class="ring ring-2 animate-spin-slower"></span>
-          <div class="logo-wrap animate-float">
-            <img class="chrome-logo" src="assets/brand/emblem-chrome-768.png" width="768" height="768" alt="" fetchpriority="high">
-            <span class="logo-shine"></span>
-          </div>
+          <div class="logo-wrap animate-float"><span class="logo-solid"></span></div>
         </div>
       </div>
     </section>
@@ -140,7 +139,7 @@
       <div class="wrap has-mark mark-right">
         <p class="label"><b>02</b> &nbsp;The path</p>
         <h2 id="journey-h" class="section-title">Eight steps</h2>
-        <p class="copy">Understand → Organize → Discover → Act, tuned for music. The tools below are live; the rest connect to the platforms you already use.</p>
+        <p class="copy">From the street to the stream. The tools are live; the rest connect to the platforms you already use.</p>
         <ol class="steps-list">
           <li><span class="index">01</span><strong>Get out</strong><span><a href="weather/">Weather</a> — check conditions, find your best window.</span></li>
           <li><span class="index">02</span><strong>Record</strong><span><a href="mic/">Mic</a> — vocals, freestyles and found sounds. <a href="notes/">Notes</a> for lyrics and ideas.</span></li>
@@ -159,14 +158,19 @@
     <section class="section" aria-labelledby="bench-h">
       <div class="wrap">
         <p class="label"><b>03</b> &nbsp;The bench</p>
-        <h2 id="bench-h" class="section-title">Six tools</h2>
+        <h2 id="bench-h" class="section-title">Pick it up and play</h2>
+        <a class="panel feature has-mark" href="controller/">
+          <span class="tool-kick" aria-hidden="true">◉</span>
+          <div><h3>Build your controller</h3><p>One scratch pad or two. Add the knobs you want, lose the ones you don’t, and make it yours. Made to feel great on an iPad.</p></div>
+          <span class="btn">Open Controller</span>
+        </a>
         <div class="hub-grid hub-grid--3">
-          <article class="panel tool"><span class="tool-kick" aria-hidden="true">◎</span><h3>Mic</h3><p>Hit record. Save as WAV, or send the take to the Sampler as a pad.</p><a class="btn" href="mic/">Open Mic</a></article>
-          <article class="panel tool"><span class="tool-kick" aria-hidden="true">●</span><h3>Sampler</h3><p>Tap a 4×4 pad grid, load sounds, build patterns and export beats.</p><a class="btn" href="sampler/">Open Sampler</a></article>
-          <article class="panel tool"><span class="tool-kick" aria-hidden="true">//</span><h3>Mixer</h3><p>Two decks, crossfader, EQ and scratch platters made for touch.</p><a class="btn" href="mixer/">Open Mixer</a></article>
-          <article class="panel tool"><span class="tool-kick" aria-hidden="true">★</span><h3>Player</h3><p>Drag tracks into a setlist, tag BPM and key, and play it live.</p><a class="btn" href="player/">Open Player</a></article>
-          <article class="panel tool"><span class="tool-kick" aria-hidden="true">☀</span><h3>Weather</h3><p>Event-ready forecast: wind, rain, UV, golden hour and your best window.</p><a class="btn" href="weather/">Open Weather</a></article>
-          <article class="panel tool"><span class="tool-kick" aria-hidden="true">✎</span><h3>Notes</h3><p>Lyrics, song ideas and Suno prompts. Saved in your browser, copy anywhere.</p><a class="btn" href="notes/">Open Notes</a></article>
+          <article class="panel tool"><span class="tool-kick" aria-hidden="true">☀</span><h3>Get outside</h3><p>Check the sky, pick your spot, and find your lyrical inspiration.</p><a class="btn" href="weather/">Open Weather</a></article>
+          <article class="panel tool"><span class="tool-kick" aria-hidden="true">✎</span><h3>What did you hear?</h3><p>Write it down before it’s gone. Lyrics, ideas and Suno prompts, saved in your browser.</p><a class="btn" href="notes/">Open Notes</a></article>
+          <article class="panel tool"><span class="tool-kick" aria-hidden="true">◎</span><h3>Your mic is ready</h3><p>…so use it. Hit record, then save the take or send it to the Sampler as a pad.</p><a class="btn" href="mic/">Open Mic</a></article>
+          <article class="panel tool"><span class="tool-kick" aria-hidden="true">●</span><h3>Lightning strikes?</h3><p>Record a sample! Tap a 4×4 pad grid, load sounds and build patterns.</p><a class="btn" href="sampler/">Open Sampler</a></article>
+          <article class="panel tool"><span class="tool-kick" aria-hidden="true">//</span><h3>Mix it</h3><p>Like cookie batter 😉 Two decks, a crossfader, EQ and scratch platters.</p><a class="btn" href="mixer/">Open Mixer</a></article>
+          <article class="panel tool"><span class="tool-kick" aria-hidden="true">★</span><h3>Whatcha playin?</h3><p>Build a setlist with BPM and key, then play it live.</p><a class="btn" href="player/">Open Player</a></article>
         </div>
       </div>
     </section>
@@ -187,7 +191,7 @@
           <a class="panel int" href="https://sukonik.github.io/nakogold/index.html" rel="noopener"><h3>NakoGold</h3><p>The artist, the catalog, the reason the bench exists.</p><span class="label">Visit →</span></a>
         </div>
         <span class="sun-mark mark-inline" style="--mark:112px" aria-hidden="true"></span>
-        <p class="copy philosophy">We don’t just build tools that use AI. We make music with AI — and keep a human in charge.</p>
+        <p class="philosophy">Be the music.</p>
       </div>
     </section>
   </main>

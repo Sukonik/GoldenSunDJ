@@ -220,3 +220,5 @@ input[type="range"] { accent-color: var(--a); min-height: 32px; }
 .footer-mark .wordmark { font-size: 1.5rem; }
 .drawer-mark { margin: auto auto 0; opacity: .9; }
 @media (prefers-reduced-motion: reduce) { .animate-float, .animate-glow, .animate-spin-slow, .animate-spin-slower, .animate-rise, .animate-shine { animation: none !important; } }
+
+.tagline { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.5rem); letter-spacing: -.01em; margin: 0 0 .75rem; background: linear-gradient(100deg, var(--a), var(--b)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }

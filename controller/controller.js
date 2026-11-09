@@ -14,12 +14,14 @@
   function say(t) { if (statusEl) statusEl.textContent = t; }
 
   /* ---------- settings (wheel) ---------- */
-  var settings = { decks: 2, eq: true, tempo: true, cues: true, fx: true, fader: true, theme: "night-club" };
+  var settings = { decks: 2, eq: true, tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false };
   try { var saved = JSON.parse(localStorage.getItem(KEY)); if (saved) for (var k in saved) if (k in settings) settings[k] = saved[k]; } catch (e) {}
   function applySettings() {
     ctlEl.setAttribute("data-decks", String(settings.decks));
     ["eq", "tempo", "cues", "fx", "fader"].forEach(function (f) { ctlEl.setAttribute("data-" + f, settings[f] ? "on" : "off"); });
     ctlEl.setAttribute("data-ctl-theme", settings.theme);
+    ctlEl.setAttribute("data-material", settings.material);
+    setTilt(settings.tilt && settings.material !== "matte");
     try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch (e) {}
     applyCross();
   }
@@ -171,9 +173,27 @@
   }
   function startDemos() {
     if (!window.GSDJDemo || !(window.OfflineAudioContext || window.webkitOfflineAudioContext)) { decks.forEach(function (d) { d.el.title.textContent = "Tap Load to add a track"; }); return; }
-    Promise.all([loadDemo(byId.a, GSDJDemo.renderHouseLoop, "House loop"), loadDemo(byId.b, GSDJDemo.renderTechnoLoop, "Techno loop")]).then(function () { say("Ready. Tap Play, drag a pad to scratch."); });
+    Promise.all([loadDemo(byId.a, GSDJDemo.renderHouseLoop, "House loop"), loadDemo(byId.b, GSDJDemo.renderTechnoLoop, "Techno loop")]).then(function () { say("Be the music. Tap Play, drag a pad to scratch."); });
   }
   if (window.requestIdleCallback) requestIdleCallback(startDemos, { timeout: 2000 }); else setTimeout(startDemos, 300);
+
+  /* ---------- materials: tilt-reactive light (iPad motion or pointer) ---------- */
+  var tiltOn = false;
+  function setTiltVars(x, y) { ctlEl.style.setProperty("--tx", clamp(x, -1, 1).toFixed(3)); ctlEl.style.setProperty("--ty", clamp(y, -1, 1).toFixed(3)); }
+  function onMotion(e) { if (e.gamma == null) return; setTiltVars(e.gamma / 35, (e.beta - 45) / 35); }
+  function onPointer(e) { var r = ctlEl.getBoundingClientRect(); setTiltVars((e.clientX - r.left) / r.width * 2 - 1, (e.clientY - r.top) / r.height * 2 - 1); }
+  function setTilt(on) {
+    if (on === tiltOn) return; tiltOn = on;
+    if (on) { window.addEventListener("deviceorientation", onMotion); window.addEventListener("pointermove", onPointer, { passive: true }); }
+    else { window.removeEventListener("deviceorientation", onMotion); window.removeEventListener("pointermove", onPointer); setTiltVars(0, 0); }
+  }
+  function toggleTilt() {
+    if (settings.tilt) { settings.tilt = false; return; }
+    var DO = window.DeviceOrientationEvent;
+    if (DO && typeof DO.requestPermission === "function") { // iPad / iPhone: permission needs a tap
+      DO.requestPermission().then(function (r) { settings.tilt = r === "granted"; if (r !== "granted") say("Motion access was not allowed. Pointer tilt still works."); applySettings(); drawWheel(); }).catch(function () { settings.tilt = true; applySettings(); drawWheel(); });
+    } else settings.tilt = true;
+  }
 
   /* ---------- settings wheel ---------- */
   var ITEMS = [
@@ -183,6 +203,8 @@
     { id: "cues", icon: "▦", label: function () { return "Cues"; }, on: function () { return settings.cues; }, tap: function () { settings.cues = !settings.cues; } },
     { id: "fx", icon: "∿", label: function () { return "Echo"; }, on: function () { return settings.fx; }, tap: function () { settings.fx = !settings.fx; } },
     { id: "fader", icon: "↔", label: function () { return "Fader"; }, on: function () { return settings.fader; }, tap: function () { settings.fader = !settings.fader; } },
+    { id: "material", icon: "▤", label: function () { return { matte: "Matte", carbon: "Carbon", titanium: "Titanium" }[settings.material]; }, on: function () { return settings.material !== "matte"; }, tap: function () { settings.material = { matte: "carbon", carbon: "titanium", titanium: "matte" }[settings.material]; } },
+    { id: "tilt", icon: "◭", label: function () { return "Tilt"; }, on: function () { return settings.tilt; }, tap: function () { toggleTilt(); } },
     { id: "themes", icon: "◐", label: function () { return "Themes"; }, on: function () { return false; }, tap: function () { showThemes(true); } }
   ];
   if (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) {

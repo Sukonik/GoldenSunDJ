@@ -1,93 +1,141 @@
-# GoldenSunDJ ☀️🎧
+<div align="center">
 
-> **Live site:** [sukonik.github.io/GoldenSunDJ](https://sukonik.github.io/GoldenSunDJ/)
+<img src="assets/brand/emblem-gold-256.png" alt="GoldenSun emblem" width="120">
 
-Software for music, movement and everyday sound. GoldenSunDJ is the home of the GoldenSun music bench: **Weather** to get out, **Notes** for lyrics and ideas, **Controller** for a full-screen touch DJ rig, **Mic** to record, **Sampler** to produce, **Mixer** to mix and **Player** to play. A GoldenSunAI product, working close with [NakoGold](https://sukonik.github.io/nakogold/index.html) and AI tools like Suno.
+# GoldenSun DJ ☀️🎧
 
-GoldenSunDJ is a launcher: open the hub, pick the tool the moment calls for, and it loads — nothing installs, everything runs in the browser.
+**Be the music.**
+Get outside, find your lyrics, record what you hear, mix it like cookie batter, and play it out.
+
+[**Live site**](https://sukonik.github.io/GoldenSunDJ/) · [Controller](https://sukonik.github.io/GoldenSunDJ/controller/) · [Weather](https://sukonik.github.io/GoldenSunDJ/weather/) · [Notes](https://sukonik.github.io/GoldenSunDJ/notes/) · [Brand notes](BRAND.md)
+
+*Built by Team GoldenSun. A GoldenSunAI product, working close with [NakoGold](https://sukonik.github.io/nakogold/index.html).*
+
+</div>
 
 ---
+
+## What it is
+
+GoldenSunDJ is the home of the GoldenSun music bench: a set of small, touch-first tools that run entirely in your browser. Nothing to install, nothing uploaded. Open the link on your phone or iPad and play.
+
+The idea follows one path, from the street to the stream:
+
+> **Get out → Record → Produce → Master → Distribute → Mix → Play → Get found**
+
+The tools are live for the steps that happen on your device. The rest link out to the platforms you already use (Suno, DistroKid, YouTube, Spotify, SoundCloud), and deeper hooks are planned.
+
+## The tools
+
+| Tool | The line | What it does |
+| --- | --- | --- |
+| **[Controller](controller/)** | *Build your controller.* | A minimalist full-screen DJ controller with 1 or 2 scratch pads. See below. |
+| **[Weather](weather/)** | *Get outside. Find your lyrical inspiration.* | A DJ weather dashboard: your get-out score, best 3-hour window, wind and sound, rain risk, gear safety, UV, golden hour, air quality, 24-hour strip and 7-day outlook. |
+| **[Notes](notes/)** | *What did you hear? Write it down, then record it.* | Lyrics, ideas, Suno prompts, setlists and gig notes, saved in your browser. |
+| **[Mic](mic/)** | *Your mic is ready… use it.* | Record vocals and found sounds. Save as WAV, or send the take to the Sampler as a pad. |
+| **[Sampler](sampler/)** | *When lightning strikes, record a sample!* | A 4×4 pad grid with a 16-step sequencer. Load your own sounds, export patterns as WAV. |
+| **[Mixer](mixer/)** | *Mix it, like cookie batter.* 😉 | Two decks, crossfader, 3-band EQ, echo and touch scratch platters. |
+| **[Player](player/)** | *Whatcha playin?* | A setlist builder with BPM, key, runtime and notes. Export or print, then play it live. |
+
+The tools hand off to each other: Mic → Sampler → Mixer, and Player → Mixer. The weather page ties in too: when a storm rolls in, its verdict reads *"When lightning strikes, record a sample!"*
 
 ## The Controller
 
-A minimalist, full-screen DJ controller built to feel great on iPad and iPhone. Defaults to **two scratch pads** with a switch to **one**. Drag a pad to scratch, tap Cue / Play, use hot cues, EQ, tempo and echo, and shape the layout from the **settings wheel**: add or remove EQ, Tempo, Cues, Echo and Fader, or open the **8 controller themes** (Night Club, Chrome Plate, Neon Grid, Gold Rush, Glacier, Magma, Violet Haze, Jade Rack), separate from the site theme. Load your own audio on each deck or use the built-in demo loops.
+Built to feel great on an **iPad**, and to use as much of the screen as it can.
 
-## The Apps
+- **1 or 2 scratch pads.** Two by default. Switch from the settings wheel.
+- **Scratch pad.** Drag to scratch: the audio seeks by the angle you turn, and pitch bends with your speed. The disc spins at 33 rpm while a deck plays.
+- **Per deck:** Cue, Play/Pause, 4 hot cues (tap to set or jump, hold to clear), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
+- **Center strip:** Echo, master volume and a crossfader.
+- **Demo loops:** a house loop on deck A and a techno loop on deck B, synthesized in your browser when it is idle.
+- **Settings wheel (the gear button):** a round menu to add or remove features: Decks (1/2), EQ, Tempo, Cues, Echo, Fader. It also holds Material, Tilt, Themes and Full screen.
+- **8 controller themes** (separate from the site theme): Night Club, Chrome Plate, Neon Grid, Gold Rush, Glacier, Magma, Violet Haze, Jade Rack. Deck A and deck B are color-coded, like real hardware.
+- **Materials (semi-3D, CSS only):** *Matte*, *Carbon* (woven carbon fiber) and *Titanium* (brushed metal), with beveled buttons and metal platters.
+- **Tilt:** on an iPad or iPhone the specular highlight moves as you tilt the device (it asks for motion access once). On a computer, the light follows your pointer.
+- **Layouts for every screen:** three columns on tablets in landscape, stacked decks in portrait, and a compact layout for phones in landscape.
 
-### 🥁 GoldenSunSampler
+### Test it on an iPad
 
-An MPC MkII-style pad board in your browser. Tap out beats on a 4×4 grid, load your own sounds onto any pad, chop samples, and build patterns with the step sequencer. Export beats and samples as WAV or MP4. No install — just open the link and play.
+1. Open <https://sukonik.github.io/GoldenSunDJ/controller/> in Safari on the iPad.
+2. Tap **Share → Add to Home Screen**. It then opens full screen like an app (the site ships a web app manifest and Apple web-app tags).
+3. Tap the gear, then **Material → Carbon** or **Titanium**, then **Tilt** and allow motion access. Tilt the iPad to move the light across the metal.
+4. Tap Play on a deck and drag the pad to scratch. Turn the iPad to try portrait and landscape.
 
-### 🎙️ GoldenSunMic
+To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. Scratching and tilt have only been tested in desktop browser emulation so far, so real-iPad feedback is welcome.
 
-Your pocket recording studio. Hit record and capture vocals, freestyles, and found sounds straight from the mic — then save them as WAV or MP4, or send them straight into GoldenSunSampler as fresh pads. Clean takes anywhere, no gear required.
+## Look and feel
 
-### 🎚️ GoldenSunMixer
+- **Brand.** The GoldenSunAI "G" sun emblem is the logo and favicon. The wordmark is **GoldenSun DJ** set in Outfit, the same geometric style as the GoldenSun AI wordmark. The black emblem is also used as a mask, so it fills with the current theme's colors in the footer, the drawer and as watermarks. The hero emblem is a clean, solid shape on a transparent background whose color slowly shifts through the theme's colors.
+- **Type.** Outfit for display, Inter for text, a monospace for small labels.
+- **8 site themes** built around headphones and CDs, each with three colors and a pattern layer (disc grooves for CDs, waveform stripes for headphones):
+  Golden Hour (default), Moonchrome, Prism Pop, Blue Hour, Amber Studio, Bubblegum Bass, Mint Drop, Ember Cans. Pick one from the theme dot in the header. Your choice is remembered.
+- **Motion.** The weather page has an animated sky (sun and rays, moon and stars, clouds, rain, snow, lightning), a counting temperature and a filling score ring. The hero has a soft float, glow and rotating rings. All of it switches off for visitors who prefer reduced motion.
+- **Voice.** Short, friendly and practical. Say what to do next, lead with the music. See [BRAND.md](BRAND.md).
 
-A full touch DJ mixer that goes anywhere. Two decks, a crossfader, and per-channel EQ and filters — plus platters you can actually scratch with your fingers. Built modular: swap the FX rack, sampler strip, and other pieces in and out to make it yours.
+## Weather and Notes
 
-### 📋 GoldenSunPlayer
+**Weather** uses [Open-Meteo](https://open-meteo.com/) (no API key). It loads for a default area on its own and only asks for your location when you tap *Use my location*. You can also search a city, save places and switch between °F/mph and °C/km/h. The header chip and the hub card both open the full dashboard.
 
-The SetList maker, spun out of KikoMix. Drag tracks into running order, tag each with BPM and key so transitions blend, watch total runtime build as you go, and add performance notes. Export or share the finished set — then play it live.
-
----
-
-## How They Interweave
-
-The four apps are one workflow, not four islands:
-
-- **GoldenSunMic → GoldenSunSampler** — record a sound, use it as a pad.
-- **GoldenSunSampler → GoldenSunMixer** — beats you build load onto the decks.
-- **KikoMix → GoldenSunPlayer** — setlists are built from the KikoMix catalog.
-- **GoldenSunPlayer → GoldenSunMixer** — the set you planned is the set you perform.
-
-All four share one design, one family navigation, and one source well:
-
-- **[NakoGold](https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L)** — the artist, the catalog, the reason the bench exists.
-- **[GoldenSunAI](https://github.com/Sukonik/goldensunai)** — the framework and design system underneath.
-- **[KikoMix](https://sukonik.github.io/kikomix/)** — the player and catalog the setlists draw from.
-
-## Design
-
-Brand notes: **[BRAND.md](BRAND.md)** (adapted from the GoldenSunAI brand kit). The look is a clean, dark, Y2K-chrome interface in the spirit of lbbikeclub: GoldenSunAI emblem and wordmark, Outfit + Inter type, soft theme glow, and 8 headphone and CD colorway themes (Golden Hour, Moonchrome, Prism Pop, Blue Hour, Amber Studio, Bubblegum Bass, Mint Drop, Ember Cans). Touch-first, responsive from phone to desktop, reduced motion respected.
+**Notes** has five note types (Lyrics, Idea, Suno prompt, Setlist, Gig), BPM, key and tags, one-tap inserts (Verse, Pre, Chorus, Bridge, Hook, Outro), a Suno prompt template and a weather stamp. Notes autosave a draft, then save to a searchable list you can filter, open, copy, download as `.txt` or `.md`, or delete. Everything stays in your browser's localStorage.
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`).
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7`.
 
 | Version | What it was |
 | --- | --- |
 | **v1** | Hub + Sampler, Mic, Mixer, Player on the BASE3 shell (GoldBrief + nakogold themes), GitHub Pages workflow. |
 | **v2** | Tailwind v4 build, Y2K chrome styling, Verdana type stack, journey bar, weather chip. |
-| **v3** | lbbikeclub-style pearl chrome UI, 8 working themes, fixed weather, per-app how-to and next-step. |
+| **v3** | lbbikeclub-style pearl chrome UI, 8 working themes, fixed weather, per-app how-to and next-step, mobile layout fixes. |
 | **v4** | Original 5×7 pixel display font and pixel-sun hero, more vivid themes, lighter rendering, idle-rendered Mixer demos. *(Pixel direction retired in v5; kept here for the record.)* |
-| **v5** | GoldenSunAI emblem + wordmark as GoldenSunDJ, Inter/Outfit type, headphone and CD themes, DJ Weather dashboard, Notes, BRAND.md. |
-| **v6** | Chrome GoldenSun emblem hero with effects, theme-colored sun marks, animated weather sky, unique theme names, and the **Controller** (1 or 2 scratch pads, settings wheel, 8 controller themes). |
+| **v5** | GoldenSunAI emblem and wordmark as GoldenSunDJ, Inter/Outfit type, headphone and CD themes, DJ Weather dashboard, Notes, BRAND.md. |
+| **v6** | Chrome emblem hero with effects, theme-colored sun marks, animated weather sky, unique theme names with pattern layers, and the **Controller** (1 or 2 scratch pads, settings wheel, 8 controller themes). |
+| **v7** | Clean solid color-changing emblem on a transparent background (replacing the chrome cut-out), new coordinated page copy ("Be the music"), a featured Controller card, **Carbon** and **Titanium** materials with tilt-reactive light, Add to Home Screen support, and this documentation. |
 
-## Tech
+## Under the hood
 
-- Tailwind CSS v4 (built in CI via `npm run build`) over a three-color theme system, with Inter + Outfit type.
-- Vanilla JavaScript + Web Audio API for the audio apps. Weather via Open-Meteo (no key; location only when you ask). Notes live in your browser's localStorage.
-- Mic capture via `getUserMedia` (works over HTTPS on GitHub Pages).
-- WAV export encoded in-browser; MP4 where the browser's recorder supports it.
-- Your recordings and samples live on your device — nothing is uploaded anywhere.
+- **Tailwind CSS v4**, built in CI (`npm run build` writes `css/tw.css`; it is not committed). Theme colors live in `css/tokens.css` as three variables per theme (`--a` primary, `--b` highlight, `--c` deep) and everything else is derived from them.
+- **Vanilla JavaScript** and the **Web Audio API** for the audio tools. No framework.
+- **Fast and light:** no backdrop blur, one static background layer, off-screen hub sections skip rendering, the Mixer and Controller demo loops are rendered only when the browser is idle (mono, 32 kHz), and a single animation loop runs only while something moves.
+- **Private:** recordings, samples, notes and settings never leave your device. Weather requests send only coordinates to Open-Meteo, and only when you ask.
+- **Accessible:** real buttons and labels, ARIA state on toggles, visible focus, keyboard nudge on the scratch pads, and reduced-motion support.
+
+### Project layout
+
+```
+index.html            hub
+controller/ weather/ notes/ mic/ sampler/ mixer/ player/   one folder per tool
+css/                  tokens, base, components, responsive, hub (tw.css is generated)
+js/shell.js           header, drawer, theme picker, weather chip, journey bar
+js/demo-loops.js      synthesized demo loops shared by Mixer and Controller
+assets/brand/         emblem PNGs and the mask used for theme-colored marks
+src/tailwind.css      Tailwind entry (animations, utilities)
+.github/workflows/    GitHub Pages deploy
+BRAND.md              brand voice and identity for GoldenSunDJ
+DESIGN.md, SHELL.md   the original v1 design plan and shell contract (historical)
+```
+
+### Run it locally
+
+```bash
+npm install
+npm run build          # generates css/tw.css
+python3 -m http.server 8000
+```
+
+Then open <http://localhost:8000>. Use a local server (not `file://`) so the theme-colored logo masks load.
+
+### Deploy
+
+Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `npm run build`, then publish the repository root. Pages must be set to **GitHub Actions** in the repository settings.
 
 ## Roadmap
 
-1. **Hub + shell** — GoldenSunDJ launcher on the BASE3 base.
-2. **GoldenSunMic** — record, trim, export WAV/MP4.
-3. **GoldenSunSampler** — pad board + step sequencer; consumes Mic captures.
-4. **GoldenSunMixer** — decks, crossfader, scratch platters, modular slots.
-5. **GoldenSunPlayer** — setlist builder wired to the KikoMix catalog.
+- Real-iPad tuning of the Controller (scratch feel, tilt, layout) from hands-on feedback.
+- A Web Audio scratch engine for true vinyl-style scratching.
+- More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
+- Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
 
-## Status
+## Credits and licenses
 
-**v1.0 — built 2026-11-07.** The hub and all four apps are live, working pages (no mockups):
-
-- **Hub** — launcher with spinning star mark, sheen wordmark, live session chip, drawer navigation with theme swatches, and tiles for all four apps.
-- **GoldenSunSampler** — 4×4 pads with a fully synthesized drum kit, per-pad volume and pitch, load your own sounds onto any pad (file picker or drag and drop), a 16-step sequencer with tempo control, and one-bar pattern export as WAV.
-- **GoldenSunMic** — mic recording with a live level meter, a takes list with playback, WAV export, and original-format download.
-- **GoldenSunMixer** — two decks with synthesized demo loops built in (plus your own files), 3-band EQ per deck, crossfader, touch platter scratching, and an echo FX module.
-- **GoldenSunPlayer** — setlist builder with drag-to-reorder, BPM/key/duration/notes per track, total-runtime stats, localStorage saving, and text/JSON export plus a print view.
-
-Each app wears its own genre theme from DESIGN.md on the shared BASE3 shell, and the drawer's theme swatches re-skin any page live. Deployment runs through GitHub Actions (`.github/workflows/pages.yml`); the site goes live at the link above once Pages is set to Actions in the repo settings.
+Code is released under the license in [LICENSE](LICENSE). The GoldenSunAI name, emblem and wordmark belong to GoldenSunAI and are used here for the GoldenSunDJ product. Weather data by Open-Meteo.

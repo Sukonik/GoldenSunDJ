@@ -1,0 +1,15 @@
+{
+  "name": "GoldenSunDJ",
+  "short_name": "GoldenSunDJ",
+  "description": "Be the music. Get outside, record, sample, mix and play.",
+  "start_url": "./controller/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05060b",
+  "theme_color": "#05060b",
+  "icons": [
+    { "src": "assets/brand/emblem-gold-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/brand/emblem-gold-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any" }
+  ]
+}
