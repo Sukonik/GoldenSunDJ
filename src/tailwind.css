@@ -2,20 +2,10 @@
 
 /* Tailwind reads the BASE3 tokens in css/tokens.css, so every utility
    (bg-card, text-ink2, border-edge ...) follows the active genre theme. */
-/* Half-pixel display face (CS Ruslan Halfpixel, demo file: letters only).
-   The file is NOT committed (see .gitignore): drop the licensed font at
-   assets/fonts/halfpixel-demo.otf. Without it the stack falls back to
-   Verdana Bold, so the site always renders. */
-@font-face {
-  font-family: "GSDJ HalfPixel";
-  src: url("../assets/fonts/halfpixel-demo.otf") format("opentype");
-  font-display: swap;
-}
-
 @theme inline {
   --font-verdana-bold: Verdana, "DejaVu Sans", Geneva, Tahoma, sans-serif;
   --font-verdana-bold-pro: "Verdana Pro", Verdana, "DejaVu Sans", Geneva, sans-serif;
-  --font-verdana-halfpixel: "GSDJ HalfPixel", Verdana, "DejaVu Sans", Geneva, sans-serif;
+  --font-pixel: "GSDJ Pixel", Verdana, "DejaVu Sans", Geneva, sans-serif;
   --color-bg: var(--bg);
   --color-raised: var(--bg-raised);
   --color-card: var(--bg-card);

@@ -24,7 +24,7 @@
 }
 
 .player-head h1 {
-  font-size: clamp(1.5rem, 6.4vw, var(--fs-3xl));
+  
 }
 
 .player-intro {

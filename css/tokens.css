@@ -4,6 +4,11 @@
    Legacy aliases (--accent, --bg, --bg-card ...) are derived from them so
    every app stylesheet keeps working and follows the theme.
    ========================================================================== */
+@font-face {
+  font-family: "GSDJ Pixel";
+  src: url("../assets/fonts/gsdj-pixel.woff2") format("woff2");
+  font-display: swap;
+}
 @property --a { syntax: "<color>"; inherits: true; initial-value: #ffd84a; }
 @property --b { syntax: "<color>"; inherits: true; initial-value: #7be8ff; }
 @property --c { syntax: "<color>"; inherits: true; initial-value: #4a3a00; }
@@ -55,6 +60,7 @@
 
   --font-display: Verdana, "Verdana Pro", "DejaVu Sans", Geneva, Tahoma, sans-serif;
   --font-sans: Verdana, "Verdana Pro", "DejaVu Sans", Geneva, Tahoma, sans-serif;
+  --font-pixel: "GSDJ Pixel", Verdana, "DejaVu Sans", Geneva, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --fs-xs: .8125rem; --fs-sm: .9375rem; --fs-base: 1.0625rem; --fs-md: 1.1875rem;
@@ -71,12 +77,12 @@
   color-scheme: dark;
 }
 
-/* Themes: three colors each. IDs kept from v1 so saved choices still work. */
-[data-theme="master"]    { --a: #ffd84a; --b: #7be8ff; --c: #4a3a00; }
-[data-theme="house"]     { --a: #ffb876; --b: #ff7a4a; --c: #5a2410; --kick: "●"; }
-[data-theme="synthpop"]  { --a: #ff8bdb; --b: #b86bff; --c: #55164a; --kick: "✦"; }
-[data-theme="techno"]    { --a: #c8ff62; --b: #3dffb0; --c: #1d4a08; --kick: "//"; }
-[data-theme="eurodance"] { --a: #ffdf62; --b: #5ab0ff; --c: #14286e; --kick: "★"; }
-[data-theme="trance"]    { --a: #6aa8ff; --b: #c06bff; --c: #12286e; }
-[data-theme="chrome"]    { --a: #dbe4ee; --b: #f0dcb8; --c: #3b4655; }
-[data-theme="sunset"]    { --a: #ff5f6d; --b: #ffc371; --c: #5e0f2a; }
+/* Themes: three colors each (more saturated in v4). IDs kept from v1. */
+[data-theme="master"]    { --a: #ffd21a; --b: #19e3ff; --c: #6b4e00; }
+[data-theme="house"]     { --a: #ff9d3d; --b: #ff3d6e; --c: #7a2208; --kick: "●"; }
+[data-theme="synthpop"]  { --a: #ff5fd2; --b: #8f5bff; --c: #6b0f5c; --kick: "✦"; }
+[data-theme="techno"]    { --a: #b6ff1a; --b: #00ffa3; --c: #1f6b00; --kick: "//"; }
+[data-theme="eurodance"] { --a: #ffd21a; --b: #2f8cff; --c: #0f2a9e; --kick: "★"; }
+[data-theme="trance"]    { --a: #4d9bff; --b: #b04dff; --c: #1a2bb0; }
+[data-theme="chrome"]    { --a: #e3ebf5; --b: #ffd9a0; --c: #46566b; }
+[data-theme="sunset"]    { --a: #ff4d5e; --b: #ffb03d; --c: #7a0f33; }

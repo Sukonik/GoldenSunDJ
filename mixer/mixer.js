@@ -240,7 +240,7 @@
     var beat = 60 / bpm;
     var duration = beat * 8; // 2 bars of 4/4
     var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    var ctx = new OC(2, Math.ceil(44100 * duration), 44100);
+    var ctx = new OC(1, Math.ceil(32000 * duration), 32000);
     var out = ctx.createGain();
     out.gain.value = 0.9;
     out.connect(ctx.destination);
@@ -263,7 +263,7 @@
     var beat = 60 / bpm;
     var duration = beat * 8;
     var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    var ctx = new OC(2, Math.ceil(44100 * duration), 44100);
+    var ctx = new OC(1, Math.ceil(32000 * duration), 32000);
     var out = ctx.createGain();
     out.gain.value = 0.9;
     out.connect(ctx.destination);
@@ -655,13 +655,19 @@
       });
   }
 
-  if (window.OfflineAudioContext || window.webkitOfflineAudioContext) {
+  /* Render the demo loops when the browser is idle (mono, 32 kHz: a fraction
+     of the memory of stereo 44.1 kHz) so the page paints and responds first. */
+  function startDemos() {
     Promise.all([
       loadDemo(deckById.a, renderHouseLoop, "House demo loop"),
       loadDemo(deckById.b, renderTechnoLoop, "Techno demo loop")
     ]).then(function () {
       setStatus("Demo loops ready. Press Play on a deck to start mixing.");
     });
+  }
+  if (window.OfflineAudioContext || window.webkitOfflineAudioContext) {
+    if (window.requestIdleCallback) window.requestIdleCallback(startDemos, { timeout: 2500 });
+    else window.setTimeout(startDemos, 300);
   } else {
     setStatus("This browser cannot make the demo loops. Load your own files on the decks instead.");
   }

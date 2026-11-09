@@ -38,7 +38,11 @@ h1, h2, h3, h4 {
   letter-spacing: 0;
   font-family: var(--font-display);
 }
-h1 { font-size: clamp(1.5rem, 6.4vw, var(--fs-3xl)); font-weight: 800; overflow-wrap: break-word; }
+/* Pixel display type: font-size in multiples of 10px keeps every pixel crisp. */
+.pixel, h1 { font-family: var(--font-pixel); font-weight: 400; letter-spacing: 0; -webkit-font-smoothing: none; font-smooth: never; text-rendering: optimizeSpeed; }
+h1 { font-size: 30px; line-height: 1.15; text-transform: uppercase; }
+@media (min-width: 40rem) { h1 { font-size: 40px; } }
+@media (min-width: 64rem) { h1 { font-size: 50px; } }
 h2 { font-size: var(--fs-xl); }
 h3 { font-size: var(--fs-lg); }
 
@@ -109,10 +113,10 @@ hr {
 body::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(42% 36% at 14% 8%, color-mix(in srgb, var(--a) 30%, transparent), transparent 70%),
-    radial-gradient(36% 34% at 88% 22%, color-mix(in srgb, var(--b) 20%, transparent), transparent 70%),
-    radial-gradient(46% 40% at 70% 98%, color-mix(in srgb, var(--c) 70%, transparent), transparent 70%),
-    linear-gradient(180deg, #06070b, var(--black));
+    radial-gradient(50% 42% at 12% 6%, color-mix(in srgb, var(--a) 46%, transparent), transparent 70%),
+    radial-gradient(42% 38% at 92% 20%, color-mix(in srgb, var(--b) 36%, transparent), transparent 70%),
+    radial-gradient(56% 46% at 66% 100%, color-mix(in srgb, var(--c) 90%, transparent), transparent 72%),
+    linear-gradient(180deg, #05060b, var(--black));
 }
 
 /* App pages: breathing room under the sticky header/journey bar. */
