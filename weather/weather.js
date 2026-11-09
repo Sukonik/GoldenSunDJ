@@ -93,15 +93,37 @@
     t.appendChild(el("p", "label", title)); t.appendChild(el("p", "tile-big", big)); t.appendChild(el("p", "tile-note", note));
     return t;
   }
+  var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function skyKind(c) { return c >= 95 ? "storm" : (c >= 71 && c <= 77) || c === 85 || c === 86 ? "snow" : (c >= 51 && c <= 67) || (c >= 80 && c <= 82) ? "rain" : c === 45 || c === 48 ? "fog" : c >= 2 ? "cloudy" : "clear"; }
+  function paintSky(n) {
+    var sky = $("#sky"); if (!sky) return;
+    var k = skyKind(n.code); sky.className = "sky sky-" + k + (n.day ? "" : " is-night"); sky.textContent = "";
+    function add(cls) { var e = document.createElement("span"); e.className = cls; sky.appendChild(e); return e; }
+    add(n.day ? "orb sun" : "orb moon");
+    if (!n.day) add("stars");
+    if (k !== "clear") { add("cloud c1"); add("cloud c2"); add("cloud c3"); }
+    if (k === "rain" || k === "storm") add("rain");
+    if (k === "snow") add("snow");
+    if (k === "storm") add("flash");
+  }
+  function countUp(node, to, unit) {
+    if (REDUCED) { node.textContent = to + unit; return; }
+    var t0 = performance.now(), dur = 700;
+    function step(t) { var p = Math.min(1, (t - t0) / dur); node.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + unit; if (p < 1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  function stagger(parent) { Array.prototype.forEach.call(parent.children, function (c, i) { c.classList.add("animate-rise"); c.style.animationDelay = Math.min(i, 14) * 45 + "ms"; }); }
+
   function render() {
     var D = state.data; if (!D) return;
     var n = D.now, today = D.days[0];
     $("#now-place").textContent = state.place.name;
-    $("#now-temp").textContent = T(n.temp) + TU();
+    countUp($("#now-temp"), T(n.temp), TU()); paintSky(n);
     $("#now-desc").textContent = describe(n.code);
     $("#now-meta").textContent = "Feels " + T(n.feels) + TU() + " · Wind " + S(n.wind) + " " + SU() + " · Humidity " + Math.round(n.hum) + "%";
     var sc = $("#now-score"); sc.setAttribute("data-tone", n.ride.tone);
     $("#score-num").textContent = n.ride.score; $("#score-lab").textContent = n.ride.label;
+    var ring = $("#score-ring"); ring.style.setProperty("--p", "0"); requestAnimationFrame(function () { requestAnimationFrame(function () { ring.style.setProperty("--p", String(n.ride.score)); }); });
 
     // best window
     var bw = bestWindow(D.hours), best = $("#best"); best.textContent = "";
@@ -128,6 +150,7 @@
       tiles.appendChild(tile("Air quality", "AQI " + Math.round(a) + " · " + lab, a <= 100 ? "Fine for a long outdoor set." : "Limit long sessions outside.", a <= 50 ? "prime" : a <= 100 ? "fair" : "skip"));
     }
 
+    stagger(tiles);
     // hourly
     var hl = $("#hourly"); hl.textContent = "";
     D.hours.slice(0, 24).forEach(function (h) {
@@ -139,6 +162,7 @@
       li.appendChild(el("span", "hr-meta", h.pop + "% · " + S(h.wind) + " " + SU()));
       hl.appendChild(li);
     });
+    stagger(hl);
     // daily
     var dl = $("#daily"); dl.textContent = "";
     D.days.forEach(function (d, i) {
@@ -150,6 +174,7 @@
       li.appendChild(el("span", "pill", d.ride.score + " · " + d.ride.label));
       dl.appendChild(li);
     });
+    stagger(dl);
     $("#wx-dash").hidden = false;
     $("#wx-status").textContent = "Updated " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + " for " + state.place.name + ".";
     if (window.GSDJ) window.GSDJ.setChip({ text: "☀ " + T(n.temp) + TU() });

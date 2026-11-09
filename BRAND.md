@@ -10,9 +10,11 @@ Warm · Optimistic · Technical · Inventive · Human-directed · Music-forward 
 
 ## Visual language
 - **Primary symbol:** the GoldenSunAI "G" inside a solar / compass-like sunburst, unchanged.
-- **Wordmark:** `Golden` + **`Sun`** (accent) + `DJ`, set in Outfit 800, same treatment as `GoldenSunAI`.
+- **Wordmark:** `GoldenSun` + **`DJ`** (accent), set in Outfit 800, the same geometric style as the `GoldenSun AI` wordmark.
+- **Hero mark:** the chrome Y2K emblem, large, with halo, rotating rings and a shine sweep.
+- **Sun mark:** the black emblem used as a mask, so it fills with the current theme's colors (footer, drawer, panels).
 - **Primary colors:** golden yellow, amber, deep brown / black.
-- **Themes:** headphone and CD colorways. Gold Disc (default), Silver CD, Rainbow CD, Cobalt Disc, Studio Black, Pink Cans, Mint Buds, Sunset Cans. Each theme is three colors: primary, highlight, deep.
+- **Themes:** headphone and CD colorways. Golden Hour (default), Moonchrome, Prism Pop, Blue Hour, Amber Studio, Bubblegum Bass, Mint Drop, Ember Cans. Each theme is three colors: primary, highlight, deep.
 - **Type:** Outfit for display, Inter for text, mono for small labels.
 - **Surface:** black with soft theme-colored glow, glass-like panels, chrome-edged pill buttons, no heavy motion.
 

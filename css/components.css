@@ -27,7 +27,7 @@
   font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1;
   letter-spacing: -.02em; white-space: nowrap; color: #fff;
 }
-.wordmark .sun { color: var(--a); }
+.wordmark .dj { color: var(--a); }
 .brand-mark { width: 36px; height: 36px; flex: none; display: block; transition: transform 1.2s var(--ease); }
 .brand:hover .brand-mark { transform: rotate(60deg); }
 
@@ -201,3 +201,22 @@ input[type="range"] { accent-color: var(--a); min-height: 32px; }
 @media (min-width: 66rem) { .main-nav { display: block; } }
 @media (max-width: 36rem) { .session-chip, .wx-score { display: none; } .wordmark { font-size: 1.15rem; } .site-header-inner { gap: .5rem; } .wx-chip { padding: 0 .65rem; } .menu-btn, .icon-btn { width: 40px; height: 40px; } }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+/* -- Sun mark: the black emblem used as a mask, so it takes the theme colors -- */
+.sun-mark {
+  display: block; width: var(--mark, 96px); aspect-ratio: 1; flex: none;
+  background: linear-gradient(135deg, var(--a), var(--b));
+  -webkit-mask: url("../assets/brand/emblem-mask-512.png") center / contain no-repeat;
+  mask: url("../assets/brand/emblem-mask-512.png") center / contain no-repeat;
+}
+.has-mark { position: relative; overflow: hidden; }
+.has-mark::after {
+  content: ""; position: absolute; right: -28px; bottom: -34px; width: 200px; aspect-ratio: 1; opacity: .12; pointer-events: none;
+  background: linear-gradient(135deg, var(--a), var(--b));
+  -webkit-mask: url("../assets/brand/emblem-mask-512.png") center / contain no-repeat;
+  mask: url("../assets/brand/emblem-mask-512.png") center / contain no-repeat;
+}
+.footer-mark { display: flex; align-items: center; gap: 1rem; margin-bottom: var(--space-4); }
+.footer-mark .wordmark { font-size: 1.5rem; }
+.drawer-mark { margin: auto auto 0; opacity: .9; }
+@media (prefers-reduced-motion: reduce) { .animate-float, .animate-glow, .animate-spin-slow, .animate-spin-slower, .animate-rise, .animate-shine { animation: none !important; } }

@@ -2,6 +2,19 @@
 
 /* Tailwind reads the BASE3 tokens in css/tokens.css, so every utility
    (bg-card, text-ink2, border-edge ...) follows the active genre theme. */
+@theme {
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-spin-slower: spin 110s linear infinite reverse;
+  --animate-glow: glow 6s ease-in-out infinite;
+  --animate-rise: rise .8s cubic-bezier(.22,.8,.24,1) both;
+  --animate-shine: shine 6s ease-in-out infinite;
+  @keyframes float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-14px) rotate(1.2deg); } }
+  @keyframes glow { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: .95; transform: scale(1.08); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @keyframes shine { 0%,55% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+}
+
 @theme inline {
   --font-verdana-bold: Verdana, "DejaVu Sans", Geneva, Tahoma, sans-serif;
   --font-verdana-bold-pro: "Verdana Pro", Verdana, "DejaVu Sans", Geneva, sans-serif;

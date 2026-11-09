@@ -2,11 +2,15 @@
 
 > **Live site:** [sukonik.github.io/GoldenSunDJ](https://sukonik.github.io/GoldenSunDJ/)
 
-Software for music, movement and everyday sound. GoldenSunDJ is the home of the GoldenSun music bench: **Weather** to get out, **Notes** for lyrics and ideas, **Mic** to record, **Sampler** to produce, **Mixer** to mix and **Player** to play. A GoldenSunAI product, working close with [NakoGold](https://sukonik.github.io/nakogold/index.html) and AI tools like Suno.
+Software for music, movement and everyday sound. GoldenSunDJ is the home of the GoldenSun music bench: **Weather** to get out, **Notes** for lyrics and ideas, **Controller** for a full-screen touch DJ rig, **Mic** to record, **Sampler** to produce, **Mixer** to mix and **Player** to play. A GoldenSunAI product, working close with [NakoGold](https://sukonik.github.io/nakogold/index.html) and AI tools like Suno.
 
 GoldenSunDJ is a launcher: open the hub, pick the tool the moment calls for, and it loads — nothing installs, everything runs in the browser.
 
 ---
+
+## The Controller
+
+A minimalist, full-screen DJ controller built to feel great on iPad and iPhone. Defaults to **two scratch pads** with a switch to **one**. Drag a pad to scratch, tap Cue / Play, use hot cues, EQ, tempo and echo, and shape the layout from the **settings wheel**: add or remove EQ, Tempo, Cues, Echo and Fader, or open the **8 controller themes** (Night Club, Chrome Plate, Neon Grid, Gold Rush, Glacier, Magma, Violet Haze, Jade Rack), separate from the site theme. Load your own audio on each deck or use the built-in demo loops.
 
 ## The Apps
 
@@ -45,7 +49,7 @@ All four share one design, one family navigation, and one source well:
 
 ## Design
 
-Brand notes: **[BRAND.md](BRAND.md)** (adapted from the GoldenSunAI brand kit). The look is a clean, dark, Y2K-chrome interface in the spirit of lbbikeclub: GoldenSunAI emblem and wordmark, Outfit + Inter type, soft theme glow, and 8 headphone and CD colorway themes. Touch-first, responsive from phone to desktop, reduced motion respected.
+Brand notes: **[BRAND.md](BRAND.md)** (adapted from the GoldenSunAI brand kit). The look is a clean, dark, Y2K-chrome interface in the spirit of lbbikeclub: GoldenSunAI emblem and wordmark, Outfit + Inter type, soft theme glow, and 8 headphone and CD colorway themes (Golden Hour, Moonchrome, Prism Pop, Blue Hour, Amber Studio, Bubblegum Bass, Mint Drop, Ember Cans). Touch-first, responsive from phone to desktop, reduced motion respected.
 
 ## Version history
 
@@ -58,6 +62,7 @@ Each version is tagged in git (`git checkout v3`).
 | **v3** | lbbikeclub-style pearl chrome UI, 8 working themes, fixed weather, per-app how-to and next-step. |
 | **v4** | Original 5×7 pixel display font and pixel-sun hero, more vivid themes, lighter rendering, idle-rendered Mixer demos. *(Pixel direction retired in v5; kept here for the record.)* |
 | **v5** | GoldenSunAI emblem + wordmark as GoldenSunDJ, Inter/Outfit type, headphone and CD themes, DJ Weather dashboard, Notes, BRAND.md. |
+| **v6** | Chrome GoldenSun emblem hero with effects, theme-colored sun marks, animated weather sky, unique theme names, and the **Controller** (1 or 2 scratch pads, settings wheel, 8 controller themes). |
 
 ## Tech
 

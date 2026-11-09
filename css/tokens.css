@@ -43,6 +43,8 @@
   --pearl: linear-gradient(150deg, rgba(255,255,255,.08), rgba(255,255,255,.02) 45%, color-mix(in srgb, var(--c) 22%, transparent));
 
   --kick: "♪";
+  --layer: repeating-radial-gradient(circle at 86% 10%, rgba(255,255,255,.07) 0 1px, transparent 1px 15px);
+  --layer-mask: radial-gradient(70% 55% at 86% 10%, #000, transparent);
   --frame-r: 16px;
   --rule-style: solid;
   --deco: none;
@@ -81,3 +83,9 @@
 [data-theme="pink-cans"]    { --a: #ff5fa8; --b: #ffb3d9; --c: #6b0f45; --kick: "♪"; }
 [data-theme="mint-buds"]    { --a: #3dffb8; --b: #3dc6ff; --c: #0b5a43; --kick: "♪"; }
 [data-theme="sunset-cans"]  { --a: #ff6a2b; --b: #ffc93d; --c: #7a1f08; --kick: "♪"; }
+
+/* Layer 2 of each theme: CD themes get disc grooves, headphone themes get waveform stripes. */
+[data-theme="studio-black"], [data-theme="pink-cans"], [data-theme="mint-buds"], [data-theme="sunset-cans"] {
+  --layer: repeating-linear-gradient(100deg, color-mix(in srgb, var(--a) 14%, transparent) 0 2px, transparent 2px 20px);
+  --layer-mask: linear-gradient(180deg, #000, transparent 55%);
+}

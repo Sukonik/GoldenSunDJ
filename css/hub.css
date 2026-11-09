@@ -1,5 +1,5 @@
 /* Hub-only styles (pearl chrome, lbbikeclub-style). */
-.display { font-family: var(--font-display); font-size: clamp(2.6rem, 11vw, 6.2rem); line-height: .95; letter-spacing: -.035em; font-weight: 800; }
+.display { font-family: var(--font-display); font-size: clamp(2.3rem, 10vw, 5rem); line-height: .98; white-space: nowrap; letter-spacing: -.035em; font-weight: 800; }
 .display .sun { color: var(--a); -webkit-text-fill-color: var(--a); }
 .section-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.9rem, 5vw, 3rem); line-height: 1; letter-spacing: -.03em; margin: .5rem 0 1.5rem; }
 .lede { font-size: clamp(1.05rem, 2vw, 1.3rem); line-height: 1.5; max-width: 34rem; color: var(--text-2); }
@@ -47,19 +47,27 @@
 /* Perf: skip rendering off-screen hub sections until needed. */
 .section { content-visibility: auto; contain-intrinsic-size: auto 600px; }
 
-/* Hero art: CD with the emblem as its label, wrapped in headphones. */
-.hero-art { position: relative; width: min(78vw, 26rem); aspect-ratio: 1; margin-inline: auto; }
-.cd {
-  position: absolute; inset: 17% 17% 5%; border-radius: 50%;
-  background:
-    radial-gradient(circle, transparent 0 31%, rgba(0,0,0,.28) 31.5% 32.5%, transparent 33%),
-    conic-gradient(from 20deg, var(--a), #fff, var(--b), color-mix(in srgb, var(--a) 40%, #fff), var(--b), #fff, var(--a), color-mix(in srgb, var(--b) 40%, #fff), var(--a));
-  box-shadow: 0 0 0 2px rgba(255,255,255,.25) inset, 0 20px 60px -10px color-mix(in srgb, var(--a) 55%, transparent);
-}
-.cd-label { position: absolute; inset: 27%; border-radius: 50%; display: grid; place-items: center; background: #0a0b0f; box-shadow: 0 0 0 3px rgba(255,255,255,.55); }
-.cd-label img { width: 88%; height: 88%; }
-.cans { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 10px 24px rgba(0,0,0,.5)); }
 .tool-kick { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: var(--a); }
 .philosophy { margin-top: 2rem; font-size: 1.15rem; color: var(--text-2); max-width: 40rem; }
 a.wx-card { display: grid; color: inherit; }
 a.wx-card:hover { border-color: var(--a); }
+
+/* Hero art: the chrome GoldenSun emblem with halo, rotating rings and a shine sweep. */
+.hero-art { position: relative; width: min(86vw, 34rem); aspect-ratio: 1; margin-inline: auto; display: grid; place-items: center; }
+.halo { position: absolute; inset: 6%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 55%, transparent), color-mix(in srgb, var(--b) 30%, transparent) 45%, transparent 70%); filter: blur(18px); }
+.ring { position: absolute; border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--a) 55%, transparent); }
+.ring-1 { inset: 0; }
+.ring-2 { inset: 8%; border-style: dotted; border-color: color-mix(in srgb, var(--b) 60%, transparent); }
+.logo-wrap { position: relative; width: 92%; aspect-ratio: 1; }
+.chrome-logo { width: 100%; height: 100%; filter: drop-shadow(0 18px 40px rgba(0,0,0,.55)) drop-shadow(0 0 36px color-mix(in srgb, var(--a) 45%, transparent)); }
+.logo-shine {
+  position: absolute; inset: 0; mix-blend-mode: overlay; animation: shine 6s ease-in-out infinite;
+  background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.95) 50%, transparent 62%); background-size: 260% 100%; background-position: 160% 0;
+  -webkit-mask: url("../assets/brand/emblem-chrome-768.png") center / contain no-repeat; mask: url("../assets/brand/emblem-chrome-768.png") center / contain no-repeat;
+}
+.display .dj { color: var(--a); -webkit-text-fill-color: var(--a); }
+.mark-right.has-mark::after { right: 0; bottom: auto; top: 3rem; width: 260px; opacity: .1; }
+.mark-inline { margin-top: 2rem; opacity: .9; }
+.hero { overflow: clip; }
+@media (prefers-reduced-motion: reduce) { .logo-shine { animation: none; opacity: 0; } }
+@keyframes shine { 0%,55% { background-position: 160% 0; } 100% { background-position: -60% 0; } }

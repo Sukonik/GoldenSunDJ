@@ -7,14 +7,14 @@
   "use strict";
 
   var THEMES = [
-    { id: "gold-disc",    name: "Gold Disc",    sub: "CD",         a: "#ffc933", b: "#ff8a1f", c: "#5c3a00" },
-    { id: "silver-cd",    name: "Silver CD",    sub: "CD",         a: "#dfe6ee", b: "#8fd3ff", c: "#3b4a5e" },
-    { id: "rainbow-cd",   name: "Rainbow CD",   sub: "CD",         a: "#ff5fd2", b: "#35e0ff", c: "#4b1fa8" },
-    { id: "cobalt-disc",  name: "Cobalt Disc",  sub: "CD",         a: "#4d8dff", b: "#00e0ff", c: "#10268f" },
-    { id: "studio-black", name: "Studio Black", sub: "Headphones", a: "#ff9f1c", b: "#ffd166", c: "#2e1c08" },
-    { id: "pink-cans",    name: "Pink Cans",    sub: "Headphones", a: "#ff5fa8", b: "#ffb3d9", c: "#6b0f45" },
-    { id: "mint-buds",    name: "Mint Buds",    sub: "Earbuds",    a: "#3dffb8", b: "#3dc6ff", c: "#0b5a43" },
-    { id: "sunset-cans",  name: "Sunset Cans",  sub: "Headphones", a: "#ff6a2b", b: "#ffc93d", c: "#7a1f08" }
+    { id: "gold-disc",    name: "Golden Hour",    sub: "Gold CD",         a: "#ffc933", b: "#ff8a1f", c: "#5c3a00" },
+    { id: "silver-cd",    name: "Moonchrome",    sub: "Silver CD",         a: "#dfe6ee", b: "#8fd3ff", c: "#3b4a5e" },
+    { id: "rainbow-cd",   name: "Prism Pop",   sub: "Rainbow CD",         a: "#ff5fd2", b: "#35e0ff", c: "#4b1fa8" },
+    { id: "cobalt-disc",  name: "Blue Hour",  sub: "Cobalt CD",         a: "#4d8dff", b: "#00e0ff", c: "#10268f" },
+    { id: "studio-black", name: "Amber Studio", sub: "Studio cans", a: "#ff9f1c", b: "#ffd166", c: "#2e1c08" },
+    { id: "pink-cans",    name: "Bubblegum Bass",    sub: "Pink cans", a: "#ff5fa8", b: "#ffb3d9", c: "#6b0f45" },
+    { id: "mint-buds",    name: "Mint Drop",    sub: "Earbuds",    a: "#3dffb8", b: "#3dc6ff", c: "#0b5a43" },
+    { id: "sunset-cans",  name: "Ember Cans",  sub: "Sunset cans", a: "#ff6a2b", b: "#ffc93d", c: "#7a1f08" }
   ];
   // v1-v4 theme ids -> current ids (so saved choices keep working)
   var LEGACY = { master: "gold-disc", house: "sunset-cans", synthpop: "pink-cans", techno: "mint-buds", eurodance: "cobalt-disc", trance: "rainbow-cd", chrome: "silver-cd", sunset: "sunset-cans" };
@@ -253,12 +253,24 @@
     header.insertAdjacentElement("afterend", nav);
   }
 
+  function initMarks() {
+    var fw = document.querySelector(".site-footer .wrap");
+    if (fw && !fw.querySelector(".footer-mark")) {
+      var d = document.createElement("div"); d.className = "footer-mark";
+      d.innerHTML = '<span class="sun-mark" style="--mark:84px" aria-hidden="true"></span><span class="wordmark">GoldenSun <span class="dj">DJ</span></span>';
+      fw.insertBefore(d, fw.firstChild);
+    }
+    var dr = document.getElementById("drawer");
+    if (dr && !dr.querySelector(".drawer-mark")) {
+      var m = document.createElement("span"); m.className = "sun-mark drawer-mark"; m.style.setProperty("--mark", "120px"); m.setAttribute("aria-hidden", "true"); dr.appendChild(m);
+    }
+  }
   function initYear() { var y = document.getElementById("year"); if (y) y.textContent = String(new Date().getFullYear()); }
 
   window.GSDJ = { setTheme: setTheme, setChip: setChip, theme: currentTheme, themes: THEMES };
 
   function init() {
-    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initYear(); initWeather();
+    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initMarks(); initYear(); initWeather();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

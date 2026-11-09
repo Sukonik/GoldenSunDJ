@@ -119,3 +119,10 @@ body::before {
 body:not([data-no-journey]) main { padding-top: var(--space-6); }
 body:not([data-no-journey]) h1 { margin-bottom: var(--space-3); }
 .howto { margin-top: var(--space-5); }
+
+/* Theme layer: static pattern over the paint (grooves or waveform stripes). */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--layer); opacity: .55;
+  -webkit-mask-image: var(--layer-mask); mask-image: var(--layer-mask);
+}

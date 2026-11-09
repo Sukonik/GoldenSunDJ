@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en" data-theme="studio-black">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#050504">
+  <title>Controller — GoldenSunDJ</title>
+  <meta name="description" content="A minimalist, full-screen DJ controller for iPad and iPhone. One or two scratch pads, EQ, tempo, hot cues, echo and 8 controller themes.">
+  <link rel="icon" type="image/png" href="../assets/brand/emblem-gold-64.png">
+  <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tw.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="controller.css">
+</head>
+<body data-no-journey class="is-controller">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap site-header-inner">
+    <a class="brand" href="../index.html" aria-label="GoldenSunDJ home">
+      <img class="brand-mark" src="../assets/brand/emblem-gold-64.png" width="36" height="36" alt="">
+      <span class="wordmark">GoldenSun <span class="dj">DJ</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Apps">
+      <ul>
+        <li><a href="../controller/" aria-current="page">Controller</a></li>
+        <li><a href="../sampler/">Sampler</a></li>
+        <li><a href="../mic/">Mic</a></li>
+        <li><a href="../mixer/">Mixer</a></li>
+        <li><a href="../player/">Player</a></li>
+        <li><a href="../weather/">Weather</a></li>
+        <li><a href="../notes/">Notes</a></li>
+      </ul>
+    </nav>
+    <span class="session-chip" id="session-chip" data-chip="◉ Controller">
+      <span class="chip-dot" aria-hidden="true"></span>
+      <span class="chip-text" id="session-chip-text">◉ Controller</span>
+    </span>
+    <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="drawer-top">
+    <span class="wordmark">GoldenSun <span class="dj">DJ</span></span>
+    <button class="icon-btn" type="button" data-drawer-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+  </div>
+  <nav class="drawer-group" aria-label="Apps">
+    <h2>Apps</h2>
+    <ul>
+      <li><a href="../controller/" aria-current="page">Controller</a></li>
+      <li><a href="../sampler/">Sampler</a></li>
+      <li><a href="../mic/">Mic</a></li>
+      <li><a href="../mixer/">Mixer</a></li>
+      <li><a href="../player/">Player</a></li>
+      <li><a href="../weather/">Weather</a></li>
+      <li><a href="../notes/">Notes</a></li>
+    </ul>
+  </nav>
+  <nav class="drawer-group" aria-label="Family">
+    <h2>Family</h2>
+    <ul>
+      <li><a href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold</a></li>
+      <li><a href="https://github.com/Sukonik/goldensunai" rel="noopener">GoldenSunAI</a></li>
+      <li><a href="https://sukonik.github.io/kikomix/" rel="noopener">KikoMix</a></li>
+    </ul>
+  </nav>
+  <div class="drawer-group">
+    <h2>Theme</h2>
+    <div class="swatches">
+      <button class="swatch" type="button" data-set-theme="master" aria-pressed="false"><span class="swatch-dot sw-master" aria-hidden="true"></span>GoldenSunDJ</button>
+      <button class="swatch" type="button" data-set-theme="house" aria-pressed="false"><span class="swatch-dot sw-house" aria-hidden="true"></span>Sampler</button>
+      <button class="swatch" type="button" data-set-theme="synthpop" aria-pressed="false"><span class="swatch-dot sw-synthpop" aria-hidden="true"></span>Mic</button>
+      <button class="swatch" type="button" data-set-theme="techno" aria-pressed="false"><span class="swatch-dot sw-techno" aria-hidden="true"></span>Mixer</button>
+      <button class="swatch" type="button" data-set-theme="eurodance" aria-pressed="false"><span class="swatch-dot sw-eurodance" aria-hidden="true"></span>Player</button>
+    </div>
+  </div>
+</aside>
+
+<main id="main" class="ctl" data-decks="2" data-ctl-theme="night-club">
+  <div class="ctl-stage">
+    <section class="deck deck-a" id="deck-a" data-deck="a" aria-label="Deck A">
+      <header class="deck-top">
+        <span class="deck-tag">A</span>
+        <span class="deck-title" id="title-a">Loading demo loop…</span>
+        <output class="deck-bpm" id="bpm-a" aria-label="Deck A tempo">--</output>
+        <label class="deck-load" title="Load a file onto deck A">
+          <span>Load</span><input type="file" accept="audio/*" id="file-a" class="visually-hidden">
+        </label>
+      </header>
+      <div class="meter" aria-hidden="true"><i id="meter-a"></i></div>
+      <div class="deck-body">
+        <div class="plat-zone">
+          <div class="platter" id="platter-a" role="slider" tabindex="0" aria-label="Deck A scratch pad. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="plat-disc" id="disc-a">
+              <span class="plat-grooves"></span>
+              <span class="plat-label"><span class="sun-mark" aria-hidden="true"></span></span>
+              <i class="plat-marker"></i>
+            </div>
+            <span class="plat-time" id="time-a">0:00</span>
+          </div>
+        </div>
+        <div class="opt opt-tempo"><label for="tempo-a">Tempo</label><input type="range" id="tempo-a" class="vslider" min="-8" max="8" step="0.1" value="0" aria-label="Deck A tempo"><output id="tempo-out-a">0%</output></div>
+        <div class="opt opt-eq">
+          <div class="eqcol"><input type="range" class="vslider" id="eq-high-a" min="-12" max="12" step="1" value="0" aria-label="Deck A high"><label for="eq-high-a">Hi</label></div>
+          <div class="eqcol"><input type="range" class="vslider" id="eq-mid-a" min="-12" max="12" step="1" value="0" aria-label="Deck A mid"><label for="eq-mid-a">Mid</label></div>
+          <div class="eqcol"><input type="range" class="vslider" id="eq-low-a" min="-12" max="12" step="1" value="0" aria-label="Deck A low"><label for="eq-low-a">Low</label></div>
+        </div>
+      </div>
+      <div class="opt opt-cues" role="group" aria-label="Deck A hot cues">
+        <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
+      </div>
+      <div class="deck-actions">
+        <button type="button" class="tbtn cue-btn" id="cue-a">Cue</button>
+        <button type="button" class="tbtn play-btn" id="play-a" aria-pressed="false">Play</button>
+      </div>
+    </section>
+    <section class="center" aria-label="Mixer">
+      <div class="opt opt-fx">
+        <button type="button" class="tbtn" id="echo-btn" aria-pressed="false">Echo</button>
+      </div>
+      <button type="button" class="wheel-btn" id="wheel-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="Controller settings">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+  </button>
+      <div class="master"><label for="master">Master</label><input type="range" id="master" min="0" max="100" value="85"></div>
+      <div class="opt opt-xfade"><label for="xfade">Crossfader</label><input type="range" id="xfade" min="-100" max="100" value="0" aria-label="Crossfader"><div class="xf-ends"><span>A</span><span>B</span></div></div>
+    </section>
+    <section class="deck deck-b" id="deck-b" data-deck="b" aria-label="Deck B">
+      <header class="deck-top">
+        <span class="deck-tag">B</span>
+        <span class="deck-title" id="title-b">Loading demo loop…</span>
+        <output class="deck-bpm" id="bpm-b" aria-label="Deck B tempo">--</output>
+        <label class="deck-load" title="Load a file onto deck B">
+          <span>Load</span><input type="file" accept="audio/*" id="file-b" class="visually-hidden">
+        </label>
+      </header>
+      <div class="meter" aria-hidden="true"><i id="meter-b"></i></div>
+      <div class="deck-body">
+        <div class="plat-zone">
+          <div class="platter" id="platter-b" role="slider" tabindex="0" aria-label="Deck B scratch pad. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="plat-disc" id="disc-b">
+              <span class="plat-grooves"></span>
+              <span class="plat-label"><span class="sun-mark" aria-hidden="true"></span></span>
+              <i class="plat-marker"></i>
+            </div>
+            <span class="plat-time" id="time-b">0:00</span>
+          </div>
+        </div>
+        <div class="opt opt-tempo"><label for="tempo-b">Tempo</label><input type="range" id="tempo-b" class="vslider" min="-8" max="8" step="0.1" value="0" aria-label="Deck B tempo"><output id="tempo-out-b">0%</output></div>
+        <div class="opt opt-eq">
+          <div class="eqcol"><input type="range" class="vslider" id="eq-high-b" min="-12" max="12" step="1" value="0" aria-label="Deck B high"><label for="eq-high-b">Hi</label></div>
+          <div class="eqcol"><input type="range" class="vslider" id="eq-mid-b" min="-12" max="12" step="1" value="0" aria-label="Deck B mid"><label for="eq-mid-b">Mid</label></div>
+          <div class="eqcol"><input type="range" class="vslider" id="eq-low-b" min="-12" max="12" step="1" value="0" aria-label="Deck B low"><label for="eq-low-b">Low</label></div>
+        </div>
+      </div>
+      <div class="opt opt-cues" role="group" aria-label="Deck B hot cues">
+        <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
+      </div>
+      <div class="deck-actions">
+        <button type="button" class="tbtn cue-btn" id="cue-b">Cue</button>
+        <button type="button" class="tbtn play-btn" id="play-b" aria-pressed="false">Play</button>
+      </div>
+    </section>
+  </div>
+  <p class="ctl-status" id="ctl-status" role="status" aria-live="polite">Tap Play. Drag the pad to scratch.</p>
+
+
+  <div class="wheel-scrim" id="wheel" hidden>
+    <div class="wheel-wrap" role="dialog" aria-modal="true" aria-label="Controller customization">
+      <div class="wheel" id="wheel-ring"></div>
+      <div class="wheel-center"><strong>Controller</strong><span id="wheel-hint">Tap to add or remove</span><button type="button" class="tbtn" id="wheel-close">Done</button></div>
+    </div>
+    <div class="themes-sheet" id="themes-sheet" hidden>
+      <h2>Controller themes</h2>
+      <div class="ctl-themes" id="ctl-themes"></div>
+      <button type="button" class="tbtn" id="themes-back">Back</button>
+    </div>
+  </div>
+</main>
+<script src="../js/shell.js"></script>
+<script src="../js/demo-loops.js"></script>
+<script src="controller.js"></script>
+</body>
+</html>
