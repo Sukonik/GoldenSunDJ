@@ -1,8 +1,8 @@
-# GoldenSunDJ 🎧
+# GoldenSunDJ ☀️🎧
 
 > **Live site:** [sukonik.github.io/GoldenSunDJ](https://sukonik.github.io/GoldenSunDJ/)
 
-One home for the whole GoldenSun music bench. GoldenSunDJ launches each app as you need it: Sampler for beats, Mic for recording, Mixer for live touch mixing and scratching, Player for setlists. All four interwoven, sourced from NakoGold, GoldenSunAI, and KikoMix.
+Software for music, movement and everyday sound. GoldenSunDJ is the home of the GoldenSun music bench: **Weather** to get out, **Notes** for lyrics and ideas, **Mic** to record, **Sampler** to produce, **Mixer** to mix and **Player** to play. A GoldenSunAI product, working close with [NakoGold](https://sukonik.github.io/nakogold/index.html) and AI tools like Suno.
 
 GoldenSunDJ is a launcher: open the hub, pick the tool the moment calls for, and it loads — nothing installs, everything runs in the browser.
 
@@ -45,18 +45,24 @@ All four share one design, one family navigation, and one source well:
 
 ## Design
 
-Full plan: **[DESIGN.md](DESIGN.md)**. In short, the system is assembled from three of Nathan's own projects:
+Brand notes: **[BRAND.md](BRAND.md)** (adapted from the GoldenSunAI brand kit). The look is a clean, dark, Y2K-chrome interface in the spirit of lbbikeclub: GoldenSunAI emblem and wordmark, Outfit + Inter type, soft theme glow, and 8 headphone and CD colorway themes. Touch-first, responsive from phone to desktop, reduced motion respected.
 
-- **Formatting base — GoldBrief's BASE3 UI**: night-black surfaces, neon-yellow master accent, Outfit + Inter two-font system, BASE3 type/spacing scales. All identity lives in tokens; structure never changes.
-- **Character — nakogold V4**: each app gets its own genre theme (Sampler = house amber, Mic = synthpop pink, Mixer = techno lime, Player = eurodance gold ★), plus the metallic gold sheen for hero moments.
-- **Components — lbbikeclub**: live session chip in the header, drawer navigation, theme swatches, stat blocks, spinning mark.
+## Version history
 
-Touch-first, responsive from phone to desktop, reduced motion respected.
+Each version is tagged in git (`git checkout v3`).
+
+| Version | What it was |
+| --- | --- |
+| **v1** | Hub + Sampler, Mic, Mixer, Player on the BASE3 shell (GoldBrief + nakogold themes), GitHub Pages workflow. |
+| **v2** | Tailwind v4 build, Y2K chrome styling, Verdana type stack, journey bar, weather chip. |
+| **v3** | lbbikeclub-style pearl chrome UI, 8 working themes, fixed weather, per-app how-to and next-step. |
+| **v4** | Original 5×7 pixel display font and pixel-sun hero, more vivid themes, lighter rendering, idle-rendered Mixer demos. *(Pixel direction retired in v5; kept here for the record.)* |
+| **v5** | GoldenSunAI emblem + wordmark as GoldenSunDJ, Inter/Outfit type, headphone and CD themes, DJ Weather dashboard, Notes, BRAND.md. |
 
 ## Tech
 
-- Tailwind CSS v4 (built in CI via `npm run build`) over a three-color pearl-chrome theme system (8 themes, modeled on lbbikeclub), with Y2K chrome styling, an original 5×7 pixel display font (`tools/build_pixel_font.py`), and a Verdana type stack (Verdana / Verdana Pro where installed, DejaVu Sans fallback).
-- Vanilla JavaScript + Web Audio API for the audio apps; weather via Open-Meteo (location only on tap).
+- Tailwind CSS v4 (built in CI via `npm run build`) over a three-color theme system, with Inter + Outfit type.
+- Vanilla JavaScript + Web Audio API for the audio apps. Weather via Open-Meteo (no key; location only when you ask). Notes live in your browser's localStorage.
 - Mic capture via `getUserMedia` (works over HTTPS on GitHub Pages).
 - WAV export encoded in-browser; MP4 where the browser's recorder supports it.
 - Your recordings and samples live on your device — nothing is uploaded anywhere.

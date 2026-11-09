@@ -38,11 +38,7 @@ h1, h2, h3, h4 {
   letter-spacing: 0;
   font-family: var(--font-display);
 }
-/* Pixel display type: font-size in multiples of 10px keeps every pixel crisp. */
-.pixel, h1 { font-family: var(--font-pixel); font-weight: 400; letter-spacing: 0; -webkit-font-smoothing: none; font-smooth: never; text-rendering: optimizeSpeed; }
-h1 { font-size: 30px; line-height: 1.15; text-transform: uppercase; }
-@media (min-width: 40rem) { h1 { font-size: 40px; } }
-@media (min-width: 64rem) { h1 { font-size: 50px; } }
+h1 { font-size: clamp(1.9rem, 6vw, 3.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; overflow-wrap: break-word; }
 h2 { font-size: var(--fs-xl); }
 h3 { font-size: var(--fs-lg); }
 

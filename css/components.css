@@ -23,16 +23,16 @@
 }
 .site-header-inner { display: flex; align-items: center; gap: var(--space-3); min-height: var(--header-h); }
 .brand { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; margin-right: auto; }
-.brand .mark-spin { width: 1.9rem; height: 1.9rem; }
-.mark-spin { display: block; flex: none; color: var(--a); transition: transform 1.2s var(--ease); }
-.brand:hover .mark-spin { transform: rotate(120deg); }
 .wordmark {
-  font-family: var(--font-pixel); font-weight: 400; font-size: 20px; line-height: 1;
-  letter-spacing: 0; text-transform: uppercase; white-space: nowrap; -webkit-font-smoothing: none;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1;
+  letter-spacing: -.02em; white-space: nowrap; color: #fff;
 }
+.wordmark .sun { color: var(--a); }
+.brand-mark { width: 36px; height: 36px; flex: none; display: block; transition: transform 1.2s var(--ease); }
+.brand:hover .brand-mark { transform: rotate(60deg); }
 
 .main-nav { display: none; }
-.main-nav ul { display: flex; gap: 1.25rem; }
+.main-nav ul { display: flex; gap: 1rem; }
 .main-nav a {
   display: inline-flex; align-items: center; min-height: 44px; position: relative;
   font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
@@ -98,7 +98,7 @@
 .drawer.is-open { transform: none; visibility: visible; transition-delay: 0s; }
 .drawer-top { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
 .drawer-group h2 { font-family: var(--mono); font-size: .7rem; font-weight: 400; letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .5rem; }
-.drawer-group a { display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid var(--hair); font-family: var(--font-pixel); font-size: 20px; font-weight: 400; text-transform: uppercase; letter-spacing: -.01em; transition: padding .3s var(--ease), color .25s; }
+.drawer-group a { display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid var(--hair); font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: -.01em; transition: padding .3s var(--ease), color .25s; }
 .drawer-group a:hover { padding-left: .4rem; color: var(--a); }
 .drawer-group a[aria-current="page"] { color: var(--a); }
 
@@ -185,7 +185,7 @@
 input[type="range"] { accent-color: var(--a); min-height: 32px; }
 
 .stat { display: grid; gap: var(--space-1); }
-.stat-num { font-family: var(--font-pixel); font-weight: 400; font-size: 40px; -webkit-font-smoothing: none; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(2rem, 6vw, 3rem); line-height: 1; font-variant-numeric: tabular-nums; }
 .stat-note { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); }
 
 /* -- Footer ---------------------------------------------------------------------------------------- */
@@ -198,6 +198,6 @@ input[type="range"] { accent-color: var(--a); min-height: 32px; }
 .footer-small { font-size: var(--fs-sm); color: var(--text-muted); }
 
 @media (min-width: 40rem) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .swatches { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 58rem) { .main-nav { display: block; } }
-@media (max-width: 36rem) { .session-chip, .wx-score { display: none; } .wordmark { font-size: .95rem; letter-spacing: 0; } .site-header-inner { gap: .5rem; } .wx-chip { padding: 0 .65rem; } .menu-btn, .icon-btn { width: 40px; height: 40px; } }
+@media (min-width: 66rem) { .main-nav { display: block; } }
+@media (max-width: 36rem) { .session-chip, .wx-score { display: none; } .wordmark { font-size: 1.15rem; } .site-header-inner { gap: .5rem; } .wx-chip { padding: 0 .65rem; } .menu-btn, .icon-btn { width: 40px; height: 40px; } }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

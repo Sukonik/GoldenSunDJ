@@ -1,0 +1,30 @@
+/* Notes. Tokens only. */
+.intro { max-width: 38rem; color: var(--text-2); margin-bottom: var(--space-5); }
+.h-sm { font-size: 1.15rem; margin-bottom: .75rem; }
+.count { color: var(--text-muted); font-weight: 400; }
+.notes-layout { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); }
+.editor, .saved { display: grid; gap: .9rem; align-content: start; }
+.types { display: flex; flex-wrap: wrap; gap: .4rem; }
+.types button, .chip { min-height: 38px; padding: 0 .95rem; border-radius: 999px; border: 1px solid var(--border-strong); font-size: var(--fs-sm); background: transparent; color: var(--text); }
+.types button:hover, .chip:hover { border-color: var(--a); background: color-mix(in srgb, var(--a) 12%, transparent); }
+.types button[aria-checked="true"], .chip[aria-pressed="true"] { background: var(--a); color: var(--accent-ink); border-color: var(--a); font-weight: 700; }
+.chip--accent { border-color: var(--a); }
+.chip--danger:hover { border-color: #ff6b7a; background: rgba(255,107,122,.15); }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.meta-row { display: grid; gap: .75rem; grid-template-columns: 1fr 1fr; }
+.meta-row .grow { grid-column: 1 / -1; }
+.inserts { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+#n-body { font-family: var(--font-sans); line-height: 1.7; min-height: 44vh; }
+.counts { color: var(--text-muted); font-size: var(--fs-sm); }
+.btn-row { display: flex; flex-wrap: wrap; gap: .6rem; }
+.note-list { display: grid; gap: .6rem; }
+.note { display: grid; gap: .3rem; padding: .8rem .9rem; border: 1px solid var(--hair); border-radius: 12px; background: rgba(255,255,255,.03); }
+.note.is-open { border-color: var(--a); }
+.note-top { display: flex; justify-content: space-between; gap: .5rem; align-items: baseline; }
+.note-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge { flex: none; font-family: var(--mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; padding: .15rem .5rem; border-radius: 999px; background: color-mix(in srgb, var(--a) 18%, transparent); color: var(--a); }
+.note-snip { color: var(--text-2); font-size: var(--fs-sm); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.note-date { color: var(--text-muted); font-size: var(--fs-xs); }
+.note-actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .2rem; }
+.empty { color: var(--text-muted); padding: .5rem 0; }
+@media (min-width: 62rem) { .notes-layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; } .saved { position: sticky; top: calc(var(--header-h) + 3.5rem); } }

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-theme="studio-black">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050504">
+  <title>Notes — GoldenSunDJ</title>
+  <meta name="description" content="Lyrics, song ideas and Suno prompts for DJs and producers. Saved in your browser, easy to copy and paste.">
+  <link rel="icon" type="image/png" href="../assets/brand/emblem-gold-64.png">
+  <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tw.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="notes.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap site-header-inner">
+    <a class="brand" href="../index.html" aria-label="GoldenSunDJ home">
+      <img class="brand-mark" src="../assets/brand/emblem-gold-64.png" width="36" height="36" alt="">
+      <span class="wordmark">Golden<span class="sun">Sun</span>DJ</span>
+    </a>
+    <nav class="main-nav" aria-label="Apps">
+      <ul>
+        <li><a href="../sampler/">Sampler</a></li>
+        <li><a href="../mic/">Mic</a></li>
+        <li><a href="../mixer/">Mixer</a></li>
+        <li><a href="../player/">Player</a></li>
+        <li><a href="../weather/">Weather</a></li>
+        <li><a href="../notes/" aria-current="page">Notes</a></li>
+      </ul>
+    </nav>
+    <span class="session-chip" id="session-chip" data-chip="✎ Notes">
+      <span class="chip-dot" aria-hidden="true"></span>
+      <span class="chip-text" id="session-chip-text">✎ Notes</span>
+    </span>
+    <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="drawer-top">
+    <span class="wordmark">Golden<span class="sun">Sun</span>DJ</span>
+    <button class="icon-btn" type="button" data-drawer-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+  </div>
+  <nav class="drawer-group" aria-label="Apps">
+    <h2>Apps</h2>
+    <ul>
+      <li><a href="../sampler/">Sampler</a></li>
+      <li><a href="../mic/">Mic</a></li>
+      <li><a href="../mixer/">Mixer</a></li>
+      <li><a href="../player/">Player</a></li>
+      <li><a href="../weather/">Weather</a></li>
+      <li><a href="../notes/" aria-current="page">Notes</a></li>
+    </ul>
+  </nav>
+  <nav class="drawer-group" aria-label="Family">
+    <h2>Family</h2>
+    <ul>
+      <li><a href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold</a></li>
+      <li><a href="https://github.com/Sukonik/goldensunai" rel="noopener">GoldenSunAI</a></li>
+      <li><a href="https://sukonik.github.io/kikomix/" rel="noopener">KikoMix</a></li>
+    </ul>
+  </nav>
+  <div class="drawer-group">
+    <h2>Theme</h2>
+    <div class="swatches">
+      <button class="swatch" type="button" data-set-theme="master" aria-pressed="false"><span class="swatch-dot sw-master" aria-hidden="true"></span>GoldenSunDJ</button>
+      <button class="swatch" type="button" data-set-theme="house" aria-pressed="false"><span class="swatch-dot sw-house" aria-hidden="true"></span>Sampler</button>
+      <button class="swatch" type="button" data-set-theme="synthpop" aria-pressed="false"><span class="swatch-dot sw-synthpop" aria-hidden="true"></span>Mic</button>
+      <button class="swatch" type="button" data-set-theme="techno" aria-pressed="false"><span class="swatch-dot sw-techno" aria-hidden="true"></span>Mixer</button>
+      <button class="swatch" type="button" data-set-theme="eurodance" aria-pressed="false"><span class="swatch-dot sw-eurodance" aria-hidden="true"></span>Player</button>
+    </div>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="wrap">
+    <p class="label"><b>Step 2</b> &nbsp;Record</p>
+    <h1>Notes</h1>
+    <p class="intro">Jot lyrics, song ideas and Suno prompts. Everything saves in this browser. Copy and paste it anywhere.</p>
+
+    <div class="notes-layout">
+      <section class="panel editor" aria-labelledby="ed-h">
+        <h2 id="ed-h" class="visually-hidden">Note editor</h2>
+        <div class="types" role="radiogroup" aria-label="Note type" id="types">
+          <button type="button" role="radio" data-type="lyrics" aria-checked="true">Lyrics</button>
+          <button type="button" role="radio" data-type="idea" aria-checked="false">Idea</button>
+          <button type="button" role="radio" data-type="suno" aria-checked="false">Suno prompt</button>
+          <button type="button" role="radio" data-type="setlist" aria-checked="false">Setlist</button>
+          <button type="button" role="radio" data-type="gig" aria-checked="false">Gig</button>
+        </div>
+        <div class="field"><label for="n-title">Title</label><input id="n-title" type="text" maxlength="120" placeholder="Untitled note" autocomplete="off"></div>
+        <div class="meta-row">
+          <div class="field"><label for="n-bpm">BPM</label><input id="n-bpm" type="number" inputmode="numeric" min="40" max="220" placeholder="120"></div>
+          <div class="field"><label for="n-key">Key</label>
+            <select id="n-key"><option value="">—</option></select></div>
+          <div class="field grow"><label for="n-tags">Tags</label><input id="n-tags" type="text" maxlength="80" placeholder="summer, house, vocal hook" autocomplete="off"></div>
+        </div>
+        <div class="inserts" role="group" aria-label="Insert">
+          <span class="label">Insert</span>
+          <button type="button" class="chip" data-ins="[Verse]">Verse</button>
+          <button type="button" class="chip" data-ins="[Pre-Chorus]">Pre</button>
+          <button type="button" class="chip" data-ins="[Chorus]">Chorus</button>
+          <button type="button" class="chip" data-ins="[Bridge]">Bridge</button>
+          <button type="button" class="chip" data-ins="[Hook]">Hook</button>
+          <button type="button" class="chip" data-ins="[Outro]">Outro</button>
+          <button type="button" class="chip chip--accent" id="ins-suno">Suno template</button>
+          <button type="button" class="chip chip--accent" id="ins-wx">☀ Weather</button>
+        </div>
+        <div class="field"><label for="n-body">Note</label><textarea id="n-body" rows="14" placeholder="Start writing…"></textarea></div>
+        <p class="counts" id="counts" aria-live="polite">0 lines · 0 words</p>
+        <div class="btn-row">
+          <button class="btn" type="button" id="save">Save note</button>
+          <button class="btn btn--ghost" type="button" id="copy">Copy</button>
+          <button class="btn btn--ghost" type="button" id="download">Download .txt</button>
+          <button class="btn btn--ghost" type="button" id="new">New note</button>
+        </div>
+        <p class="status" id="n-status" role="status" aria-live="polite">Draft saves automatically.</p>
+      </section>
+
+      <section class="panel saved" aria-labelledby="sv-h">
+        <h2 id="sv-h" class="h-sm">Saved notes <span class="count" id="sv-count"></span></h2>
+        <div class="field"><label class="visually-hidden" for="sv-q">Search notes</label><input id="sv-q" type="search" placeholder="Search notes"></div>
+        <div class="chips" id="filters" role="group" aria-label="Filter by type"></div>
+        <ul class="note-list" id="note-list"></ul>
+        <div class="btn-row"><button class="btn btn--ghost" type="button" id="copy-all">Copy all</button><button class="btn btn--ghost" type="button" id="dl-all">Download all (.md)</button></div>
+      </section>
+    </div>
+
+    <aside class="next-step" aria-label="Next step">
+      <p>Words ready? Hit record.</p>
+      <a class="btn" href="../mic/">Next: Mic →</a>
+    </aside>
+  </div>
+</main>
+
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-note">Built by Team GoldenSun. ☀️ A GoldenSunAI product.</p>
+    <nav class="footer-links" aria-label="Family">
+      <a href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold</a>
+      <a href="https://github.com/Sukonik/goldensunai" rel="noopener">GoldenSunAI</a>
+      <a href="https://sukonik.github.io/kikomix/" rel="noopener">KikoMix</a>
+    </nav>
+    <p class="footer-small">Recordings and samples never leave your device.</p>
+    <p class="footer-small">© <span id="year">2026</span> GoldenSunDJ</p>
+  </div>
+</footer>
+
+<script src="../js/shell.js"></script>
+<script src="notes.js"></script>
+</body>
+</html>

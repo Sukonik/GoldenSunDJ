@@ -7,15 +7,17 @@
   "use strict";
 
   var THEMES = [
-    { id: "master",    name: "Master",    sub: "Gold",   a: "#ffd84a", b: "#7be8ff", c: "#4a3a00" },
-    { id: "house",     name: "House",     sub: "Amber",  a: "#ffb876", b: "#ff7a4a", c: "#5a2410" },
-    { id: "synthpop",  name: "Synthpop",  sub: "Pink",   a: "#ff8bdb", b: "#b86bff", c: "#55164a" },
-    { id: "techno",    name: "Techno",    sub: "Lime",   a: "#c8ff62", b: "#3dffb0", c: "#1d4a08" },
-    { id: "eurodance", name: "Eurodance", sub: "Blue",   a: "#ffdf62", b: "#5ab0ff", c: "#14286e" },
-    { id: "trance",    name: "Trance",    sub: "Violet", a: "#6aa8ff", b: "#c06bff", c: "#12286e" },
-    { id: "chrome",    name: "Chrome",    sub: "Silver", a: "#dbe4ee", b: "#f0dcb8", c: "#3b4655" },
-    { id: "sunset",    name: "Sunset",    sub: "Coral",  a: "#ff5f6d", b: "#ffc371", c: "#5e0f2a" }
+    { id: "gold-disc",    name: "Gold Disc",    sub: "CD",         a: "#ffc933", b: "#ff8a1f", c: "#5c3a00" },
+    { id: "silver-cd",    name: "Silver CD",    sub: "CD",         a: "#dfe6ee", b: "#8fd3ff", c: "#3b4a5e" },
+    { id: "rainbow-cd",   name: "Rainbow CD",   sub: "CD",         a: "#ff5fd2", b: "#35e0ff", c: "#4b1fa8" },
+    { id: "cobalt-disc",  name: "Cobalt Disc",  sub: "CD",         a: "#4d8dff", b: "#00e0ff", c: "#10268f" },
+    { id: "studio-black", name: "Studio Black", sub: "Headphones", a: "#ff9f1c", b: "#ffd166", c: "#2e1c08" },
+    { id: "pink-cans",    name: "Pink Cans",    sub: "Headphones", a: "#ff5fa8", b: "#ffb3d9", c: "#6b0f45" },
+    { id: "mint-buds",    name: "Mint Buds",    sub: "Earbuds",    a: "#3dffb8", b: "#3dc6ff", c: "#0b5a43" },
+    { id: "sunset-cans",  name: "Sunset Cans",  sub: "Headphones", a: "#ff6a2b", b: "#ffc93d", c: "#7a1f08" }
   ];
+  // v1-v4 theme ids -> current ids (so saved choices keep working)
+  var LEGACY = { master: "gold-disc", house: "sunset-cans", synthpop: "pink-cans", techno: "mint-buds", eurodance: "cobalt-disc", trance: "rainbow-cd", chrome: "silver-cd", sunset: "sunset-cans" };
   var KEY = "gsdj-theme";
   var root = document.documentElement;
 
@@ -24,7 +26,7 @@
     return null;
   }
   function isTheme(id) { return THEMES.some(function (t) { return t.id === id; }); }
-  function currentTheme() { return root.getAttribute("data-theme") || "master"; }
+  function currentTheme() { return root.getAttribute("data-theme") || "gold-disc"; }
 
   function markThemes() {
     var id = currentTheme();
@@ -39,7 +41,11 @@
     markThemes();
   }
   // Apply the saved choice immediately (page default otherwise).
-  (function () { var s = store(KEY); if (isTheme(s)) root.setAttribute("data-theme", s); })();
+  (function () {
+    var s = store(KEY);
+    if (LEGACY[s]) s = LEGACY[s];
+    root.setAttribute("data-theme", isTheme(s) ? s : "gold-disc");
+  })();
 
   function buildSwatches() {
     document.querySelectorAll(".swatches").forEach(function (host) {
@@ -162,7 +168,7 @@
     document.querySelectorAll(".wx-chip").forEach(function (chip) {
       var t = chip.querySelector(".wx-chip-text");
       if (d) { chip.setAttribute("data-tone", d.now.ride.tone); t.innerHTML = d.now.temp + "°F<span class=\"wx-score\"> · " + d.now.ride.score + "</span>";
-        chip.setAttribute("aria-label", "Weather in " + d.place.name + ": " + d.now.temp + " degrees, " + describe(d.now.code) + ". " + d.now.ride.label + ". Tap to use your location."); }
+        chip.setAttribute("aria-label", "Weather in " + d.place.name + ": " + d.now.temp + " degrees, " + describe(d.now.code) + ". " + d.now.ride.label + ". Tap for the full weather dashboard."); }
       else { chip.removeAttribute("data-tone"); t.textContent = wxState.error ? "Weather offline" : "Weather…"; }
     });
     var card = document.querySelector("[data-wx-card]");
@@ -200,13 +206,15 @@
   }
   function initWeather() {
     document.querySelectorAll("[data-wx-locate]").forEach(function (b) { b.addEventListener("click", useMyLocation); });
-    document.querySelectorAll(".wx-chip").forEach(function (b) { b.addEventListener("click", useMyLocation); });
+    document.querySelectorAll(".wx-chip").forEach(function (b) {
+      b.addEventListener("click", function () { if (!document.body.hasAttribute("data-wx-page")) location.href = prefix() + "weather/"; });
+    });
     loadWeather(place()); // never prompts; uses saved or default location
   }
 
   /* ---- journey bar + header controls ------------------------------------------- */
   var STEPS = [
-    ["Get out", "index.html#get-out"], ["Record", "mic/"], ["Produce", "sampler/"], ["Master", null],
+    ["Get out", "weather/"], ["Record", "mic/"], ["Produce", "sampler/"], ["Master", null],
     ["Distribute", null], ["Mix", "mixer/"], ["Play", "player/"], ["Get found", null]
   ];
   function prefix() {
