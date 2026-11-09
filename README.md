@@ -81,7 +81,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9`.
 
 | Version | What it was |
 | --- | --- |
@@ -93,6 +93,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v6** | Chrome emblem hero with effects, theme-colored sun marks, animated weather sky, unique theme names with pattern layers, and the **Controller** (1 or 2 scratch pads, settings wheel, 8 controller themes). |
 | **v7** | Clean solid color-changing emblem on a transparent background (replacing the chrome cut-out), new coordinated page copy ("Be the music"), a featured Controller card, **Carbon** and **Titanium** materials with tilt-reactive light, Add to Home Screen support, and this documentation. |
 | **v8** | **Mobile pass:** a static, light build on phones and iPads (no animations, plain emblem image, no fixed pattern layers) that fixes the home-screen crash, an **Animations on/off** switch in the menu, a responsive header and menu, 44 px touch targets across every page, safe-area support, and [RESOURCES.md](RESOURCES.md) with the controller projects we study. |
+| **v9** | **Clean header and status:** one tidy row at every width (brand left, a clear *Menu* button, weather and theme chips that never overlap), the page nav moves into the menu below 1280 px, the cluttered header status chip is gone (status now lives in the page), the Controller's status line sits inside the center strip and clears itself, and the journey bar has soft edges. |
 
 ## Under the hood
 

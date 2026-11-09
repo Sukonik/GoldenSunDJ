@@ -180,9 +180,9 @@
     var d = wxState.data;
     document.querySelectorAll(".wx-chip").forEach(function (chip) {
       var t = chip.querySelector(".wx-chip-text");
-      if (d) { chip.setAttribute("data-tone", d.now.ride.tone); t.innerHTML = d.now.temp + "°F<span class=\"wx-score\"> · " + d.now.ride.score + "</span>";
+      if (d) { chip.setAttribute("data-tone", d.now.ride.tone); t.textContent = "☀ " + d.now.temp + "°";
         chip.setAttribute("aria-label", "Weather in " + d.place.name + ": " + d.now.temp + " degrees, " + describe(d.now.code) + ". " + d.now.ride.label + ". Tap for the full weather dashboard."); }
-      else { chip.removeAttribute("data-tone"); t.textContent = wxState.error ? "☀ --°" : "☀ …"; }
+      else { chip.removeAttribute("data-tone"); t.textContent = wxState.error ? "☀ --" : "☀ …"; }
     });
     var card = document.querySelector("[data-wx-card]");
     if (!card) return;
@@ -239,6 +239,9 @@
     var inner = header && header.querySelector(".site-header-inner");
     if (!inner) return;
     var menu = document.getElementById("menu-btn");
+    if (menu && !menu.querySelector(".menu-label")) {
+      menu.innerHTML = '<span class="menu-label">Menu</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+    }
     if (!inner.querySelector(".wx-chip")) {
       var w = document.createElement("button");
       w.type = "button"; w.className = "wx-chip";
@@ -264,6 +267,7 @@
     nav.className = "journey-bar"; nav.setAttribute("aria-label", "Your session path");
     nav.innerHTML = html + "</ol>";
     header.insertAdjacentElement("afterend", nav);
+    var cur = nav.querySelector("[aria-current=step]"); if (cur && cur.scrollIntoView) { try { nav.scrollLeft = Math.max(0, cur.offsetLeft - 24); } catch (e) {} }
   }
 
   function initMotionToggle() {

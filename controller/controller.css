@@ -67,7 +67,8 @@ body.is-controller .site-footer { display: none; }
 .master, .opt-xfade { display: grid; gap: .3rem; font-family: var(--mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--k-mute); }
 .center input[type="range"] { width: 100%; min-height: 40px; accent-color: var(--k-a); touch-action: none; }
 .xf-ends { display: flex; justify-content: space-between; width: 100%; padding-inline: .3rem; }
-.ctl-status { position: absolute; left: 50%; bottom: .6rem; transform: translateX(-50%); padding: .3rem .9rem; border-radius: 999px; background: rgba(0,0,0,.55); color: var(--k-mute); font-size: .8rem; pointer-events: none; max-width: 70%; text-align: center; opacity: .9; }
+.ctl-status { font-size: .8rem; line-height: 1.35; color: var(--k-mute); text-align: center; min-height: 0; margin: 0; }
+.ctl-status:empty { display: none; }
 
 /* feature toggles driven by the wheel */
 .ctl[data-eq="off"] .opt-eq, .ctl[data-tempo="off"] .opt-tempo, .ctl[data-cues="off"] .opt-cues, .ctl[data-fx="off"] .opt-fx, .ctl[data-fader="off"] .opt-xfade { display: none; }
@@ -108,7 +109,8 @@ body.is-controller .site-footer { display: none; }
 
 /* phones in portrait: tuck the optional rails under the pad to save height */
 @media (max-width: 40rem) and (orientation: portrait) {
-  .ctl-status, .plat-time { display: none; }
+  .plat-time { display: none; }
+  .center .ctl-status { grid-column: 1 / -1; order: 9; }
   .center { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .3rem .7rem; padding: .5rem; }
   .center .opt-xfade { grid-column: 1 / -1; }
   .center .master { grid-template-columns: 1fr; }
@@ -116,7 +118,7 @@ body.is-controller .site-footer { display: none; }
   .vslider { width: 28px; }
   .deck { padding: .5rem; gap: .3rem; }
 }
-@media (max-height: 34rem) and (orientation: landscape) { .ctl-status { display: none; } :root { --header-h: 52px; } .deck-top .deck-title, .meter { display: none; } .opt-cues { display: none; } .plat-time { display: none; } .ctl { padding: .4rem; gap: .3rem; } .deck { grid-template-rows: auto minmax(0, 1fr) auto; } .center { align-content: center; gap: .5rem; } }
+@media (max-height: 34rem) and (orientation: landscape) { :root { --header-h: 52px; } .deck-top .deck-title, .meter { display: none; } .opt-cues { display: none; } .plat-time { display: none; } .ctl { padding: .4rem; gap: .3rem; } .deck { grid-template-rows: auto minmax(0, 1fr) auto; } .center { align-content: center; gap: .5rem; } }
 @media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
 
 /* ---- materials: semi-3D carbon fiber and brushed titanium (CSS only) ---- */

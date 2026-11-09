@@ -11,7 +11,8 @@
   var REV_SECONDS = 60 / 33; // 33 rpm
   var KEY = "gsdj-ctl";
   var statusEl = $("ctl-status");
-  function say(t) { if (statusEl) statusEl.textContent = t; }
+  var sayTimer = null;
+  function say(t) { if (!statusEl) return; statusEl.textContent = t; clearTimeout(sayTimer); sayTimer = setTimeout(function () { statusEl.textContent = ""; }, 5000); }
 
   /* ---------- settings (wheel) ---------- */
   var settings = { decks: 2, eq: true, tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false };

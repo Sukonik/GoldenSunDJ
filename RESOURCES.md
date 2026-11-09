@@ -78,6 +78,19 @@ Drawn from the projects above, in rough priority order for the touch Controller:
 
 ---
 
+## 3b. Inspiration screenshots (shared by the team)
+
+A set of DJ-app and website screenshots was shared as 3D and layout inspiration. The images themselves are third-party apps and sites, so they are **not stored in this repo**. What we noted:
+
+- **Waveform strip on top of each deck** with track name, time and BPM. Minimal and readable.
+- **Very large platters** with a glowing ring and little else on screen; Play as a big glowing round button in the bottom corners; a slim crossfader with small arrow buttons at the bottom center.
+- **FX and Sampler overlay:** one button opens a full-width panel of big, glowing, color-coded pads (8 per page, with page dots), with Sampler and FX tabs and a clear close button.
+- **Single-deck "CDJ" layout:** touch screen with waveform and browse buttons, a large jog wheel with a ring of lights, a tall tempo fader, Cue and Play/Pause, loop in / out / reloop, vinyl jog mode.
+- **Pad-style layouts and tutorial hints:** a plain green tooltip that teaches "drag your finger on the turntable to scratch".
+- **Spotify and Suno home pages:** simple top bar (logo left, a few links, one pill button), a single big headline, one clear action. A good model for a clean menu.
+
+What fits GoldenSunDJ: the waveform strip, glowing corner Play buttons, the overlay of big color pads, and the single-deck layout. What does not: heavy skeuomorphic chrome and dense screens; our controller stays minimal and added-to-by-choice.
+
 ## 4. Inspiration sites and repos used for GoldenSunDJ itself
 
 - [lbbikeclub](https://github.com/Sukonik/lbbikeclub) — the pearl-chrome UI, three-color theme system and weather chip that GoldenSunDJ's look follows.
