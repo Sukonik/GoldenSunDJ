@@ -55,7 +55,8 @@ Touch-first, responsive from phone to desktop, reduced motion respected.
 
 ## Tech
 
-- Vanilla JavaScript + Web Audio API — no framework, no build step.
+- Tailwind CSS v4 (built in CI via `npm run build`) over the BASE3 tokens, with Y2K chrome styling and a Verdana type stack (Verdana / Verdana Pro where installed, DejaVu Sans fallback).
+- Vanilla JavaScript + Web Audio API for the audio apps; weather via Open-Meteo (location only on tap).
 - Mic capture via `getUserMedia` (works over HTTPS on GitHub Pages).
 - WAV export encoded in-browser; MP4 where the browser's recorder supports it.
 - Your recordings and samples live on your device — nothing is uploaded anywhere.

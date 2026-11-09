@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* Tailwind reads the BASE3 tokens in css/tokens.css, so every utility
+   (bg-card, text-ink2, border-edge ...) follows the active genre theme. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--bg-raised);
+  --color-card: var(--bg-card);
+  --color-deep: var(--bg-deep);
+  --color-edge: var(--border);
+  --color-edge-strong: var(--border-strong);
+  --color-chromeedge: var(--chrome-edge);
+  --color-ink: var(--text);
+  --color-ink2: var(--text-2);
+  --color-mute: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-house: var(--acc-house);
+  --color-synthpop: var(--acc-synthpop);
+  --color-techno: var(--acc-techno);
+  --color-eurodance: var(--acc-eurodance);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+@utility chrome-text {
+  background: var(--sheen);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+@utility chrome-bezel {
+  border: 1px solid var(--chrome-edge);
+  border-radius: 18px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-card) 92%, white) 0%, var(--bg-card) 100%);
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 -1px 0 rgba(0,0,0,.5) inset, 0 10px 28px -12px rgba(0,0,0,.7);
+}
+@utility chrome-bar {
+  background: var(--chrome);
+  color: var(--chrome-ink);
+}

@@ -7,15 +7,13 @@
   <title>GoldenSunDJ — Sampler, Mic, Mixer, Player</title>
   <meta name="description" content="One home for the whole GoldenSun music bench. GoldenSunDJ launches each app as you need it: Sampler for beats, Mic for recording, Mixer for live touch mixing and scratching, Player for setlists. All four interwoven, sourced from NakoGold, GoldenSunAI, and KikoMix.">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tw.css">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body>
+<body data-no-journey>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
@@ -80,62 +78,94 @@
   </aside>
 
   <main id="main">
-    <section class="hero deco-bg">
-      <div class="wrap hero-inner">
-        <svg class="mark-spin hero-mark" viewBox="0 0 100 100" aria-hidden="true"><polygon fill="currentColor" points="50,2 61.8,33.8 95.6,35.2 69,56.2 78.2,88.8 50,70 21.8,88.8 31,56.2 4.4,35.2 38.2,33.8"/></svg>
-        <div class="hero-copy">
-          <h1 class="wordmark--sheen">GoldenSunDJ</h1>
-          <p>One home for the whole GoldenSun music bench. GoldenSunDJ launches each app as you need it: Sampler for beats, Mic for recording, Mixer for live touch mixing and scratching, Player for setlists. All four interwoven, sourced from NakoGold, GoldenSunAI, and KikoMix.</p>
-          <p>Pick a tool below — each one opens as its own page and runs entirely in your browser.</p>
+    <!-- Hero: chrome deck -->
+    <section class="relative overflow-hidden border-b border-chromeedge bg-raised">
+      <div class="wrap grid items-center gap-8 py-12 grid-cols-[minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_auto] md:py-20">
+        <div class="max-w-2xl">
+          <p class="mb-5 inline-block rounded-2xl border border-chromeedge px-3 py-1 text-sm font-bold tracking-wide text-ink2">GET OUT · RECORD · PRODUCE · MASTER · DISTRIBUTE · MIX · PLAY · GET FOUND</p>
+          <h1 class="chrome-text text-4xl font-extrabold leading-tight md:text-7xl">GoldenSunDJ</h1>
+          <p class="mt-5 text-lg text-ink2">Take your music from the street to the stream. Record outside, build beats, mix live, and get your tracks found — all from your phone, all in the browser.</p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a class="btn" href="mic/">● Start recording</a>
+            <a class="btn btn--ghost" href="#journey">See the whole path</a>
+          </div>
+        </div>
+        <!-- Y2K chrome disc -->
+        <svg class="mx-auto h-44 w-44 md:h-64 md:w-64" viewBox="0 0 200 200" role="img" aria-label="Chrome record disc">
+          <defs>
+            <radialGradient id="g1" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#cfd5dc"/><stop offset=".6" stop-color="#7d8590"/><stop offset="1" stop-color="#e8ebef"/></radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="92" fill="url(#g1)" stroke="#aeb5bf" stroke-width="3"/>
+          <circle cx="100" cy="100" r="62" fill="none" stroke="#14161a" stroke-opacity=".18" stroke-width="2"/>
+          <circle cx="100" cy="100" r="42" fill="none" stroke="#14161a" stroke-opacity=".18" stroke-width="2"/>
+          <circle cx="100" cy="100" r="22" fill="var(--accent)"/>
+          <circle cx="100" cy="100" r="5" fill="#14161a"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Get out: weather -->
+    <section id="get-out" class="py-10" aria-labelledby="out-h">
+      <div class="wrap">
+        <div class="chrome-bezel flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 id="out-h" class="text-2xl">1 · Get out</h2>
+            <p class="mt-1 max-w-xl text-ink2">Check the weather where you are and pick your spot. Fresh air, new sounds.</p>
+            <p class="mt-3 text-lg font-bold" data-wx="card" aria-live="polite">Tap to check the weather</p>
+          </div>
+          <button class="btn" type="button" data-wx-btn>☀ Check my weather</button>
         </div>
       </div>
     </section>
 
-    <hr>
-
-    <section class="section" aria-labelledby="bench-h">
+    <!-- Journey -->
+    <section id="journey" class="py-10" aria-labelledby="journey-h">
       <div class="wrap">
-        <h2 id="bench-h">The bench</h2>
-        <div class="tiles">
-          <article class="tile">
-            <span class="tile-kick kick-house" aria-hidden="true">●</span>
-            <h3>GoldenSunSampler</h3>
-            <p>An MPC MkII-style pad board in your browser. Tap out beats on a 4×4 grid, load your own sounds onto any pad, chop samples, and build patterns with the step sequencer. Export beats and samples as WAV or MP4. No install — just open the link and play.</p>
-            <a class="btn" href="sampler/">Open Sampler</a>
-          </article>
-          <article class="tile">
-            <span class="tile-kick kick-synthpop" aria-hidden="true">✦</span>
-            <h3>GoldenSunMic</h3>
-            <p>Your pocket recording studio. Hit record and capture vocals, freestyles, and found sounds straight from the mic — then save them as WAV or MP4, or send them straight into GoldenSunSampler as fresh pads. Clean takes anywhere, no gear required.</p>
-            <a class="btn" href="mic/">Open Mic</a>
-          </article>
-          <article class="tile">
-            <span class="tile-kick kick-techno" aria-hidden="true">//</span>
-            <h3>GoldenSunMixer</h3>
-            <p>A full touch DJ mixer that goes anywhere. Two decks, a crossfader, and per-channel EQ and filters — plus platters you can actually scratch with your fingers. Built modular: swap the FX rack, sampler strip, and other pieces in and out to make it yours.</p>
-            <a class="btn" href="mixer/">Open Mixer</a>
-          </article>
-          <article class="tile">
-            <span class="tile-kick kick-eurodance" aria-hidden="true">★</span>
-            <h3>GoldenSunPlayer</h3>
-            <p>The SetList maker, spun out of KikoMix. Drag tracks into running order, tag each with BPM and key so transitions blend, watch total runtime build as you go, and add performance notes. Export or share the finished set — then play it live.</p>
-            <a class="btn" href="player/">Open Player</a>
-          </article>
-        </div>
+        <h2 id="journey-h" class="mb-2 text-3xl">The path</h2>
+        <p class="mb-8 max-w-2xl text-ink2">Eight steps. The four tools below are live; the rest connect to the platforms you already use.</p>
+        <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <li class="chrome-bezel flex flex-col gap-2 p-5">
+            <span class="text-sm font-bold text-mute">2 · RECORD</span>
+            <h3 class="text-xl text-synthpop">Mic</h3>
+            <p class="text-ink2">Capture vocals and found sounds. Save as WAV, or send to the Sampler.</p>
+            <a class="btn mt-auto self-start" href="mic/">Open Mic</a>
+          </li>
+          <li class="chrome-bezel flex flex-col gap-2 p-5">
+            <span class="text-sm font-bold text-mute">3 · PRODUCE</span>
+            <h3 class="text-xl text-house">Sampler</h3>
+            <p class="text-ink2">Tap beats on a 4×4 pad grid, load sounds, and build patterns.</p>
+            <a class="btn mt-auto self-start" href="sampler/">Open Sampler</a>
+          </li>
+          <li class="chrome-bezel flex flex-col gap-2 p-5">
+            <span class="text-sm font-bold text-mute">6 · MIX</span>
+            <h3 class="text-xl text-techno">Mixer</h3>
+            <p class="text-ink2">Two decks, crossfader, EQ and scratch platters. Built for touch.</p>
+            <a class="btn mt-auto self-start" href="mixer/">Open Mixer</a>
+          </li>
+          <li class="chrome-bezel flex flex-col gap-2 p-5">
+            <span class="text-sm font-bold text-mute">7 · PLAY</span>
+            <h3 class="text-xl text-eurodance">Player</h3>
+            <p class="text-ink2">Build setlists with BPM and key, then play the set live.</p>
+            <a class="btn mt-auto self-start" href="player/">Open Player</a>
+          </li>
+        </ol>
       </div>
     </section>
 
-    <hr>
-
-    <section class="section" aria-labelledby="flow-h">
+    <!-- Integrations -->
+    <section class="py-10" aria-labelledby="int-h">
       <div class="wrap">
-        <h2 id="flow-h">One workflow</h2>
-        <ul class="flow">
-          <li><strong>GoldenSunMic → GoldenSunSampler</strong> — record a sound, use it as a pad.</li>
-          <li><strong>GoldenSunSampler → GoldenSunMixer</strong> — beats you build load onto the decks.</li>
-          <li><strong>KikoMix → GoldenSunPlayer</strong> — setlists are built from the KikoMix catalog.</li>
-          <li><strong>GoldenSunPlayer → GoldenSunMixer</strong> — the set you planned is the set you perform.</li>
+        <h2 id="int-h" class="mb-2 text-3xl">Make it, release it, get found</h2>
+        <p class="mb-8 max-w-2xl text-ink2">Direct links today. Deeper hooks are planned — nothing here uploads your audio without you.</p>
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <li class="chrome-bezel p-5"><h3 class="text-lg">Suno</h3><p class="mb-3 text-ink2">Generate ideas and stems to bring into the Sampler.</p><a class="font-bold text-accent underline" href="https://suno.com" rel="noopener">Open Suno →</a></li>
+          <li class="chrome-bezel p-5"><h3 class="text-lg">4 · Master</h3><p class="mb-3 text-ink2">Final polish before release. Mastering partner coming soon.</p><span class="text-mute">Planned</span></li>
+          <li class="chrome-bezel p-5"><h3 class="text-lg">5 · DistroKid</h3><p class="mb-3 text-ink2">Send finished tracks to every store.</p><a class="font-bold text-accent underline" href="https://distrokid.com" rel="noopener">Open DistroKid →</a></li>
+          <li class="chrome-bezel p-5"><h3 class="text-lg">YouTube</h3><p class="mb-3 text-ink2">Post sets, sessions and visuals.</p><a class="font-bold text-accent underline" href="https://www.youtube.com" rel="noopener">Open YouTube →</a></li>
+          <li class="chrome-bezel p-5"><h3 class="text-lg">Spotify</h3><p class="mb-3 text-ink2">Where listeners find the release.</p><a class="font-bold text-accent underline" href="https://open.spotify.com/artist/6n4s5S0cGiMsW4oJvIwU2L" rel="noopener">NakoGold on Spotify →</a></li>
+          <li class="chrome-bezel p-5"><h3 class="text-lg">SoundCloud</h3><p class="mb-3 text-ink2">Share works in progress and mixes.</p><a class="font-bold text-accent underline" href="https://soundcloud.com" rel="noopener">Open SoundCloud →</a></li>
         </ul>
+        <p class="mt-8 text-ink2">Works hand in hand with <a class="font-bold text-accent underline" href="https://sukonik.github.io/nakogold/index.html" rel="noopener">NakoGold</a> — the artist, the catalog, the reason the bench exists.</p>
       </div>
     </section>
   </main>

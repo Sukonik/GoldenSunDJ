@@ -1,0 +1,13 @@
+{
+  "name": "goldensundj",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "build": "tailwindcss -i src/tailwind.css -o css/tw.css --minify",
+    "dev": "tailwindcss -i src/tailwind.css -o css/tw.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}
