@@ -98,6 +98,12 @@ A set of DJ-app and website screenshots was shared as 3D and layout inspiration.
 - **Music browser:** tap the center of a platter to load a track from a simple list with tabs.
 - **Skins and mixer styles** picker, and a "party mode" with colorful visuals.
 
+**From recording 3 (settings and skins):**
+- A **bottom pill tab bar** for settings (Profile, Tutorials, Skin, Settings, About) with the active tab filled in green: a model for the pages in our settings wheel.
+- A **Settings list of plain toggles** (auto BPM, auto sync, auto repeat, advanced options), each with a help bubble.
+- **Skin picker** with live previews ("Pro mixer" default, "Animated mixer"): a model for choosing Controller themes and materials with a preview.
+- **Rim lights on the platter** that glow in color and travel with playback.
+
 What fits GoldenSunDJ: the waveform strip, glowing corner Play buttons, the overlay of big color pads, and the single-deck layout. What does not: heavy skeuomorphic chrome and dense screens; our controller stays minimal and added-to-by-choice.
 
 ## 4. Inspiration sites and repos used for GoldenSunDJ itself

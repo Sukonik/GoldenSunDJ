@@ -157,3 +157,63 @@ body.is-controller .site-footer { display: none; }
 @media (max-width: 40rem) and (orientation: portrait) { .vslider { width: 34px; } }
 @media (max-height: 46rem) and (orientation: portrait) { .opt-cues, .meter { display: none; } .deck { grid-template-rows: auto minmax(0, 1fr) auto; } .deck-title { font-size: .8rem; } }
 @media (max-height: 46rem) and (orientation: portrait) { .xf-ends { display: none; } .center { gap: .2rem .6rem; padding: .4rem .5rem; } .center .opt-xfade { gap: 0; } .tbtn { min-height: 44px; } }
+
+/* ======== Add-ons (off by default; turned on from the settings wheel) ======== */
+.deck { position: relative; }
+.wave, .opt-loop, .pads-btn { display: none; }
+.ctl[data-wave="on"] .wave { display: block; width: 100%; height: 56px; border-radius: 10px; background: rgba(0,0,0,.35); touch-action: none; cursor: pointer; }
+.ctl[data-loop="on"] .opt-loop { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: .4rem; align-items: center; }
+.ctl[data-pads="on"] .pads-btn { display: inline-flex; align-items: center; justify-content: center; }
+.ctl[data-pads="on"] .deck-actions { grid-template-columns: 1fr 1fr 2fr; }
+.lp-step, .lp-toggle { min-height: 44px; border-radius: 12px; border: 1px solid var(--k-line); background: rgba(255,255,255,.06); color: var(--k-text); font-weight: 800; font-family: var(--mono); }
+.lp-toggle[aria-pressed="true"] { background: var(--dk); color: #0a0b0f; border-color: transparent; box-shadow: 0 0 18px color-mix(in srgb, var(--dk) 70%, transparent); }
+.play-btn[aria-pressed="true"] { box-shadow: 0 0 0 3px color-mix(in srgb, var(--dk) 40%, transparent), 0 0 22px color-mix(in srgb, var(--dk) 60%, transparent); }
+
+.pad-drawer { position: absolute; inset: 3.2rem .5rem .5rem; z-index: 4; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: .5rem; padding: .6rem; border-radius: 16px; background: color-mix(in srgb, var(--k-deck) 96%, #000); border: 1px solid var(--dk); box-shadow: 0 20px 40px -10px rgba(0,0,0,.8); }
+.pad-drawer[hidden] { display: none; }
+.pd-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.pd-tabs { display: flex; gap: .3rem; }
+.pd-tab, .pd-close { min-height: 44px; padding: 0 1rem; border-radius: 999px; border: 1px solid var(--k-line); background: transparent; color: var(--k-text); font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+.pd-tab[aria-selected="true"] { background: var(--dk); color: #0a0b0f; border-color: transparent; font-weight: 800; }
+.pd-close { width: 44px; padding: 0; }
+.pd-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: .5rem; min-height: 0; }
+.pd-grid[hidden], .pd-fx[hidden] { display: none; }
+.pd-pad { border-radius: 14px; border: 2px solid var(--pc); background: color-mix(in srgb, var(--pc) 16%, #05060a); color: #fff; font-weight: 800; font-size: .85rem; box-shadow: 0 0 14px color-mix(in srgb, var(--pc) 45%, transparent), inset 0 0 18px color-mix(in srgb, var(--pc) 25%, transparent); min-height: 44px; }
+.pd-pad:active, .pd-pad.is-hit { background: var(--pc); color: #0a0b0f; box-shadow: 0 0 26px var(--pc); }
+.pd-fx { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: .5rem; min-height: 0; }
+.xy { position: relative; border-radius: 14px; border: 1px solid var(--dk); background: linear-gradient(135deg, color-mix(in srgb, var(--dk) 18%, #05060a), #05060a); touch-action: none; display: grid; place-items: end center; padding: .5rem; overflow: hidden; min-height: 80px; }
+.xy span { font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--k-mute); pointer-events: none; }
+.xy-dot { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: var(--dk); box-shadow: 0 0 20px var(--dk); opacity: .5; pointer-events: none; }
+.xy.is-down .xy-dot { opacity: 1; }
+.pd-fxbtns { display: grid; gap: .5rem; grid-auto-rows: minmax(44px, 1fr); }
+.fxb { border-radius: 14px; border: 1px solid var(--dk); background: transparent; color: var(--k-text); font-family: var(--mono); font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; min-height: 44px; }
+.fxb.is-down { background: var(--dk); color: #0a0b0f; }
+
+/* wheel pages */
+.wheel-nav { display: flex; gap: .4rem; justify-content: center; flex-wrap: wrap; }
+.wheel-dots { display: flex; gap: .35rem; justify-content: center; }
+.wheel-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.25); }
+.wheel-dots i.on { background: var(--k-a); }
+
+/* first-run tips */
+.tip { position: fixed; z-index: 150; max-width: min(18rem, 86vw); padding: .8rem .9rem; border-radius: 14px; background: #1b7f2a; color: #fff; box-shadow: 0 14px 40px rgba(0,0,0,.6); display: grid; gap: .6rem; }
+.tip[hidden] { display: none; }
+.tip p { font-size: .95rem; line-height: 1.4; }
+.tip-btns { display: flex; gap: .4rem; }
+.tip .tbtn { min-height: 44px; padding: 0 .9rem; background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.4); font-size: .72rem; }
+@media (max-width: 40rem) and (orientation: portrait) { .pad-drawer { inset: 3rem .3rem .3rem; } .pd-pad { font-size: .7rem; } }
+.opt-loop { justify-items: stretch; }
+.plat-time { white-space: nowrap; }
+.ctl[data-wave="on"] .plat-time { display: none; }
+
+/* deck is a flex column so optional rows (wave, loop, EQ 2) never steal the pad's space */
+.deck { display: flex; flex-direction: column; }
+.deck-body { flex: 1 1 0; min-height: 0; }
+.opt-eq2 { display: none; }
+.ctl[data-eq="2"] .opt-eq { display: none; }
+.ctl[data-eq="2"] .opt-eq2 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; align-items: center; justify-items: stretch; }
+.opt-eq2 label { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .3rem; align-items: center; font-family: var(--mono); font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; color: var(--k-mute); }
+.opt-eq2 input[type="range"] { width: 100%; min-height: 36px; accent-color: var(--dk); touch-action: none; }
+
+/* EQ 2 on short portrait screens: the compact EQ takes the hot-cue row's place so the discs stay big */
+@media (max-height: 46rem) and (orientation: portrait) { .ctl[data-eq="2"] .opt-cues { display: none; } }

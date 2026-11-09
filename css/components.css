@@ -264,3 +264,29 @@ input[type="range"] { accent-color: var(--a); min-height: 32px; }
 @media (max-width: 20rem) { .wx-dot { display: none; } }
 /* journey bar: soft edges so a scrolling list never looks cut off */
 .journey-bar { -webkit-mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 28px), transparent); }
+
+/* ================= v10: Suno/Spotify-style header on tablets, compact app bar in full screen ================= */
+.nav-all { display: none; }
+@media (min-width: 48rem) {
+  .main-nav { display: block; }
+  .nav-more { display: none; }
+  .nav-all { display: list-item; }
+  .main-nav ul { gap: .35rem; }
+  .main-nav a { font-size: .68rem; letter-spacing: .08em; padding-inline: .5rem; }
+  .theme-btn { display: none; }
+  .menu-label { display: none; }
+  .menu-btn { width: 44px; padding: 0; }
+}
+@media (min-width: 64rem) { .theme-btn { display: inline-flex; } .menu-label { display: inline; } .menu-btn { width: auto; padding: 0 .95rem; } .main-nav a { font-size: .72rem; letter-spacing: .12em; } .main-nav ul { gap: .75rem; } }
+@media (min-width: 80rem) { .nav-more { display: list-item; } .nav-all { display: none; } .main-nav ul { gap: 1rem; } }
+
+/* Full screen / installed app: a slim bar with Home and the menu button; everything else lives in the drawer. */
+html[data-fs="on"] { --header-h: 52px; }
+html[data-fs="on"] .site-header-inner > :not(.brand):not(.menu-btn) { display: none !important; }
+html[data-fs="on"] .main-nav, html[data-fs="on"] .journey-bar { display: none !important; }
+html[data-fs="on"] .brand .wordmark { display: none; }
+html[data-fs="on"] .brand { gap: .5rem; padding-right: .9rem; border: 1px solid var(--border-strong); border-radius: 999px; padding-left: .4rem; }
+html[data-fs="on"] .brand::after { content: "Home"; font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+html[data-fs="on"] .menu-label { display: none; }
+html[data-fs="on"] .menu-btn { width: 44px; padding: 0; }
+html[data-fs="on"] .site-header-inner { min-height: var(--header-h); }

@@ -105,9 +105,10 @@
         </label>
       </header>
       <div class="meter" aria-hidden="true"><i id="meter-a"></i></div>
+      <canvas class="wave" id="wave-a" height="56" role="img" aria-label="Deck A waveform. Tap to seek."></canvas>
       <div class="deck-body">
         <div class="plat-zone">
-          <div class="platter" id="platter-a" role="slider" tabindex="0" aria-label="Deck A scratch pad. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="platter" id="platter-a" role="slider" tabindex="0" aria-label="Deck A scratch disc. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="plat-disc" id="disc-a">
               <span class="plat-grooves"></span>
               <span class="plat-label"><span class="sun-mark" aria-hidden="true"></span></span>
@@ -123,12 +124,33 @@
           <div class="eqcol"><input type="range" class="vslider" id="eq-low-a" min="-12" max="12" step="1" value="0" aria-label="Deck A low"><label for="eq-low-a">Low</label></div>
         </div>
       </div>
+      <div class="opt opt-eq2" role="group" aria-label="Deck A EQ (compact)"><label>Hi<input type="range" id="eq2-high-a" min="-12" max="12" step="1" value="0" aria-label="Deck A Hi"></label><label>Mid<input type="range" id="eq2-mid-a" min="-12" max="12" step="1" value="0" aria-label="Deck A Mid"></label><label>Low<input type="range" id="eq2-low-a" min="-12" max="12" step="1" value="0" aria-label="Deck A Low"></label></div>
       <div class="opt opt-cues" role="group" aria-label="Deck A hot cues">
         <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
       </div>
+      <div class="opt opt-loop" role="group" aria-label="Deck A loop">
+        <button type="button" class="lp-step" id="lp-minus-a" aria-label="Shorter loop">−</button>
+        <button type="button" class="lp-toggle" id="loop-a" aria-pressed="false">⟲ <span id="loop-n-a">4</span> beats</button>
+        <button type="button" class="lp-step" id="lp-plus-a" aria-label="Longer loop">+</button>
+      </div>
       <div class="deck-actions">
+        <button type="button" class="tbtn pads-btn" id="pads-a" aria-expanded="false">Sampler</button>
         <button type="button" class="tbtn cue-btn" id="cue-a">Cue</button>
         <button type="button" class="tbtn play-btn" id="play-a" aria-pressed="false">Play</button>
+      </div>
+      <div class="pad-drawer" id="drawer-a" hidden>
+        <div class="pd-top">
+          <div class="pd-tabs" role="tablist" aria-label="Deck A sampler and FX">
+            <button type="button" role="tab" class="pd-tab" data-tab="sampler" aria-selected="true">Sampler</button>
+            <button type="button" role="tab" class="pd-tab" data-tab="fx" aria-selected="false">FX</button>
+          </div>
+          <button type="button" class="pd-close" aria-label="Close sampler">✕</button>
+        </div>
+        <div class="pd-grid" data-panel="sampler"></div>
+        <div class="pd-fx" data-panel="fx" hidden>
+          <div class="xy" id="xy-a" role="application" aria-label="XY effect pad. Left to right sweeps the filter, bottom to top adds echo."><i class="xy-dot"></i><span>Filter ↔ · Echo ↕</span></div>
+          <div class="pd-fxbtns"><button type="button" class="fxb" data-fx="echo">Echo</button><button type="button" class="fxb" data-fx="brake">Brake</button><button type="button" class="fxb" data-fx="filter">Filter</button></div>
+        </div>
       </div>
     </section>
     <section class="center" aria-label="Mixer">
@@ -139,7 +161,7 @@
     <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
   </button>
       <div class="master"><label for="master">Master</label><input type="range" id="master" min="0" max="100" value="85"></div>
-      <p class="ctl-status" id="ctl-status" role="status" aria-live="polite">Be the music. Tap Play, drag a pad to scratch.</p>
+      <p class="ctl-status" id="ctl-status" role="status" aria-live="polite">Be the music. Tap Play, drag a disc to scratch.</p>
       <div class="opt opt-xfade"><label for="xfade">Crossfader</label><input type="range" id="xfade" min="-100" max="100" value="0" aria-label="Crossfader"><div class="xf-ends"><span>A</span><span>B</span></div></div>
     </section>
     <section class="deck deck-b" id="deck-b" data-deck="b" aria-label="Deck B">
@@ -152,9 +174,10 @@
         </label>
       </header>
       <div class="meter" aria-hidden="true"><i id="meter-b"></i></div>
+      <canvas class="wave" id="wave-b" height="56" role="img" aria-label="Deck B waveform. Tap to seek."></canvas>
       <div class="deck-body">
         <div class="plat-zone">
-          <div class="platter" id="platter-b" role="slider" tabindex="0" aria-label="Deck B scratch pad. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="platter" id="platter-b" role="slider" tabindex="0" aria-label="Deck B scratch disc. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="plat-disc" id="disc-b">
               <span class="plat-grooves"></span>
               <span class="plat-label"><span class="sun-mark" aria-hidden="true"></span></span>
@@ -170,21 +193,44 @@
           <div class="eqcol"><input type="range" class="vslider" id="eq-low-b" min="-12" max="12" step="1" value="0" aria-label="Deck B low"><label for="eq-low-b">Low</label></div>
         </div>
       </div>
+      <div class="opt opt-eq2" role="group" aria-label="Deck B EQ (compact)"><label>Hi<input type="range" id="eq2-high-b" min="-12" max="12" step="1" value="0" aria-label="Deck B Hi"></label><label>Mid<input type="range" id="eq2-mid-b" min="-12" max="12" step="1" value="0" aria-label="Deck B Mid"></label><label>Low<input type="range" id="eq2-low-b" min="-12" max="12" step="1" value="0" aria-label="Deck B Low"></label></div>
       <div class="opt opt-cues" role="group" aria-label="Deck B hot cues">
         <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
       </div>
+      <div class="opt opt-loop" role="group" aria-label="Deck B loop">
+        <button type="button" class="lp-step" id="lp-minus-b" aria-label="Shorter loop">−</button>
+        <button type="button" class="lp-toggle" id="loop-b" aria-pressed="false">⟲ <span id="loop-n-b">4</span> beats</button>
+        <button type="button" class="lp-step" id="lp-plus-b" aria-label="Longer loop">+</button>
+      </div>
       <div class="deck-actions">
+        <button type="button" class="tbtn pads-btn" id="pads-b" aria-expanded="false">Sampler</button>
         <button type="button" class="tbtn cue-btn" id="cue-b">Cue</button>
         <button type="button" class="tbtn play-btn" id="play-b" aria-pressed="false">Play</button>
+      </div>
+      <div class="pad-drawer" id="drawer-b" hidden>
+        <div class="pd-top">
+          <div class="pd-tabs" role="tablist" aria-label="Deck B sampler and FX">
+            <button type="button" role="tab" class="pd-tab" data-tab="sampler" aria-selected="true">Sampler</button>
+            <button type="button" role="tab" class="pd-tab" data-tab="fx" aria-selected="false">FX</button>
+          </div>
+          <button type="button" class="pd-close" aria-label="Close sampler">✕</button>
+        </div>
+        <div class="pd-grid" data-panel="sampler"></div>
+        <div class="pd-fx" data-panel="fx" hidden>
+          <div class="xy" id="xy-b" role="application" aria-label="XY effect pad. Left to right sweeps the filter, bottom to top adds echo."><i class="xy-dot"></i><span>Filter ↔ · Echo ↕</span></div>
+          <div class="pd-fxbtns"><button type="button" class="fxb" data-fx="echo">Echo</button><button type="button" class="fxb" data-fx="brake">Brake</button><button type="button" class="fxb" data-fx="filter">Filter</button></div>
+        </div>
       </div>
     </section>
   </div>
 
 
+  <div class="tip" id="tip" role="status" hidden><p id="tip-text"></p><div class="tip-btns"><button type="button" class="tbtn" id="tip-next">Next</button><button type="button" class="tbtn" id="tip-skip">Skip tips</button></div></div>
+
   <div class="wheel-scrim" id="wheel" hidden>
     <div class="wheel-wrap" role="dialog" aria-modal="true" aria-label="Controller customization">
       <div class="wheel" id="wheel-ring"></div>
-      <div class="wheel-center"><strong>Controller</strong><span id="wheel-hint">Tap to add or remove</span><button type="button" class="tbtn" id="wheel-close">Done</button></div>
+      <div class="wheel-center"><strong id="wheel-title">Controls</strong><span id="wheel-hint">Tap to add or remove</span><div class="wheel-nav"><button type="button" class="tbtn" id="wheel-next">Next ▸</button><button type="button" class="tbtn" id="wheel-close">Done</button></div><div class="wheel-dots" id="wheel-dots" aria-hidden="true"></div></div>
     </div>
     <div class="themes-sheet" id="themes-sheet" hidden>
       <h2>Controller themes</h2>

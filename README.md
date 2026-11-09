@@ -43,15 +43,19 @@ The tools hand off to each other: Mic → Sampler → Mixer, and Player → Mixe
 
 Built to feel great on an **iPad**, and to use as much of the screen as it can.
 
-- **1 or 2 scratch pads.** Two by default. Switch from the settings wheel.
-- **Scratch pad.** Drag to scratch: the audio seeks by the angle you turn, and pitch bends with your speed. The disc spins at 33 rpm while a deck plays.
-- **Per deck:** Cue, Play/Pause, 4 hot cues (tap to set or jump, hold to clear), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
-- **Center strip:** Echo, master volume and a crossfader.
+- **1 or 2 scratch discs** (the rotating pads). Two by default. Switch from the settings wheel.
+- **Scratch disc.** Drag to scratch: the audio seeks by the angle you turn, and pitch bends with your speed. The disc spins at 33 rpm while a deck plays.
+- **Per deck, by default:** Cue, Play/Pause, 4 hot cues (tap to set or jump, hold to clear), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
+- **Center strip:** Echo, master volume and a crossfader. Status messages show here and clear themselves.
 - **Demo loops:** a house loop on deck A and a techno loop on deck B, synthesized in your browser when it is idle.
-- **Settings wheel (the gear button):** a round menu to add or remove features: Decks (1/2), EQ, Tempo, Cues, Echo, Fader. It also holds Material, Tilt, Themes and Full screen.
+- **Settings wheel (the gear button):** a round menu in three pages.
+  - **Controls:** Decks (1 or 2), **EQ**, Tempo, Cues, Echo, Fader. **EQ 1** is the full slider rail (default). **EQ 2** is a compact one-row strip that frees width so the discs can be bigger. Tap again for EQ off.
+  - **Add-ons** (all off until you add them, so the screen stays clean): **Wave** (a waveform strip per deck with a playhead, tap to seek), **Sampler + FX** (a drawer with 8 glowing sampler pads, an XY effect pad and momentary Echo, Brake and Filter), **Loop** (a − loop N + control, 1 to 32 beats, with a glowing Play button) and **Tips** (short skippable first-run tooltips).
+  - **Look:** Material, Tilt, Themes and Full screen.
 - **8 controller themes** (separate from the site theme): Night Club, Chrome Plate, Neon Grid, Gold Rush, Glacier, Magma, Violet Haze, Jade Rack. Deck A and deck B are color-coded, like real hardware.
-- **Materials (semi-3D, CSS only):** *Matte*, *Carbon* (woven carbon fiber) and *Titanium* (brushed metal), with beveled buttons and metal platters.
+- **Materials (semi-3D, CSS only):** *Matte*, *Carbon* (woven carbon fiber) and *Titanium* (brushed metal), with beveled buttons and metal discs.
 - **Tilt:** on an iPad or iPhone the specular highlight moves as you tilt the device (it asks for motion access once). On a computer, the light follows your pointer.
+- **Full screen:** in full screen mode or when installed to the Home Screen, the top bar shrinks to **Home** and **Menu** buttons, and everything else lives in the menu drawer.
 - **Layouts for every screen:** three columns on tablets in landscape, stacked decks in portrait, and a compact layout for phones in landscape.
 
 ### Test it on an iPad
@@ -81,7 +85,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10`.
 
 | Version | What it was |
 | --- | --- |
@@ -94,6 +98,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v7** | Clean solid color-changing emblem on a transparent background (replacing the chrome cut-out), new coordinated page copy ("Be the music"), a featured Controller card, **Carbon** and **Titanium** materials with tilt-reactive light, Add to Home Screen support, and this documentation. |
 | **v8** | **Mobile pass:** a static, light build on phones and iPads (no animations, plain emblem image, no fixed pattern layers) that fixes the home-screen crash, an **Animations on/off** switch in the menu, a responsive header and menu, 44 px touch targets across every page, safe-area support, and [RESOURCES.md](RESOURCES.md) with the controller projects we study. |
 | **v9** | **Clean header and status:** one tidy row at every width (brand left, a clear *Menu* button, weather and theme chips that never overlap), the page nav moves into the menu below 1280 px, the cluttered header status chip is gone (status now lives in the page), the Controller's status line sits inside the center strip and clears itself, and the journey bar has soft edges. |
+| **v10** | **Suno/Spotify-style header** (page links stay visible on tablets, with an *All tools* link to the menu, and a compact **Home + Menu** bar in full screen or installed mode). **Controller add-ons** you turn on from the settings wheel: waveform strips, a sampler + FX drawer with an XY pad, loop control and first-run tips. **EQ 1 / EQ 2** (full or compact) so the discs can be bigger. |
 
 ## Under the hood
 

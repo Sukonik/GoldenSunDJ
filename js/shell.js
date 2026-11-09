@@ -53,6 +53,15 @@
     document.querySelectorAll("[data-motion-toggle]").forEach(function (b) { b.setAttribute("aria-pressed", m === "on" ? "true" : "false"); var t = b.querySelector("span"); if (t) t.textContent = m === "on" ? "On" : "Off"; });
   }
   applyMotion();
+  /* Full screen / installed app: a slim bar with Home + Menu (see css). */
+  function applyFs() {
+    var fs = !!(document.fullscreenElement || document.webkitFullscreenElement) || window.navigator.standalone === true;
+    try { fs = fs || window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches; } catch (e) {}
+    root.setAttribute("data-fs", fs ? "on" : "off");
+  }
+  applyFs();
+  document.addEventListener("fullscreenchange", applyFs); document.addEventListener("webkitfullscreenchange", applyFs);
+  try { ["standalone", "fullscreen"].forEach(function (m) { var q = window.matchMedia("(display-mode: " + m + ")"); if (q.addEventListener) q.addEventListener("change", applyFs); }); } catch (e) {}
   // Apply the saved choice immediately (page default otherwise).
   (function () {
     var s = store(KEY);
@@ -241,6 +250,14 @@
     var menu = document.getElementById("menu-btn");
     if (menu && !menu.querySelector(".menu-label")) {
       menu.innerHTML = '<span class="menu-label">Menu</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+    }
+    var navUl = header.querySelector(".main-nav ul");
+    if (navUl && !navUl.querySelector(".nav-all")) {
+      Array.prototype.forEach.call(navUl.children, function (li) { var a = li.querySelector("a"); if (a && /(sampler|mic|mixer|player)\//.test(a.getAttribute("href") || "")) li.classList.add("nav-more"); });
+      var all = document.createElement("li"); all.className = "nav-all";
+      all.innerHTML = '<a href="#" role="button">All tools</a>';
+      all.firstChild.addEventListener("click", function (e) { e.preventDefault(); drawerApi.open(); });
+      navUl.appendChild(all);
     }
     if (!inner.querySelector(".wx-chip")) {
       var w = document.createElement("button");
