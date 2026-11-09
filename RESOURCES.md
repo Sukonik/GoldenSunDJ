@@ -89,6 +89,15 @@ A set of DJ-app and website screenshots was shared as 3D and layout inspiration.
 - **Pad-style layouts and tutorial hints:** a plain green tooltip that teaches "drag your finger on the turntable to scratch".
 - **Spotify and Suno home pages:** simple top bar (logo left, a few links, one pill button), a single big headline, one clear action. A good model for a clean menu.
 
+**From the two screen recordings (an iPad DJ app; not stored in this repo):**
+- **Side-button drawers inside each deck** (FX, Pro, Pads, Mixer): one tap swaps the deck's face for a panel (a sampler grid with paging arrows, an FX picker with an XY pad, "pro tools" with sync, jump and hot cues) without leaving the screen.
+- **Loop selector** per deck: a compact "− loop 4 +" control beside Cue.
+- **Waveform strips** with a colored played-part and a playhead, plus track name, time and BPM at the top.
+- **Center mixer:** BPM readout, two vertical channel faders with a shared level meter, a crossfader at the bottom, and a filter / bass / mid / high strip.
+- **Guided first-run tips:** short green tooltips that teach one move at a time ("drag your finger on the turntable to scratch", "drag the crossfader to mix") with a way to skip.
+- **Music browser:** tap the center of a platter to load a track from a simple list with tabs.
+- **Skins and mixer styles** picker, and a "party mode" with colorful visuals.
+
 What fits GoldenSunDJ: the waveform strip, glowing corner Play buttons, the overlay of big color pads, and the single-deck layout. What does not: heavy skeuomorphic chrome and dense screens; our controller stays minimal and added-to-by-choice.
 
 ## 4. Inspiration sites and repos used for GoldenSunDJ itself
