@@ -7,7 +7,7 @@
 **Be the music.**
 Get outside, find your lyrics, record what you hear, mix it like cookie batter, and play it out.
 
-[**Live site**](https://sukonik.github.io/GoldenSunDJ/) · [Controller](https://sukonik.github.io/GoldenSunDJ/controller/) · [Weather](https://sukonik.github.io/GoldenSunDJ/weather/) · [Notes](https://sukonik.github.io/GoldenSunDJ/notes/) · [Brand notes](BRAND.md)
+[**Live site**](https://sukonik.github.io/GoldenSunDJ/) · [Controller](https://sukonik.github.io/GoldenSunDJ/controller/) · [Weather](https://sukonik.github.io/GoldenSunDJ/weather/) · [Notes](https://sukonik.github.io/GoldenSunDJ/notes/) · [Brand notes](BRAND.md) · [Resources](RESOURCES.md)
 
 *Built by Team GoldenSun. A GoldenSunAI product, working close with [NakoGold](https://sukonik.github.io/nakogold/index.html).*
 
@@ -69,7 +69,8 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 - **Type.** Outfit for display, Inter for text, a monospace for small labels.
 - **8 site themes** built around headphones and CDs, each with three colors and a pattern layer (disc grooves for CDs, waveform stripes for headphones):
   Golden Hour (default), Moonchrome, Prism Pop, Blue Hour, Amber Studio, Bubblegum Bass, Mint Drop, Ember Cans. Pick one from the theme dot in the header. Your choice is remembered.
-- **Motion.** The weather page has an animated sky (sun and rays, moon and stars, clouds, rain, snow, lightning), a counting temperature and a filling score ring. The hero has a soft float, glow and rotating rings. All of it switches off for visitors who prefer reduced motion.
+- **Static on phones and iPads.** Touch devices (and visitors who prefer reduced motion) get a still, light build by default: no animations, a plain emblem image instead of the animated masked one, and no fixed full-screen pattern layers. Use **Menu → Motion → Animations** to turn motion on or off on any device.
+- **Motion (desktop).** The weather page has an animated sky (sun and rays, moon and stars, clouds, rain, snow, lightning), a counting temperature and a filling score ring. The hero has a soft float, glow and rotating rings. All of it switches off for visitors who prefer reduced motion.
 - **Voice.** Short, friendly and practical. Say what to do next, lead with the music. See [BRAND.md](BRAND.md).
 
 ## Weather and Notes
@@ -80,7 +81,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8`.
 
 | Version | What it was |
 | --- | --- |
@@ -91,11 +92,13 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v5** | GoldenSunAI emblem and wordmark as GoldenSunDJ, Inter/Outfit type, headphone and CD themes, DJ Weather dashboard, Notes, BRAND.md. |
 | **v6** | Chrome emblem hero with effects, theme-colored sun marks, animated weather sky, unique theme names with pattern layers, and the **Controller** (1 or 2 scratch pads, settings wheel, 8 controller themes). |
 | **v7** | Clean solid color-changing emblem on a transparent background (replacing the chrome cut-out), new coordinated page copy ("Be the music"), a featured Controller card, **Carbon** and **Titanium** materials with tilt-reactive light, Add to Home Screen support, and this documentation. |
+| **v8** | **Mobile pass:** a static, light build on phones and iPads (no animations, plain emblem image, no fixed pattern layers) that fixes the home-screen crash, an **Animations on/off** switch in the menu, a responsive header and menu, 44 px touch targets across every page, safe-area support, and [RESOURCES.md](RESOURCES.md) with the controller projects we study. |
 
 ## Under the hood
 
 - **Tailwind CSS v4**, built in CI (`npm run build` writes `css/tw.css`; it is not committed). Theme colors live in `css/tokens.css` as three variables per theme (`--a` primary, `--b` highlight, `--c` deep) and everything else is derived from them.
 - **Vanilla JavaScript** and the **Web Audio API** for the audio tools. No framework.
+- **Responsive and touch-ready:** header and menu adapt from 320 px phones to iPad Pro, every button and link is at least 44 px tall on touch devices, the layout respects the iPhone notch and home bar, and the full path (home, Controller, Weather, Notes, Mic, Sampler, Mixer, Player) was audited at nine phone and iPad sizes in portrait and landscape.
 - **Fast and light:** no backdrop blur, one static background layer, off-screen hub sections skip rendering, the Mixer and Controller demo loops are rendered only when the browser is idle (mono, 32 kHz), and a single animation loop runs only while something moves.
 - **Private:** recordings, samples, notes and settings never leave your device. Weather requests send only coordinates to Open-Meteo, and only when you ask.
 - **Accessible:** real buttons and labels, ARIA state on toggles, visible focus, keyboard nudge on the scratch pads, and reduced-motion support.
@@ -135,6 +138,10 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 - A Web Audio scratch engine for true vinyl-style scratching.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
 - Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
+
+## Resources
+
+The controller projects, repos and tools we study are listed in **[RESOURCES.md](RESOURCES.md)**, with the ideas we may borrow and the licenses to check.
 
 ## Credits and licenses
 

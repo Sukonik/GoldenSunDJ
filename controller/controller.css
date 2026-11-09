@@ -149,3 +149,9 @@ body.is-controller .site-footer { display: none; }
 .ctl[data-material="carbon"] .tbtn:active, .ctl[data-material="titanium"] .tbtn:active, .ctl[data-material="carbon"] .cue:active, .ctl[data-material="titanium"] .cue:active { transform: translateY(2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 1px 0 #07080a; }
 .ctl[data-material="titanium"] .play-btn[aria-pressed="true"], .ctl[data-material="carbon"] .play-btn[aria-pressed="true"] { background: var(--dk); color: #0a0b0f; }
 .ctl[data-material="titanium"] .deck-load { color: #101216; border-color: rgba(0,0,0,.35); }
+
+/* touch sizing + very short portrait screens */
+@media (pointer: coarse) { .vslider { width: 40px; } .vslider::-webkit-slider-thumb { width: 36px; height: 26px; margin-left: -14px; } .vslider::-moz-range-thumb { width: 36px; height: 26px; } .platter { min-width: 0; } }
+@media (max-width: 40rem) and (orientation: portrait) { .vslider { width: 34px; } }
+@media (max-height: 46rem) and (orientation: portrait) { .opt-cues, .meter { display: none; } .deck { grid-template-rows: auto minmax(0, 1fr) auto; } .deck-title { font-size: .8rem; } }
+@media (max-height: 46rem) and (orientation: portrait) { .xf-ends { display: none; } .center { gap: .2rem .6rem; padding: .4rem .5rem; } .center .opt-xfade { gap: 0; } .tbtn { min-height: 44px; } }

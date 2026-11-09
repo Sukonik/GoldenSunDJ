@@ -11,10 +11,10 @@
 .pr-note { color: var(--text-muted); padding: .4rem 0; }
 .tools-row { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: space-between; align-items: center; }
 .chips { display: flex; flex-wrap: wrap; gap: .4rem; }
-.chip { min-height: 36px; padding: 0 .9rem; border-radius: 999px; border: 1px solid var(--border-strong); font-size: var(--fs-sm); background: transparent; }
+.chip { min-height: 44px; padding: 0 .9rem; border-radius: 999px; border: 1px solid var(--border-strong); font-size: var(--fs-sm); background: transparent; }
 .chip:hover { border-color: var(--a); background: color-mix(in srgb, var(--a) 12%, transparent); }
 .seg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: 999px; overflow: hidden; }
-.seg button { min-height: 40px; padding: 0 .9rem; font-size: var(--fs-sm); background: transparent; }
+.seg button { min-height: 44px; padding: 0 .9rem; font-size: var(--fs-sm); background: transparent; }
 .seg button[aria-pressed="true"] { background: var(--a); color: var(--accent-ink); font-weight: 700; }
 
 .now { display: grid; gap: 1.25rem; margin-top: var(--space-4); }
@@ -96,3 +96,8 @@
 .now-score[data-tone="prime"] .score-ring { --tone: #3dff9a; } .now-score[data-tone="fair"] .score-ring { --tone: #ffc43d; } .now-score[data-tone="skip"] .score-ring { --tone: #ff6b7a; }
 .score-ring .score-num { font-size: 2.2rem; }
 @media (prefers-reduced-motion: reduce) { .sky *, .sky::before { animation: none !important; } .score-ring { transition: none; } }
+
+/* static sky for Animations: Off (clouds parked in view) */
+html[data-motion="off"] .sky .c1 { left: 8%; } html[data-motion="off"] .sky .c2 { left: 46%; } html[data-motion="off"] .sky .c3 { left: 24%; }
+html[data-motion="off"] .sky .rain { display: none; }
+@media (pointer: coarse) { .hr-bar { display: none; } }

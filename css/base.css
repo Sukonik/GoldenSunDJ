@@ -7,6 +7,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
+  overflow-x: hidden;
   overflow-x: clip;
   background: var(--black);
   color-scheme: dark;
@@ -125,4 +126,13 @@ body::after {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background: var(--layer); opacity: .55;
   -webkit-mask-image: var(--layer-mask); mask-image: var(--layer-mask);
+}
+
+html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+html[data-motion="off"] body::before, html[data-motion="off"] body::after { display: none; }
+html[data-motion="off"] {
+  background:
+    radial-gradient(60% 40vh at 12% 0%, color-mix(in srgb, var(--a) 28%, transparent), transparent 70%) top / 100% 100vh no-repeat,
+    radial-gradient(50% 36vh at 92% 10vh, color-mix(in srgb, var(--b) 20%, transparent), transparent 70%) top / 100% 100vh no-repeat,
+    var(--black);
 }

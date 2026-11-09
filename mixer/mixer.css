@@ -248,3 +248,5 @@
   display: inline-flex;
   align-items: center;
 }
+.fx-toggle-row { min-height: 44px; display: flex; align-items: center; gap: .6rem; }
+.fx-toggle-row input.fx-check { width: 28px; height: 28px; }

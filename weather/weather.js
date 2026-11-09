@@ -93,7 +93,7 @@
     t.appendChild(el("p", "label", title)); t.appendChild(el("p", "tile-big", big)); t.appendChild(el("p", "tile-note", note));
     return t;
   }
-  var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function reduced() { return document.documentElement.getAttribute("data-motion") === "off"; }
   function skyKind(c) { return c >= 95 ? "storm" : (c >= 71 && c <= 77) || c === 85 || c === 86 ? "snow" : (c >= 51 && c <= 67) || (c >= 80 && c <= 82) ? "rain" : c === 45 || c === 48 ? "fog" : c >= 2 ? "cloudy" : "clear"; }
   function paintSky(n) {
     var sky = $("#sky"); if (!sky) return;
@@ -107,7 +107,7 @@
     if (k === "storm") add("flash");
   }
   function countUp(node, to, unit) {
-    if (REDUCED) { node.textContent = to + unit; return; }
+    if (reduced()) { node.textContent = to + unit; return; }
     var t0 = performance.now(), dur = 700;
     function step(t) { var p = Math.min(1, (t - t0) / dur); node.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + unit; if (p < 1) requestAnimationFrame(step); }
     requestAnimationFrame(step);

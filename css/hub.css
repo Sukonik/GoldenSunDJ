@@ -79,3 +79,11 @@ a.wx-card:hover { border-color: var(--a); }
 .feature p { color: var(--text-2); max-width: 36rem; }
 .feature:hover { border-color: var(--a); }
 @media (min-width: 40rem) { .feature { grid-template-columns: auto minmax(0, 1fr) auto; } .feature .tool-kick { font-size: 3rem; } }
+
+.logo-static { display: none; width: 100%; height: 100%; }
+/* ---- Static / light build: phones, iPads, reduced motion, or Animations: Off ---- */
+html[data-motion="off"] .logo-solid, html[data-motion="off"] .halo, html[data-motion="off"] .ring { display: none; }
+html[data-motion="off"] .logo-static { display: block; }
+html[data-motion="off"] .logo-wrap { filter: none; }
+html[data-motion="off"] .section { content-visibility: visible; }
+html[data-motion="off"] .hero-art { background: radial-gradient(circle, color-mix(in srgb, var(--a) 28%, transparent), transparent 68%); border-radius: 50%; }

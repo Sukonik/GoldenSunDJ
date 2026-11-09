@@ -222,3 +222,29 @@ input[type="range"] { accent-color: var(--a); min-height: 32px; }
 @media (prefers-reduced-motion: reduce) { .animate-float, .animate-glow, .animate-spin-slow, .animate-spin-slower, .animate-rise, .animate-shine { animation: none !important; } }
 
 .tagline { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.5rem); letter-spacing: -.01em; margin: 0 0 .75rem; background: linear-gradient(100deg, var(--a), var(--b)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+
+/* ---- Mobile / touch pass ---- */
+.site-header { padding-top: env(safe-area-inset-top); }
+.site-header-inner { padding-inline: max(var(--space-5), env(safe-area-inset-left)) max(var(--space-5), env(safe-area-inset-right)); }
+.brand { min-width: 0; flex-shrink: 1; }
+.wordmark { overflow: hidden; text-overflow: clip; }
+.wx-chip { max-width: 8.5rem; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+.main-nav a { padding-inline: .45rem; min-width: 44px; justify-content: center; }
+.journey-list a { min-height: 44px; }
+.drawer { height: 100dvh; padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+.drawer-note { font-size: var(--fs-xs); color: var(--text-muted); margin-top: .5rem; }
+.motion-toggle { width: 100%; justify-content: flex-start; }
+.motion-toggle > span:last-child { margin-left: auto; font-family: var(--mono); font-size: .8rem; color: var(--a); }
+@media (max-width: 26rem) { .wordmark { font-size: 1.05rem; } .brand-mark { width: 30px; height: 30px; } .site-header-inner { gap: .4rem; } .wx-chip { max-width: 5.6rem; padding: 0 .55rem; } }
+@media (max-width: 22rem) { .brand .wordmark .dj { display: none; } }
+@media (pointer: coarse) {
+  button, .btn, .chip, select, textarea, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]) { min-height: 44px; }
+  input[type="range"] { min-height: 44px; }
+  input[type="checkbox"], input[type="radio"] { width: 24px; height: 24px; }
+  .btn { padding-inline: 1.2rem; }
+  .menu-btn, .icon-btn { width: 44px; height: 44px; }
+}
+
+@media (max-width: 40rem) { .drawer-group a { min-height: 46px; font-size: 1.2rem; } .drawer { gap: var(--space-4); } }
+@media (max-width: 26rem) { .site-header-inner { padding-inline: .75rem; } .wordmark { font-size: 1rem; } .wx-chip { max-width: 4.8rem; } .brand { gap: .4rem; } }
+@media (max-width: 22rem) { .brand .wordmark .dj { display: inline; } }

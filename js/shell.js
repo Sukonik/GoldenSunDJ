@@ -40,6 +40,19 @@
     store(KEY, id);
     markThemes();
   }
+  /* Motion: static by default on touch devices (phones, iPads) and for reduced-motion users.
+     Visitors can switch it in the menu. html[data-motion="off"] turns every animation off. */
+  var MOTION_KEY = "gsdj-motion";
+  function motionDefault() {
+    try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(hover: none)").matches) return "off"; } catch (e) {}
+    return "on";
+  }
+  function motionState() { var m = store(MOTION_KEY); return m === "on" || m === "off" ? m : motionDefault(); }
+  function applyMotion() {
+    var m = motionState(); root.setAttribute("data-motion", m);
+    document.querySelectorAll("[data-motion-toggle]").forEach(function (b) { b.setAttribute("aria-pressed", m === "on" ? "true" : "false"); var t = b.querySelector("span"); if (t) t.textContent = m === "on" ? "On" : "Off"; });
+  }
+  applyMotion();
   // Apply the saved choice immediately (page default otherwise).
   (function () {
     var s = store(KEY);
@@ -169,7 +182,7 @@
       var t = chip.querySelector(".wx-chip-text");
       if (d) { chip.setAttribute("data-tone", d.now.ride.tone); t.innerHTML = d.now.temp + "°F<span class=\"wx-score\"> · " + d.now.ride.score + "</span>";
         chip.setAttribute("aria-label", "Weather in " + d.place.name + ": " + d.now.temp + " degrees, " + describe(d.now.code) + ". " + d.now.ride.label + ". Tap for the full weather dashboard."); }
-      else { chip.removeAttribute("data-tone"); t.textContent = wxState.error ? "Weather offline" : "Weather…"; }
+      else { chip.removeAttribute("data-tone"); t.textContent = wxState.error ? "☀ --°" : "☀ …"; }
     });
     var card = document.querySelector("[data-wx-card]");
     if (!card) return;
@@ -229,7 +242,7 @@
     if (!inner.querySelector(".wx-chip")) {
       var w = document.createElement("button");
       w.type = "button"; w.className = "wx-chip";
-      w.innerHTML = '<span class="wx-dot" aria-hidden="true"></span><span class="wx-chip-text">Weather…</span>';
+      w.innerHTML = '<span class="wx-dot" aria-hidden="true"></span><span class="wx-chip-text">☀ …</span>';
       inner.insertBefore(w, document.getElementById("session-chip") || menu);
     }
     if (!inner.querySelector(".theme-btn")) {
@@ -253,6 +266,15 @@
     header.insertAdjacentElement("afterend", nav);
   }
 
+  function initMotionToggle() {
+    var dr = document.getElementById("drawer"); if (!dr || dr.querySelector("[data-motion-toggle]")) return;
+    var g = document.createElement("div"); g.className = "drawer-group";
+    g.innerHTML = '<h2>Motion</h2><button type="button" class="swatch motion-toggle" data-motion-toggle aria-pressed="false"><span class="swatch-dot" style="--sw-a:#ffc933;--sw-b:#ff8a1f;--sw-c:#5c3a00" aria-hidden="true"></span>Animations <span>Off</span></button><p class="drawer-note">Off keeps pages light and steady on phones and iPads.</p>';
+    var themeGroup = dr.querySelector(".swatches"); var host = themeGroup && themeGroup.parentNode ? themeGroup.parentNode : dr;
+    host.parentNode.insertBefore(g, host.nextSibling);
+    g.querySelector("button").addEventListener("click", function () { store(MOTION_KEY, motionState() === "on" ? "off" : "on"); applyMotion(); });
+    applyMotion();
+  }
   function initMarks() {
     var fw = document.querySelector(".site-footer .wrap");
     if (fw && !fw.querySelector(".footer-mark")) {
@@ -267,10 +289,10 @@
   }
   function initYear() { var y = document.getElementById("year"); if (y) y.textContent = String(new Date().getFullYear()); }
 
-  window.GSDJ = { setTheme: setTheme, setChip: setChip, theme: currentTheme, themes: THEMES };
+  window.GSDJ = { motion: motionState, setTheme: setTheme, setChip: setChip, theme: currentTheme, themes: THEMES };
 
   function init() {
-    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initMarks(); initYear(); initWeather();
+    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initMotionToggle(); initMarks(); initYear(); initWeather();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
