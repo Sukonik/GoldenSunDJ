@@ -63,7 +63,8 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
 - **Materials (semi-3D, CSS only):** *Matte*, *Carbon* (woven carbon fiber) and *Titanium* (brushed metal), with beveled buttons and metal discs.
 - **Tilt:** on an iPad or iPhone the specular highlight moves as you tilt the device (it asks for motion access once). On a computer, the light follows your pointer.
 - **Full screen:** in full screen mode or when installed to the Home Screen, the top bar shrinks to **Home** and **Menu** buttons, and everything else lives in the menu drawer.
-- **Layouts for every screen:** three columns on tablets in landscape, stacked decks in portrait, and a compact layout for phones in landscape.
+- **Layouts for every screen:** three columns on tablets in landscape, stacked decks in portrait, and a dedicated **phone-in-landscape layout** (below).
+- **Phone in landscape.** On a phone turned sideways (full screen from the Home Screen, or inside Safari with its address bar) each deck is rearranged instead of squeezed: a slim top bar, a big disc with the tempo fader beside it, **hot cues as a 2×2 grid and big Play / Cue buttons in a side column**, and the EQ as one compact row under the disc. The header shrinks to 44 px, the center strip is narrower, and with the default setup nothing scrolls (on a 844×390 phone the disc is about 195 px, on a 926×428 phone about 236 px, and about 136 px even inside Safari with its address bar). The EQ switches to the compact row in this layout whichever EQ mode you chose. With every add-on on at once in a very short window, the deck scrolls on its own instead of anything overlapping.
 
 ### Cue and hot cues (the Cue button and the 1 2 3 4 buttons)
 
@@ -117,7 +118,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17`.
 
 | Version | What it was |
 | --- | --- |
@@ -137,6 +138,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v14** | **Scratch engine** (audio worklet, forward and backward, glitch-free) with a repeatable platter model and a **Scratch feel** panel (Natural, Tight, Heavy, Bend, Slip mode). The deck **Load** button now opens the full deck menu (Library, Load, Link). |
 | **v15** | **Scratch patterns** (8 one-tap scratches per deck), **tempo detection** (automatic, with tap tempo to correct it) and a beat grid that follows it, plus **playback safety** (held effects always release, the audio engine self-restarts, a watchdog keeps decks moving). |
 | **v16** | **Clearer cues:** hot cues show *Save* or their time, Library tracks arrive with Build / Drop / Break / Drop 2 cues, cues snap to the beat and are remembered per track, a message explains every cue action, and the Cue button now *holds to listen and returns when you let go*. Also fixes a bug where a track you loaded in the first seconds could be replaced by the demo loop. Hot cues is now a switch in the Add-ons page, so you can trade it for EQ, Sampler or FX room. |
+| **v17** | **Phone landscape layout:** a purpose-built landscape arrangement for iPhones (big discs, side column for cues and Play/Cue, compact EQ, slimmer header), tested in full screen and inside Safari. Fixes the cramped, scrolling, "locked" feel on a sideways phone. |
 
 ## Under the hood
 

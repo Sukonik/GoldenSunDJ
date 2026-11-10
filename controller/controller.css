@@ -373,3 +373,66 @@ body.is-controller .site-footer { display: none; }
 .cue-btn.is-down { background: var(--dk); color: #0a0b0f; border-color: transparent; box-shadow: 0 0 20px color-mix(in srgb, var(--dk) 60%, transparent); }
 .deck-toast { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 6; max-width: min(92%, 26rem); padding: .55rem .9rem; border-radius: 14px; background: rgba(10,12,18,.94); color: #fff; font-size: .82rem; line-height: 1.35; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.6), 0 0 0 1px color-mix(in srgb, var(--dk) 50%, transparent); pointer-events: none; }
 .deck-toast[hidden] { display: none; }
+
+/* ======== v17: portrait order stays the same (the side wrapper dissolves) ======== */
+.deck-side { display: contents; }
+.deck-top { order: 0; } .meter { order: 1; } .wave-wrap { order: 2; } .deck-body { order: 3; } .opt-eq2 { order: 4; }
+.deck-side .opt-cues { order: 5; } .deck-drawers { order: 6; } .opt-loop { order: 7; } .deck-side .deck-actions { order: 8; }
+
+/* ======== v17: phone in landscape. A real layout, not a squeezed portrait one. ========
+   Each deck: [ top bar ] over [ disc + tempo | side column with hot cues and Play / Cue ].
+   EQ becomes one compact row under the disc. Nothing scrolls with the defaults. */
+@media (orientation: landscape) and (max-height: 34rem) {
+  :root, html[data-fs="on"] { --header-h: 44px; }
+  .site-header-inner { min-height: 44px; }
+  .ctl { padding: 4px max(10px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); gap: 0; min-height: 0; }
+  .ctl-stage, .ctl[data-decks="1"] .ctl-stage { grid-template-columns: minmax(0, 1fr) 7.2rem minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 6px; overflow: hidden; }
+  .ctl[data-decks="1"] .ctl-stage { grid-template-columns: minmax(0, 1fr) 7.2rem; }
+  .deck { display: grid; grid-template-columns: minmax(0, 1fr) minmax(4.6rem, 5.6rem); grid-template-rows: auto auto minmax(0, 1fr) auto auto auto; grid-template-areas: "top top" "wave wave" "body side" "eq side" "drw drw" "loop loop"; gap: 4px 6px; padding: 6px 8px; border-radius: 14px; min-height: 0; }
+  .deck > .deck-top { grid-area: top; } .deck > .wave-wrap { grid-area: wave; } .deck > .deck-body { grid-area: body; } .deck > .opt-eq2 { grid-area: eq; } .deck > .deck-side { grid-area: side; } .deck > .deck-drawers { grid-area: drw; } .deck > .opt-loop { grid-area: loop; } .deck > .meter { display: none; }
+  .deck-top { gap: .4rem; } .deck-tag { width: 1.9rem; height: 1.9rem; min-width: 1.9rem; padding: 0 .35rem; font-size: .9rem; } .deck-title { font-size: .72rem; } .deck-bpm { font-size: .8rem; } .deck-load { min-height: 32px; padding: 0 .6rem; font-size: .62rem; }
+  .deck-body { grid-template-columns: minmax(0, 1fr) auto; min-height: 0; gap: .3rem; }
+  .deck-body .opt-eq { display: none !important; }
+  .ctl[data-eq="1"] .opt-eq2, .ctl[data-eq="2"] .opt-eq2 { display: grid; }
+  .opt-eq2 { gap: .3rem; }
+  .opt-eq2 label { font-size: .55rem; } .opt-eq2 input[type="range"] { min-height: 30px; }
+  .plat-zone { padding: 2px; } .plat-time { display: none; }
+  .opt-tempo { gap: .15rem; } .vslider { width: 30px; min-height: 2.6rem; } .opt-tempo label, .opt-tempo output { font-size: .55rem; }
+  .deck-side { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 4px; min-height: 0; }
+  .ctl[data-cues="off"] .deck-side { grid-template-rows: minmax(0, 1fr); }
+  .deck-side .opt-cues { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .ctl[data-cues="off"] .deck-side .opt-cues { display: none; }
+  .cue { min-height: 34px; padding: .1rem; } .cue b { font-size: .8rem; } .cue small { font-size: .5rem; }
+  .deck-side .deck-actions { display: grid; grid-template-columns: 1fr; grid-template-rows: minmax(0, 1.6fr) minmax(0, 1fr); gap: 4px; min-height: 0; }
+  .deck-side .deck-actions .play-btn { order: -1; } .deck-side .deck-actions .tbtn { min-height: 40px; padding: 0 .4rem; font-size: .72rem; }
+  .ctl[data-wave="on"] .wave { height: 44px; } .wave-zoom { min-height: 24px; top: 2px; }
+  .deck-drawers, .opt-loop { gap: 4px; } .deck-drawers .tbtn, .lp-step, .lp-toggle { min-height: 36px; font-size: .68rem; }
+  .drawer-x { inset: 2.7rem .3rem .3rem; padding: .5rem; }
+  .deck-toast { top: 38%; font-size: .72rem; max-width: 90%; }
+  .center { gap: .35rem; padding: 6px; align-content: space-evenly; }
+  .center .ctl-status, .xf-ends { display: none; }
+  .center .tbtn { min-height: 40px; padding: 0 .5rem; font-size: .7rem; } .wheel-btn { width: 44px; height: 44px; }
+  .master, .opt-xfade { font-size: .58rem; gap: .1rem; } .center input[type="range"] { min-height: 32px; }
+  .wheel-wrap { width: min(94dvh, 26rem); }
+  .dm { max-height: 96dvh; padding: .7rem; gap: .5rem; } .dm-tabs button { min-height: 40px; }
+}
+@media (orientation: landscape) and (max-height: 34rem) {
+  .deck-side .opt-cues { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ctl[data-eq="1"] .opt-eq2, .ctl[data-eq="2"] .opt-eq2 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; }
+  .opt-eq2 label { grid-template-columns: auto minmax(0, 1fr); gap: .2rem; }
+  .ctl[data-eq="off"] .opt-eq2 { display: none; }
+}
+@media (orientation: landscape) and (max-height: 34rem) {
+  .ctl-stage, .ctl[data-decks="1"] .ctl-stage { overflow-y: auto; overflow-x: hidden; }
+  .deck-side { overflow: hidden; }
+  .cue { min-height: 28px; }
+  .deck-side .deck-actions .tbtn { min-height: 30px; }
+  .deck-body { min-height: 4.6rem; }
+}
+@media (orientation: landscape) and (max-height: 34rem) {
+  /* extreme case only (browser chrome plus every add-on): the deck itself scrolls instead of anything overlapping */
+  .deck { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+  .deck::-webkit-scrollbar { display: none; }
+  .deck { grid-template-rows: auto auto minmax(6.5rem, 1fr) auto auto auto; }
+  .deck > .deck-body { min-height: 0; }
+}
