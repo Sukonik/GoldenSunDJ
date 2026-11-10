@@ -93,10 +93,91 @@
     d.url = src; d.owned = !!o.blob; d.src = o.meta || null; d.file = o.file || null; d.pk = o.pk || null;
     d.audio.src = src; d.audio.load();
     d.bpm = o.bpm || 0; d.gridOffset = o.bpm ? 0 : null; d.bpmFrom = o.bpm ? "known" : null; d.el.bpm.classList.remove("is-auto"); d.tempo = 0; $("tempo-" + d.id).value = 0; $("tempo-out-" + d.id).textContent = "0%";
-    d.cues = [null, null, null, null]; document.querySelectorAll("#deck-" + d.id + " .cue").forEach(function (c) { c.classList.remove("is-set"); });
+    restoreCues(d, o);
     d.loop.on = false; if (typeof loopUi === "function") loopUi(d);
     d.el.title.textContent = o.title || "Track"; setBpm(d); updatePlayUi(d);
     hooks.load.forEach(function (f) { f(d); });
+  }
+
+
+  /* ---------- cues: simple, visible and remembered ---------- */
+  var cueNames = ["Save", "Save", "Save", "Save"];
+  function snapT(d, t) {                                  // snap to the nearest beat when the tempo is known
+    if (!d.bpm || d.gridOffset == null) return t; var b = 60 / d.bpm;
+    var n = Math.round((t - d.gridOffset) / b) * b + d.gridOffset; return Math.max(0, Math.min(isFinite(d.audio.duration) ? d.audio.duration - 0.05 : n, n));
+  }
+  function trackKey(d) {
+    var m = d.src; if (!m) return null;
+    if (m.kind === "genre") return "g:" + m.id; if (m.kind === "audius") return "a:" + m.id;
+    if (m.kind === "file" && d.file) return "f:" + d.file.name + ":" + d.file.size; return null;
+  }
+  function saveCues(d) {
+    var k = trackKey(d); if (!k) return;
+    try { var all = JSON.parse(localStorage.getItem("gsdj-cues") || "{}"); all[k] = { c: d.cues, n: d.cueLabels || [], p: d.cuePoint || 0, u: Date.now() };
+      var keys = Object.keys(all); if (keys.length > 60) { keys.sort(function (x, y) { return all[x].u - all[y].u; }).slice(0, keys.length - 60).forEach(function (kk) { delete all[kk]; }); }
+      localStorage.setItem("gsdj-cues", JSON.stringify(all)); } catch (e) {}
+  }
+  function restoreCues(d, o) {
+    d.cues = [null, null, null, null]; d.cueLabels = [null, null, null, null]; d.cuePoint = 0;
+    var k = trackKey(d), saved = null;
+    try { if (k) saved = JSON.parse(localStorage.getItem("gsdj-cues") || "{}")[k]; } catch (e) {}
+    if (saved) { d.cues = (saved.c || []).slice(0, 4); while (d.cues.length < 4) d.cues.push(null); d.cueLabels = (saved.n || []).slice(0, 4); d.cuePoint = saved.p || 0; }
+    else if (o && o.cues) { o.cues.slice(0, 4).forEach(function (c, i) { d.cues[i] = c.time; d.cueLabels[i] = c.name; }); }
+    paintCues(d);
+  }
+  function paintCues(d) {
+    document.querySelectorAll("#deck-" + d.id + " .cue").forEach(function (b, i) {
+      var t = d.cues[i], on = t != null, sm = b.querySelector("small");
+      b.classList.toggle("is-set", on); b.setAttribute("aria-label", on ? "Hot cue " + (i + 1) + (d.cueLabels && d.cueLabels[i] ? ", " + d.cueLabels[i] : "") + " at " + fmt(t) + ". Tap to jump. Hold to clear." : "Hot cue " + (i + 1) + ", empty. Tap to save this spot.");
+      if (sm) sm.textContent = on ? ((d.cueLabels && d.cueLabels[i]) || fmt(t)) : "Save";
+    });
+  }
+  var toastTimers = {};
+  function toast(d, msg) {
+    var el = $("toast-" + d.id); if (!el) return say(msg);
+    el.textContent = msg; el.hidden = false; clearTimeout(toastTimers[d.id]); toastTimers[d.id] = setTimeout(function () { el.hidden = true; }, 2600);
+    say(msg);
+  }
+  function firstTimeHelp(d) {
+    try { if (localStorage.getItem("gsdj-cue-help")) return; localStorage.setItem("gsdj-cue-help", "1"); } catch (e) { return; }
+    setTimeout(function () { toast(d, "Tip: hot cues are bookmarks. Tap an empty one to save this spot, tap it again to jump back. Hold to clear."); }, 1800);
+  }
+  function wireCues(d) {
+    var cb = $("cue-" + d.id), previewing = false, pid = null;
+    // Cue: paused = set the return point here and listen while you hold; playing = jump back to the return point and pause
+    cb.addEventListener("pointerdown", function (e) {
+      if (!d.audio.src) { say("Load a track first. Tap Load."); return; }
+      e.preventDefault(); pid = e.pointerId; build(d); ensureCtx(); if (navigator.vibrate) navigator.vibrate(8);
+      if (d.audio.paused) {
+        d.cuePoint = snapT(d, d.audio.currentTime); saveCues(d); previewing = true; cb.classList.add("is-down");
+        d.audio.currentTime = d.cuePoint; d.audio.playbackRate = rate(d); var p = d.audio.play(); if (p && p.catch) p.catch(function () {});
+        toast(d, "Cue set at " + fmt(d.cuePoint) + ". Hold to listen, let go to return."); updatePlayUi(d);
+      } else {
+        d.audio.currentTime = d.cuePoint; d.audio.pause(); updatePlayUi(d); toast(d, "Back at the cue point (" + fmt(d.cuePoint) + "). Press Play to go.");
+      }
+    });
+    function up(e) { if (!previewing || (e && e.pointerId !== undefined && pid !== null && e.pointerId !== pid)) return; previewing = false; cb.classList.remove("is-down"); d.audio.pause(); d.audio.currentTime = d.cuePoint; updatePlayUi(d); }
+    cb.addEventListener("pointerup", up); cb.addEventListener("pointercancel", up); cb.addEventListener("pointerleave", up);
+    window.addEventListener("blur", function () { up(); });
+    // hot cues: tap empty = save here, tap saved = jump, hold saved = clear
+    document.querySelectorAll("#deck-" + d.id + " .cue").forEach(function (b) {
+      var i = +b.getAttribute("data-cue"), timer = null, held = false;
+      b.addEventListener("pointerdown", function () { held = false; clearTimeout(timer); if (d.cues[i] == null) return; timer = setTimeout(function () { held = true; d.cues[i] = null; if (d.cueLabels) d.cueLabels[i] = null; paintCues(d); saveCues(d); toast(d, "Hot cue " + (i + 1) + " cleared."); if (navigator.vibrate) navigator.vibrate([10, 40, 10]); }, 600); });
+      function end() { clearTimeout(timer); }
+      b.addEventListener("pointerup", end); b.addEventListener("pointerleave", end); b.addEventListener("pointercancel", end);
+      b.addEventListener("click", function () {
+        if (held || !d.audio.src) { if (!d.audio.src) say("Load a track first. Tap Load."); return; }
+        if (d.cues[i] == null) {
+          var t = snapT(d, d.audio.currentTime); d.cues[i] = t; if (!d.cueLabels) d.cueLabels = [null, null, null, null]; d.cueLabels[i] = null; paintCues(d); saveCues(d);
+          toast(d, "Hot cue " + (i + 1) + " saved at " + fmt(t) + (d.bpm ? " (on the beat)" : "") + ". Tap it again to jump back here."); firstTimeHelp(d);
+        } else {
+          var was = !d.audio.paused; d.audio.currentTime = d.cues[i]; d.livePos = null;
+          b.classList.add("is-hit"); setTimeout(function () { b.classList.remove("is-hit"); }, 180);
+          toast(d, "Jumped to hot cue " + (i + 1) + (d.cueLabels && d.cueLabels[i] ? " (" + d.cueLabels[i] + ")" : "") + " at " + fmt(d.cues[i]) + (was ? "" : ". Press Play."));
+        }
+        if (navigator.vibrate) navigator.vibrate(8);
+      });
+    });
   }
 
   /* ---------- transport ---------- */
@@ -113,25 +194,7 @@
   }
   decks.forEach(function (d) {
     d.el.play.addEventListener("click", function () { togglePlay(d); });
-    $("cue-" + d.id).addEventListener("click", function () {
-      if (!d.audio.src) return;
-      if (d.audio.paused) { d.cuePoint = d.audio.currentTime; say("Cue set at " + fmt(d.cuePoint) + "."); }
-      else { d.audio.currentTime = d.cuePoint; d.audio.pause(); updatePlayUi(d); }
-      if (navigator.vibrate) navigator.vibrate(8);
-    });
-    // hot cues: tap = set or jump, hold = clear
-    document.querySelectorAll("#deck-" + d.id + " .cue").forEach(function (b) {
-      var i = +b.getAttribute("data-cue"), timer = null, held = false;
-      b.addEventListener("pointerdown", function () { held = false; timer = setTimeout(function () { held = true; d.cues[i] = null; b.classList.remove("is-set"); say("Cue " + (i + 1) + " cleared."); }, 600); });
-      function end() { clearTimeout(timer); }
-      b.addEventListener("pointerup", end); b.addEventListener("pointerleave", end); b.addEventListener("pointercancel", end);
-      b.addEventListener("click", function () {
-        if (held || !d.audio.src) return;
-        if (d.cues[i] == null) { d.cues[i] = d.audio.currentTime; b.classList.add("is-set"); say("Cue " + (i + 1) + " set at " + fmt(d.cues[i]) + "."); }
-        else { d.audio.currentTime = d.cues[i]; }
-        if (navigator.vibrate) navigator.vibrate(8);
-      });
-    });
+    wireCues(d);
     $("tempo-" + d.id).addEventListener("input", function () { d.tempo = parseFloat(this.value) || 0; $("tempo-out-" + d.id).textContent = (d.tempo > 0 ? "+" : "") + d.tempo.toFixed(1) + "%"; if (!d.dragging) d.audio.playbackRate = rate(d); setBpm(d); });
     ["low", "mid", "high"].forEach(function (b) { ["eq-", "eq2-"].forEach(function (pre) { $(pre + b + "-" + d.id).addEventListener("input", function () { var v = parseFloat(this.value); $("eq-" + b + "-" + d.id).value = v; $("eq2-" + b + "-" + d.id).value = v; if (d.nodes) d.nodes[b].gain.value = v; }); }); });
   });
@@ -178,6 +241,7 @@
   /* ---------- demo loops (idle) ---------- */
   function loadDemo(d, fn, name) {
     return fn().then(function (buf) {
+      if (d.src && d.src.kind !== "demo") return;               // you already loaded your own track: never replace it
       var pk = window.GSDJWave ? window.GSDJWave.fromBuffer(buf) : null;
       loadSource(d, URL.createObjectURL(window.GSDJDemo.bufferToWavBlob(buf)), { blob: true, pk: pk, bpm: d.bpm, title: name + " · short demo", meta: { kind: "demo" } });
     }).catch(function (err) { console.error("demo", err && err.message); d.el.title.textContent = "Demo unavailable. Tap Load."; });
@@ -224,7 +288,7 @@
   });
 
   /* ---------- add-on: first-run tips ---------- */
-  var TIPS = [["#play-a", "Tap Play to start a deck."], ["#platter-a", "Drag the disc to scratch."], ["#xfade", "Slide the crossfader to blend the decks."], ["#wheel-btn", "Tap the gear to add or remove controls."]], tipI = 0;
+  var TIPS = [["#play-a", "Tap Play to start a deck."], ["#platter-a", "Drag the disc to scratch."], ["#deck-a .cue", "Hot cues are bookmarks. Tap to save a spot, tap again to jump back."], ["#cue-a", "Cue: hold to listen from the return point, let go to return."], ["#xfade", "Slide the crossfader to blend the decks."], ["#wheel-btn", "Tap the gear to add or remove controls."]], tipI = 0;
   function tipTarget() { while (tipI < TIPS.length) { var el = document.querySelector(TIPS[tipI][0]); if (el && el.getBoundingClientRect().width > 0) return el; tipI++; } return null; }
   function showTip() {
     var tip = $("tip"), el = tipTarget();
@@ -295,7 +359,7 @@
   $("wheel").addEventListener("click", function (e) { if (e.target === this) openWheel(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("wheel").hidden) openWheel(false); });
 
-  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, posOf: posOf, setBpm: setBpm, KEY: KEY, SCRATCH_DEFAULT: SCRATCH_DEFAULT, REV_SECONDS: REV_SECONDS,
+  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, snapT: snapT, toast: toast, paintCues: paintCues, saveCues: saveCues, posOf: posOf, setBpm: setBpm, KEY: KEY, SCRATCH_DEFAULT: SCRATCH_DEFAULT, REV_SECONDS: REV_SECONDS,
     updatePlayUi: updatePlayUi, applySettings: applySettings, loadSource: loadSource, loopOn: loopOn, el: ctlEl,
     audio: function () { return { ctx: actx, master: master, echoWet: echoWet }; } };
   window.dispatchEvent(new Event("gsdj-ctl-ready"));

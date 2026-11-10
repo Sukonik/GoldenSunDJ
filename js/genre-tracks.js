@@ -131,12 +131,13 @@
 
   function render(id, onProgress) {
     var g = G[id]; if (!g) return Promise.reject(new Error("unknown genre"));
-    var secs = plan(g), cache = {}, chunks = [], pk = [], frames = 0, done = 0;
+    var secs = plan(g), cache = {}, chunks = [], pk = [], frames = 0, done = 0, marks = [], tt = 0, beatS = 60 / g.bpm, seenDrop = 0;
+    secs.forEach(function (sc) { var nm = sc[0], when = tt; tt += sc[1] * 4 * beatS; if (nm === "build") marks.push({ name: "Build", time: when }); else if (nm === "drop") { seenDrop++; marks.push({ name: seenDrop === 1 ? "Drop" : "Drop 2", time: when }); } else if (nm === "break") marks.push({ name: "Break", time: when }); });
     var steps = secs.length;
     function next(i) {
       if (i >= steps) {
         var peaks = new Float32Array(pk), top = 0; for (var k = 0; k < peaks.length; k++) if (peaks[k] > top) top = peaks[k]; if (top > 0) for (var q = 0; q < peaks.length; q++) peaks[q] /= top;
-        return Promise.resolve({ blob: wavBlob(chunks, frames), peaks: { data: peaks, pps: PPS }, duration: frames / SR, title: g.name + " · " + g.key + " · full track", bpm: g.bpm });
+        return Promise.resolve({ blob: wavBlob(chunks, frames), peaks: { data: peaks, pps: PPS }, duration: frames / SR, title: g.name + " · " + g.key + " · full track", bpm: g.bpm, cues: marks.slice(0, 4) });
       }
       var nm = secs[i][0], bars = secs[i][1], key = nm + bars;
       if (onProgress) onProgress(i / steps, nm);

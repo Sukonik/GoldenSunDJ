@@ -362,3 +362,14 @@ body.is-controller .site-footer { display: none; }
 .drawer-pat .pd-grid { flex: 1; min-height: 0; }
 .drawer-pat .pd-pad span { font-size: .8rem; }
 .drawer-pat .pd-pad i { top: 5px; }
+
+/* ======== v16: clearer cues ======== */
+.cue { display: grid; place-items: center; align-content: center; gap: 1px; padding: .2rem .3rem; line-height: 1.1; }
+.cue b { font-size: .95rem; }
+.cue small { font-family: var(--mono); font-size: .56rem; letter-spacing: .06em; text-transform: uppercase; color: var(--k-mute); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cue.is-set { background: color-mix(in srgb, var(--dk) 26%, transparent); border-color: var(--dk); }
+.cue.is-set small { color: #fff; font-weight: 700; }
+.cue.is-hit { background: var(--dk); } .cue.is-hit b, .cue.is-hit small { color: #0a0b0f; }
+.cue-btn.is-down { background: var(--dk); color: #0a0b0f; border-color: transparent; box-shadow: 0 0 20px color-mix(in srgb, var(--dk) 60%, transparent); }
+.deck-toast { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 6; max-width: min(92%, 26rem); padding: .55rem .9rem; border-radius: 14px; background: rgba(10,12,18,.94); color: #fff; font-size: .82rem; line-height: 1.35; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.6), 0 0 0 1px color-mix(in srgb, var(--dk) 50%, transparent); pointer-events: none; }
+.deck-toast[hidden] { display: none; }

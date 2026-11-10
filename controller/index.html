@@ -123,17 +123,16 @@
         </div>
       </div>
       <div class="opt opt-eq2" role="group" aria-label="Deck A EQ (compact)"><label>Hi<input type="range" id="eq2-high-a" min="-12" max="12" step="1" value="0" aria-label="Deck A Hi"></label><label>Mid<input type="range" id="eq2-mid-a" min="-12" max="12" step="1" value="0" aria-label="Deck A Mid"></label><label>Low<input type="range" id="eq2-low-a" min="-12" max="12" step="1" value="0" aria-label="Deck A Low"></label></div>
-      <div class="opt opt-cues" role="group" aria-label="Deck A hot cues">
-        <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
-      </div>
+      <div class="opt opt-cues" role="group" aria-label="Deck A hot cues. Bookmarks: tap an empty one to save this spot, tap a saved one to jump there, hold to clear."><button type="button" class="cue" data-cue="0"><b>1</b><small>Save</small></button><button type="button" class="cue" data-cue="1"><b>2</b><small>Save</small></button><button type="button" class="cue" data-cue="2"><b>3</b><small>Save</small></button><button type="button" class="cue" data-cue="3"><b>4</b><small>Save</small></button></div>
       <div class="deck-drawers" role="group" aria-label="Deck A sampler and FX"><button type="button" class="tbtn drw-samp" id="samp-a" aria-expanded="false">Sampler</button><button type="button" class="tbtn drw-fx" id="fx-a" aria-expanded="false">FX</button><button type="button" class="tbtn drw-pat" id="pat-a" aria-expanded="false">Scratch</button></div>
       <div class="opt opt-loop" role="group" aria-label="Deck A loop">
         <button type="button" class="lp-step" id="lp-minus-a" aria-label="Shorter loop">−</button>
         <button type="button" class="lp-toggle" id="loop-a" aria-pressed="false">⟲ <span id="loop-n-a">4</span> beats</button>
         <button type="button" class="lp-step" id="lp-plus-a" aria-label="Longer loop">+</button>
       </div>
+      <div class="deck-toast" id="toast-a" role="status" aria-live="polite" hidden></div>
       <div class="deck-actions">
-        <button type="button" class="tbtn cue-btn" id="cue-a">Cue</button>
+        <button type="button" class="tbtn cue-btn" id="cue-a" title="Cue: set a return point. Hold to listen, let go to return.">Cue</button>
         <button type="button" class="tbtn play-btn" id="play-a" aria-pressed="false">Play</button>
       </div>
     </section>
@@ -176,17 +175,16 @@
         </div>
       </div>
       <div class="opt opt-eq2" role="group" aria-label="Deck B EQ (compact)"><label>Hi<input type="range" id="eq2-high-b" min="-12" max="12" step="1" value="0" aria-label="Deck B Hi"></label><label>Mid<input type="range" id="eq2-mid-b" min="-12" max="12" step="1" value="0" aria-label="Deck B Mid"></label><label>Low<input type="range" id="eq2-low-b" min="-12" max="12" step="1" value="0" aria-label="Deck B Low"></label></div>
-      <div class="opt opt-cues" role="group" aria-label="Deck B hot cues">
-        <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
-      </div>
+      <div class="opt opt-cues" role="group" aria-label="Deck B hot cues. Bookmarks: tap an empty one to save this spot, tap a saved one to jump there, hold to clear."><button type="button" class="cue" data-cue="0"><b>1</b><small>Save</small></button><button type="button" class="cue" data-cue="1"><b>2</b><small>Save</small></button><button type="button" class="cue" data-cue="2"><b>3</b><small>Save</small></button><button type="button" class="cue" data-cue="3"><b>4</b><small>Save</small></button></div>
       <div class="deck-drawers" role="group" aria-label="Deck B sampler and FX"><button type="button" class="tbtn drw-samp" id="samp-b" aria-expanded="false">Sampler</button><button type="button" class="tbtn drw-fx" id="fx-b" aria-expanded="false">FX</button><button type="button" class="tbtn drw-pat" id="pat-b" aria-expanded="false">Scratch</button></div>
       <div class="opt opt-loop" role="group" aria-label="Deck B loop">
         <button type="button" class="lp-step" id="lp-minus-b" aria-label="Shorter loop">−</button>
         <button type="button" class="lp-toggle" id="loop-b" aria-pressed="false">⟲ <span id="loop-n-b">4</span> beats</button>
         <button type="button" class="lp-step" id="lp-plus-b" aria-label="Longer loop">+</button>
       </div>
+      <div class="deck-toast" id="toast-b" role="status" aria-live="polite" hidden></div>
       <div class="deck-actions">
-        <button type="button" class="tbtn cue-btn" id="cue-b">Cue</button>
+        <button type="button" class="tbtn cue-btn" id="cue-b" title="Cue: set a return point. Hold to listen, let go to return.">Cue</button>
         <button type="button" class="tbtn play-btn" id="play-b" aria-pressed="false">Play</button>
       </div>
     </section>

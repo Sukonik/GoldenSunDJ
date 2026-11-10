@@ -74,7 +74,9 @@
       if (d.loop.on && have) { var lx = xOf(d.loop.start), lw = (d.loop.end - d.loop.start) / tSpan * w; g.fillStyle = "rgba(255,255,255,.16)"; g.fillRect(lx, top, lw, ah); g.fillStyle = col; g.fillRect(lx, top, 2, ah); g.fillRect(lx + lw - 2, top, 2, ah); }
       // hot cue flags
       g.font = "800 10px " + cs.fontFamily; g.textAlign = "center";
-      for (var ci = 0; ci < 4; ci++) { var ct = d.cues[ci]; if (ct == null || !have) continue; var cx = xOf(ct); if (cx < -8 || cx > w + 8) continue; g.fillStyle = col; g.fillRect(Math.round(cx), 0, 2, h); g.fillRect(Math.round(cx), 0, 14, 13); g.fillStyle = "#0a0b0f"; g.fillText(String(ci + 1), Math.round(cx) + 8, 10); }
+      for (var ci = 0; ci < 4; ci++) { var ct = d.cues[ci]; if (ct == null || !have) continue; var cx = xOf(ct); if (cx < -8 || cx > w + 8) continue; g.fillStyle = col; g.fillRect(Math.round(cx), 0, 2, h); g.fillRect(Math.round(cx), 0, 14, 13); g.fillStyle = "#0a0b0f"; g.fillText(String(ci + 1), Math.round(cx) + 8, 10); if (d.cueLabels && d.cueLabels[ci]) { g.font = "700 10px " + cs.fontFamily; g.textAlign = "left"; g.fillStyle = "#fff"; g.fillText(d.cueLabels[ci], Math.round(cx) + 17, 10); g.textAlign = "center"; g.font = "800 10px " + cs.fontFamily; } }
+      // return point (Cue button)
+      if (have && d.cuePoint > 0) { var rx = xOf(d.cuePoint); if (rx >= -8 && rx <= w + 8) { g.fillStyle = "#fff"; g.fillRect(Math.round(rx), top, 1, ah); g.beginPath(); g.moveTo(rx - 5, h); g.lineTo(rx + 5, h); g.lineTo(rx, h - 8); g.fill(); } }
       // playhead
       var px0 = xOf(cur); g.fillStyle = "#fff"; g.fillRect(Math.round(px0) - 1, 0, 2, h); g.beginPath(); g.moveTo(px0 - 5, 0); g.lineTo(px0 + 5, 0); g.lineTo(px0, 6); g.fill();
       // time labels

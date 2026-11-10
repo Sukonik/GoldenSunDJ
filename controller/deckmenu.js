@@ -48,7 +48,7 @@
       window.GSDJGenres.render(id, function (p, sec) { if (my !== token) return; $("lib-bar").style.width = Math.max(4, Math.round(p * 100)) + "%"; $("lib-msg").textContent = "Building: " + (names[sec] || "Finishing") + "…"; })
         .then(function (r) {
           if (my !== token) return; building = false; setBusy(false);
-          C.loadSource(d, URL.createObjectURL(r.blob), { blob: true, pk: r.peaks, bpm: r.bpm, title: r.title, meta: { kind: "genre", id: id } });
+          C.loadSource(d, URL.createObjectURL(r.blob), { blob: true, pk: r.peaks, bpm: r.bpm, title: r.title, cues: r.cues, meta: { kind: "genre", id: id } });
           C.say("Loaded " + r.title + " on deck " + d.id.toUpperCase() + "."); menu.hidden = true; if (opener) opener.focus();
         }).catch(function () { if (my !== token) return; building = false; setBusy(false); $("lib-msg").textContent = "Could not build that track here."; $("lib-progress").hidden = false; });
     });

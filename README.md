@@ -67,17 +67,25 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
 
 ### Cue and hot cues (the Cue button and the 1 2 3 4 buttons)
 
-These work for **any** track (Library, Load, Link, demo loops), not just local files. They are *markers* you place yourself, so they do nothing visible until you set one.
+These work for **any** track (Library, Load, Link, demo loops). They are *bookmarks* you place yourself, and the Controller now explains what happened each time with a short message on the deck.
 
-- **Cue button.** Press **Cue while the deck is paused** to mark the current spot as the cue point. Press **Cue while it is playing** to jump back to that cue point and pause. A new deck's cue point is the very start (0:00), so pressing Cue right away just returns to the beginning.
-- **1 2 3 4 (hot cues).** Each is a saved spot. **Tap an empty one** to save the current position into it (it lights up). **Tap a lit one** to jump straight to that spot, even while playing. **Press and hold** a lit one for about 0.6 s to clear it. They reset when you load a new track.
-- **Why they can feel like nothing happens:** the only feedback is the button lighting up and a short status line, and the position moves instantly. Turn on the **Wave** add-on to see numbered flags on the waveform and the jump.
+**Hot cues 1 2 3 4: four bookmarks per deck**
+- **Empty** ones say **Save**. Tap one while the track is at a spot you like and it saves that spot (the button shows the time, for example `1:12`, and lights up). A message tells you what happened.
+- **Tap a saved one** to jump straight to it, even while playing. Great for jumping to the drop.
+- **Press and hold** a saved one for about 0.6 s to clear it.
+- **Library tracks come with cues already placed:** **1 Build, 2 Drop, 3 Break, 4 Drop 2**. Just tap them. You can clear or re-save any of them.
+- **On the beat:** when the tempo is known (Library tracks, auto-detected or tapped tempo), saved cues snap to the nearest beat so jumps land in time.
+- **Remembered:** cues are saved on your device for each track (Library tracks, your files and Audius tracks) and come back when you load it again.
+- With the **Wave** add-on, each cue shows as a numbered flag (with its name) on the waveform, and tapping a flag jumps there.
 
-**Known gaps and ideas for a future update (cues):**
-- Hot cues are not remembered between sessions or per track, and are not quantized (they save the exact instant you tap). Snapping to the beat grid, saving cues per track, and a brief on-screen flash or toast ("Cue 2 set at 1:12") would make them much clearer.
-- Cue does not yet preview while held (the usual "hold to listen, release to return" behavior).
-- Jumping to a hot cue on a streamed (Link) track can pause briefly while the stream buffers; it is faster once the track is saved on the device.
-- Loop and Gate are quantized to the beat grid, but cues and the Cue button are not.
+**Cue button: your "return point"**
+- **Paused:** press **Cue** to set the return point at the current spot. **Keep holding to listen** from there, and **let go to snap back** and pause. (This is how DJ players preview a start point.)
+- **Playing:** press **Cue** to jump back to the return point and pause. Press **Play** to go.
+- The return point shows as a small white marker on the waveform. A new track's return point starts at 0:00.
+
+Tip: turn on **Tips** (gear → Add-ons) for short hints about these buttons. A one-time message also appears the first time you save a hot cue.
+
+**Ideas for a later update (cues):** custom names for cues, a color per cue, cue points that follow the detected beat grid after a tempo correction, jumping to a cue on a streamed track without a pause while it buffers (faster once saved on the device), and cue-based looping.
 
 ### Test it on an iPad
 
@@ -107,7 +115,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16`.
 
 | Version | What it was |
 | --- | --- |
@@ -126,6 +134,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v13** | **iPhone fixes from real-device screenshots:** the settings wheel now stays fully on screen on narrow phones, and the tempo and EQ sliders, disc, waveform and button rows never overlap, even with every add-on on (checked at six phone and iPad sizes in both EQ modes). |
 | **v14** | **Scratch engine** (audio worklet, forward and backward, glitch-free) with a repeatable platter model and a **Scratch feel** panel (Natural, Tight, Heavy, Bend, Slip mode). The deck **Load** button now opens the full deck menu (Library, Load, Link). |
 | **v15** | **Scratch patterns** (8 one-tap scratches per deck), **tempo detection** (automatic, with tap tempo to correct it) and a beat grid that follows it, plus **playback safety** (held effects always release, the audio engine self-restarts, a watchdog keeps decks moving). |
+| **v16** | **Clearer cues:** hot cues show *Save* or their time, Library tracks arrive with Build / Drop / Break / Drop 2 cues, cues snap to the beat and are remembered per track, a message explains every cue action, and the Cue button now *holds to listen and returns when you let go*. Also fixes a bug where a track you loaded in the first seconds could be replaced by the demo loop. |
 
 ## Under the hood
 
@@ -168,7 +177,6 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 
 ## Roadmap
 
-- Make the Cue button and hot cues clearer and more useful (see *Known gaps* under *Cue and hot cues*).
 - Real-iPad tuning of the Controller (scratch feel, tilt, layout) from hands-on feedback.
 - A crossfader cut helper, record-your-scratch, and more patterns.
 - More glass icon variants (a Home Screen icon for every color, an SVG favicon).
