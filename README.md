@@ -90,7 +90,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13`.
 
 | Version | What it was |
 | --- | --- |
@@ -106,6 +106,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v10** | **Suno/Spotify-style header** (page links stay visible on tablets, with an *All tools* link to the menu, and a compact **Home + Menu** bar in full screen or installed mode). **Controller add-ons** you turn on from the settings wheel: waveform strips, a sampler + FX drawer with an XY pad, loop control and first-run tips. **EQ 1 / EQ 2** (full or compact) so the discs can be bigger. |
 | **v11** | **Deck menu** on the A and B tags (Library of eight full-length NAKO GOLD style tracks, Load, and **Link** to search free music on Audius), **Sampler** and **FX** as separate add-ons with 6 sampler banks, a refreshed borderless FX drawer, and a much better **Wave** (beat bars, cue flags, loop region, zoom). |
 | **v12** | **Glass icon system:** eight Murano-style blown-glass app icons with the black (or white) logo, default Glass Blue, a picker in the menu, a favicon that follows your choice, and a Home Screen icon. Fixes the Animations toggle label. |
+| **v13** | **iPhone fixes from real-device screenshots:** the settings wheel now stays fully on screen on narrow phones, and the tempo and EQ sliders, disc, waveform and button rows never overlap, even with every add-on on (checked at six phone and iPad sizes in both EQ modes). |
 
 ## Under the hood
 

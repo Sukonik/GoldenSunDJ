@@ -316,3 +316,20 @@ body.is-controller .site-footer { display: none; }
   .ctl[data-decks="1"] .ctl-stage { grid-template-rows: minmax(min-content, 1fr) auto; }
 }
 @media (min-width: 52rem) and (orientation: landscape) { .ctl-stage { grid-template-rows: minmax(min-content, 1fr); } }
+
+/* ======== v13: iPhone fixes (wheel stays on screen, rails never overlap) ======== */
+.wheel-wrap { width: min(86vw, 26rem, 68dvh); }
+.wheel-item { width: 20%; margin: -10% 0 0 -10%; transform: rotate(var(--ang)) translateY(-200%) rotate(calc(var(--ang) * -1)); font-size: .58rem; }
+.wheel-item b { font-size: 1.15rem; }
+.wheel-item span { max-width: 92%; line-height: 1.1; overflow-wrap: anywhere; }
+.wheel-center { inset: 27%; }
+.wheel-center span { font-size: .68rem; line-height: 1.25; }
+.wheel-center .tbtn { min-height: 40px; padding: 0 .8rem; font-size: .7rem; }
+/* rails shrink with the deck but never past what they need, so they cannot run into the rows below */
+.vslider { min-height: 3.6rem; }
+.deck-body { min-height: 6.75rem; overflow: hidden; }
+.opt-tempo, .opt-eq { min-height: 0; overflow: hidden; }
+.deck > * { min-width: 0; }
+.deck-body { overflow: visible; }
+.opt-tempo, .opt-eq { overflow: visible; }
+.plat-zone { padding: 8px; box-sizing: border-box; }
