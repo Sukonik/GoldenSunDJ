@@ -44,7 +44,8 @@ The tools hand off to each other: Mic → Sampler → Mixer, and Player → Mixe
 Built to feel great on an **iPad**, and to use as much of the screen as it can.
 
 - **1 or 2 scratch discs** (the rotating pads). Two by default. Switch from the settings wheel.
-- **Scratch disc.** Drag to scratch: the audio seeks by the angle you turn, and pitch bends with your speed. The disc spins at 33 rpm while a deck plays.
+- **Scratch disc.** Drag to scratch. A real scratch engine plays a light decoded copy of the track through an audio worklet, so it can run at any speed, forward or backward, with no glitches. A small platter model makes it repeatable: finger speed sets playback speed, a held finger stops the record, and letting go spins the motor back up. The disc spins at 33 rpm while a deck plays. Until a track is ready (or if it is too long), the disc uses **Bend**, a gentle pitch nudge.
+- **Scratch feel (wheel → Scratch):** presets **Natural** (default), **Tight**, **Heavy** and **Bend**, plus Sensitivity, Weight and Return time sliders, **Stop on touch** and **Slip mode** (let go and the track jumps back to where it would have been, so you stay on the beat). The same settings give the same result every time.
 - **Per deck, by default:** Cue, Play/Pause, 4 hot cues (tap to set or jump, hold to clear), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
 - **Center strip:** Echo, master volume and a crossfader. Status messages show here and clear themselves.
 - **Tap the A or B tag on a deck** to open the deck menu:
@@ -90,7 +91,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14`.
 
 | Version | What it was |
 | --- | --- |
@@ -107,6 +108,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v11** | **Deck menu** on the A and B tags (Library of eight full-length NAKO GOLD style tracks, Load, and **Link** to search free music on Audius), **Sampler** and **FX** as separate add-ons with 6 sampler banks, a refreshed borderless FX drawer, and a much better **Wave** (beat bars, cue flags, loop region, zoom). |
 | **v12** | **Glass icon system:** eight Murano-style blown-glass app icons with the black (or white) logo, default Glass Blue, a picker in the menu, a favicon that follows your choice, and a Home Screen icon. Fixes the Animations toggle label. |
 | **v13** | **iPhone fixes from real-device screenshots:** the settings wheel now stays fully on screen on narrow phones, and the tempo and EQ sliders, disc, waveform and button rows never overlap, even with every add-on on (checked at six phone and iPad sizes in both EQ modes). |
+| **v14** | **Scratch engine** (audio worklet, forward and backward, glitch-free) with a repeatable platter model and a **Scratch feel** panel (Natural, Tight, Heavy, Bend, Slip mode). The deck **Load** button now opens the full deck menu (Library, Load, Link). |
 
 ## Under the hood
 
@@ -150,7 +152,7 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 ## Roadmap
 
 - Real-iPad tuning of the Controller (scratch feel, tilt, layout) from hands-on feedback.
-- A Web Audio scratch engine for true vinyl-style scratching (decode tracks to buffers for reverse play and instant scratching).
+- Scratch patterns (baby, chirp, transform), a crossfader cut helper and a record-your-scratch option.
 - More glass icon variants (a Home Screen icon for every color, an SVG favicon).
 - More Link sources (Internet Archive, Free To Use) and tempo detection for streamed tracks.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.

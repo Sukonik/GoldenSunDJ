@@ -15,8 +15,11 @@
   function say(t) { if (!statusEl) return; statusEl.textContent = t; clearTimeout(sayTimer); sayTimer = setTimeout(function () { statusEl.textContent = ""; }, 5000); }
 
   /* ---------- settings (wheel) ---------- */
-  var settings = { decks: 2, eq: "1", tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false, wave: false, sampler: false, fxu: false, loop: false, tips: false };
+  var settings = { decks: 2, eq: "1", tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false, wave: false, sampler: false, fxu: false, loop: false, tips: false,
+    scratch: { preset: "natural", mode: "scratch", sens: 1, weight: 0.5, ret: 0.25, brake: true, slip: false } };
+  var SCRATCH_DEFAULT = JSON.parse(JSON.stringify(settings.scratch));
   try { var saved = JSON.parse(localStorage.getItem(KEY)); if (saved) for (var k in saved) if (k in settings) settings[k] = saved[k]; } catch (e) {}
+  try { settings.scratch = Object.assign({}, SCRATCH_DEFAULT, (saved && saved.scratch) || {}); } catch (e) {}
   if (settings.eq === true) settings.eq = "1"; if (settings.eq === false) settings.eq = "off";
   try { if (saved && saved.pads) { settings.sampler = true; settings.fxu = true; } } catch (e) {}
   var hooks = { after: [], frame: [], load: [] };
@@ -61,8 +64,8 @@
       var high = actx.createBiquadFilter(); high.type = "highshelf"; high.frequency.value = 4000;
       var flt = actx.createBiquadFilter(); flt.type = "lowpass"; flt.frequency.value = 20000; flt.Q.value = 0.8;
       var an = actx.createAnalyser(); an.fftSize = 256; var cross = actx.createGain();
-      src.connect(low); low.connect(mid); mid.connect(high); high.connect(flt); flt.connect(an); an.connect(cross); cross.connect(master);
-      d.nodes = { low: low, mid: mid, high: high, flt: flt, an: an, cross: cross, data: new Uint8Array(an.fftSize) }; d.built = true;
+      var elg = actx.createGain(); src.connect(elg); elg.connect(low); low.connect(mid); mid.connect(high); high.connect(flt); flt.connect(an); an.connect(cross); cross.connect(master);
+      d.nodes = { elg: elg, low: low, mid: mid, high: high, flt: flt, an: an, cross: cross, data: new Uint8Array(an.fftSize) }; d.built = true;
       ["low", "mid", "high"].forEach(function (b) { d.nodes[b].gain.value = parseFloat($("eq-" + b + "-" + d.id).value); });
       applyCross(); return true;
     } catch (e) { say("Audio routing failed. Playback still works without EQ."); return false; }
@@ -73,6 +76,7 @@
     if (byId.a.nodes) byId.a.nodes.cross.gain.value = ga; if (byId.b.nodes) byId.b.nodes.cross.gain.value = gb;
   }
   function rate(d) { return 1 + d.tempo / 100; }
+  function posOf(d) { return d.livePos != null ? d.livePos : d.audio.currentTime; }
   function setBpm(d) { d.el.bpm.textContent = d.bpm ? (d.bpm * rate(d)).toFixed(1) : "--"; }
 
   /* ---------- loading a track onto a deck (Load, Library and Link all come through here) ---------- */
@@ -123,48 +127,10 @@
     });
     $("tempo-" + d.id).addEventListener("input", function () { d.tempo = parseFloat(this.value) || 0; $("tempo-out-" + d.id).textContent = (d.tempo > 0 ? "+" : "") + d.tempo.toFixed(1) + "%"; if (!d.dragging) d.audio.playbackRate = rate(d); setBpm(d); });
     ["low", "mid", "high"].forEach(function (b) { ["eq-", "eq2-"].forEach(function (pre) { $(pre + b + "-" + d.id).addEventListener("input", function () { var v = parseFloat(this.value); $("eq-" + b + "-" + d.id).value = v; $("eq2-" + b + "-" + d.id).value = v; if (d.nodes) d.nodes[b].gain.value = v; }); }); });
-    $("file-" + d.id).addEventListener("change", function () {
-      var f = this.files && this.files[0]; if (!f) return;
-      loadSource(d, URL.createObjectURL(f), { blob: true, file: f, title: f.name, meta: { kind: "file" } });
-      say("Loaded " + f.name + " on deck " + d.id.toUpperCase() + "."); this.value = "";
-    });
   });
   $("xfade").addEventListener("input", applyCross);
   $("master").addEventListener("input", function () { if (master) master.gain.value = parseFloat(this.value) / 100; });
   $("echo-btn").addEventListener("click", function () { var on = this.getAttribute("aria-pressed") !== "true"; this.setAttribute("aria-pressed", on ? "true" : "false"); ensureCtx(); if (echoWet) echoWet.gain.value = on ? 0.5 : 0; });
-
-  /* ---------- scratch pad ---------- */
-  function angleOf(d, e) { var r = d.el.platter.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI; }
-  decks.forEach(function (d) {
-    var last = 0, lastT = 0, wasPlaying = false;
-    d.el.platter.addEventListener("pointerdown", function (e) {
-      if (!d.audio.src) { say("Load a track or wait for the demo loop."); return; }
-      e.preventDefault(); build(d); ensureCtx();
-      d.dragging = true; last = angleOf(d, e); lastT = performance.now(); wasPlaying = !d.audio.paused;
-      if (!wasPlaying) { d.audio.playbackRate = 1; var p = d.audio.play(); if (p && p.catch) p.catch(function () {}); }
-      try { d.el.platter.setPointerCapture(e.pointerId); } catch (x) {} loopOn();
-    });
-    d.el.platter.addEventListener("pointermove", function (e) {
-      if (!d.dragging) return;
-      var a = angleOf(d, e), delta = a - last; if (delta > 180) delta -= 360; if (delta < -180) delta += 360; last = a;
-      var now = performance.now(), dt = Math.max(8, now - lastT) / 1000; lastT = now;
-      d.angle += delta;
-      var dur = d.audio.duration; if (isFinite(dur) && dur > 0) { var t = d.audio.currentTime + (delta / 360) * REV_SECONDS; d.audio.currentTime = ((t % dur) + dur) % dur; }
-      var vel = (delta / dt) / (360 / REV_SECONDS);            // 1 = normal speed
-      d.audio.playbackRate = clamp(Math.abs(vel) < 0.05 ? 0.25 : Math.abs(vel), 0.25, 3);
-    });
-    function end(e) {
-      if (!d.dragging) return; d.dragging = false; d.audio.playbackRate = rate(d);
-      if (!wasPlaying) { d.audio.pause(); }
-      if (e && e.pointerId !== undefined) { try { d.el.platter.releasePointerCapture(e.pointerId); } catch (x) {} }
-      updatePlayUi(d);
-    }
-    d.el.platter.addEventListener("pointerup", end); d.el.platter.addEventListener("pointercancel", end);
-    d.el.platter.addEventListener("keydown", function (e) {
-      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return; var dur = d.audio.duration; if (!isFinite(dur) || dur <= 0) return;
-      d.audio.currentTime = ((d.audio.currentTime + (e.key === "ArrowRight" ? 0.25 : -0.25)) % dur + dur) % dur; e.preventDefault();
-    });
-  });
 
   /* ---------- one animation loop, only while something moves ---------- */
   var raf = null, prev = 0;
@@ -179,8 +145,8 @@
       for (var hf = 0; hf < hooks.frame.length; hf++) hooks.frame[hf](d, playing);
       if (playing && !d.dragging) d.angle += rate(d) * (360 / REV_SECONDS) * dt;
       d.el.disc.style.transform = "rotate(" + d.angle.toFixed(1) + "deg)";
-      var dur = d.audio.duration; d.el.time.textContent = fmt(d.audio.currentTime) + (isFinite(dur) ? " / " + fmt(dur) : "");
-      d.el.platter.setAttribute("aria-valuenow", isFinite(dur) && dur > 0 ? String(Math.round(d.audio.currentTime / dur * 100)) : "0");
+      var dur = d.audio.duration, ps = posOf(d); d.el.time.textContent = fmt(ps) + (isFinite(dur) ? " / " + fmt(dur) : "");
+      d.el.platter.setAttribute("aria-valuenow", isFinite(dur) && dur > 0 ? String(Math.round(ps / dur * 100)) : "0");
       if (d.nodes && playing) { d.nodes.an.getByteTimeDomainData(d.nodes.data); var s = 0; for (var i = 0; i < d.nodes.data.length; i++) { var v = (d.nodes.data[i] - 128) / 128; s += v * v; } d.el.meter.style.width = clamp(Math.sqrt(s / d.nodes.data.length) * 260, 0, 100) + "%"; }
       else d.el.meter.style.width = "0%";
     });
@@ -267,11 +233,12 @@
     tips: { icon: "?", label: function () { return "Tips"; }, on: function () { return settings.tips; }, tap: function () { settings.tips = !settings.tips; if (settings.tips) pendingTips = true; } },
     material: { icon: "▤", label: function () { return { matte: "Matte", carbon: "Carbon", titanium: "Titanium" }[settings.material]; }, on: function () { return settings.material !== "matte"; }, tap: function () { settings.material = { matte: "carbon", carbon: "titanium", titanium: "matte" }[settings.material]; } },
     tilt: { icon: "◭", label: function () { return "Tilt"; }, on: function () { return settings.tilt; }, tap: function () { toggleTilt(); } },
+    scratch: { icon: "✺", label: function () { return "Scratch"; }, on: function () { return false; }, tap: function () { if (window.GSDJScratch) { openWheel(false); window.GSDJScratch.openPanel(); } } },
     themes: { icon: "◐", label: function () { return "Themes"; }, on: function () { return false; }, tap: function () { showThemes(true); } },
     full: { icon: "⛶", label: function () { return "Full"; }, on: function () { return !!document.fullscreenElement; }, tap: function () { var el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else (el.requestFullscreen || el.webkitRequestFullscreen).call(el); } }
   };
   var canFull = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
-  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "cues", "fx", "fader"] }, { name: "Add-ons", ids: ["wave", "sampler", "fxu", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
+  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "cues", "fx", "fader", "scratch"] }, { name: "Add-ons", ids: ["wave", "sampler", "fxu", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
   var wheelPage = 0, pendingTips = false, ring = $("wheel-ring");
   function drawWheel() {
     var pg = PAGES[wheelPage]; ring.textContent = ""; $("wheel-title").textContent = pg.name;
@@ -305,7 +272,7 @@
   $("wheel").addEventListener("click", function (e) { if (e.target === this) openWheel(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("wheel").hidden) openWheel(false); });
 
-  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, setBpm: setBpm,
+  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, posOf: posOf, setBpm: setBpm, KEY: KEY, SCRATCH_DEFAULT: SCRATCH_DEFAULT, REV_SECONDS: REV_SECONDS,
     updatePlayUi: updatePlayUi, applySettings: applySettings, loadSource: loadSource, loopOn: loopOn, el: ctlEl,
     audio: function () { return { ctx: actx, master: master, echoWet: echoWet }; } };
   window.dispatchEvent(new Event("gsdj-ctl-ready"));

@@ -31,7 +31,7 @@
     $("dm-close").addEventListener("click", close);
     menu.addEventListener("click", function (e) { if (e.target === menu) close(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !menu.hidden) close(); });
-    C.decks.forEach(function (d) { var tag = $("tag-" + d.id); tag.addEventListener("click", function () { open(d, tag); }); d.audio.addEventListener("error", function () { if (d.audio.src && d.src && d.src.kind === "audius") C.say("Could not play that stream. Try another track."); }); });
+    C.decks.forEach(function (d) { var tag = $("tag-" + d.id), ld = $("load-" + d.id); tag.addEventListener("click", function () { open(d, tag); }); ld.addEventListener("click", function () { open(d, ld); }); d.audio.addEventListener("error", function () { if (d.audio.src && d.src && d.src.kind === "audius") C.say("Could not play that stream. Try another track."); }); });
 
     /* ---------- Library ---------- */
     var list = $("lib-list");

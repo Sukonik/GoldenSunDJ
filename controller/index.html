@@ -100,9 +100,7 @@
         <button type="button" class="deck-tag" id="tag-a" aria-haspopup="dialog" aria-label="Deck A: choose a track">A<small aria-hidden="true">▾</small></button>
         <span class="deck-title" id="title-a">Loading demo loop…</span>
         <output class="deck-bpm" id="bpm-a" aria-label="Deck A tempo">--</output>
-        <label class="deck-load" title="Load a file onto deck A">
-          <span>Load</span><input type="file" accept="audio/*" id="file-a" class="visually-hidden">
-        </label>
+        <button type="button" class="deck-load" id="load-a" aria-haspopup="dialog" aria-label="Load a track onto deck A">Load</button>
       </header>
       <div class="meter" aria-hidden="true"><i id="meter-a"></i></div>
       <div class="wave-wrap" id="wavewrap-a"><canvas class="wave" id="wave-a" height="72" role="img" aria-label="Deck A waveform. Drag to scrub."></canvas><button type="button" class="wave-zoom" id="zoom-a" aria-pressed="false" aria-label="Zoom waveform">Zoom</button></div>
@@ -155,9 +153,7 @@
         <button type="button" class="deck-tag" id="tag-b" aria-haspopup="dialog" aria-label="Deck B: choose a track">B<small aria-hidden="true">▾</small></button>
         <span class="deck-title" id="title-b">Loading demo loop…</span>
         <output class="deck-bpm" id="bpm-b" aria-label="Deck B tempo">--</output>
-        <label class="deck-load" title="Load a file onto deck B">
-          <span>Load</span><input type="file" accept="audio/*" id="file-b" class="visually-hidden">
-        </label>
+        <button type="button" class="deck-load" id="load-b" aria-haspopup="dialog" aria-label="Load a track onto deck B">Load</button>
       </header>
       <div class="meter" aria-hidden="true"><i id="meter-b"></i></div>
       <div class="wave-wrap" id="wavewrap-b"><canvas class="wave" id="wave-b" height="72" role="img" aria-label="Deck B waveform. Drag to scrub."></canvas><button type="button" class="wave-zoom" id="zoom-b" aria-pressed="false" aria-label="Zoom waveform">Zoom</button></div>
@@ -217,6 +213,7 @@
 <script src="controller.js"></script>
 <script src="wave.js"></script>
 <script src="sampler.js"></script>
+<script src="scratch.js"></script>
 <script src="deckmenu.js"></script>
 </body>
 </html>

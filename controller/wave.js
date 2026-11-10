@@ -47,7 +47,7 @@
       if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
       var g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
       var cs = getComputedStyle(cv), col = cs.getPropertyValue("--dk").trim() || "#ff9f1c";
-      var dur = d.audio.duration, cur = d.audio.currentTime || 0, have = isFinite(dur) && dur > 0;
+      var dur = d.audio.duration, cur = C.posOf(d) || 0, have = isFinite(dur) && dur > 0;
       var tStart = 0, tSpan = have ? dur : 1;
       if (d.zoom && have) { tSpan = Math.min(ZOOM_SECONDS, dur); tStart = clamp(cur - tSpan / 2, 0, Math.max(0, dur - tSpan)); }
       var mid = h / 2, top = 14, bot = 14, ah = h - top - bot, pk = d.pk;

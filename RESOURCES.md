@@ -135,6 +135,14 @@ Notes: streamed tracks are played through an `<audio>` element. Tap a streamed t
 
 **Material Design + Italian blown glass (Murano).** Material gives the tile (rounded square, soft elevation, simple geometry); blown glass gives the surface (translucent color that is dark at the thick rim and luminous in the thin center, a window highlight, lattimo swirls, trapped air bubbles). Eight colors match the eight site themes; Glass Blue is the default. Generated with `tools/make_glass_icons.py` from our own emblem mask.
 
+## 4d. Scratch engine notes
+
+- Scratching needs random-access playback at any speed, including backward, which an `<audio>` element cannot do (seeking is slow and glitchy, negative speeds are not allowed). So we decode a light **mono, 22 kHz copy** of the track (a few MB for a 3-minute track) and play it from an **AudioWorklet** that reads samples with linear interpolation and smooths the speed.
+- A tiny **platter model** (finger velocity / 33 rpm, one-pole smoothing for weight, motor spin-up on release) turns touch into speed, so identical settings always feel identical. Presets: Natural, Tight, Heavy, Bend.
+- The normal player keeps running silently during a scratch, which is what makes **Slip mode** possible.
+- Limits: tracks over about 30 MB use Bend instead; streamed tracks are prepared once they start playing.
+- Ideas: scratch patterns (baby, chirp, transform), crossfader-cut helper, reverse and brake buttons, recording your scratch.
+
 ## 5. Tools and data we use
 
 - [Open-Meteo](https://open-meteo.com/) — free weather, geocoding and air-quality APIs (no key).
