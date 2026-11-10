@@ -15,17 +15,19 @@
   function say(t) { if (!statusEl) return; statusEl.textContent = t; clearTimeout(sayTimer); sayTimer = setTimeout(function () { statusEl.textContent = ""; }, 5000); }
 
   /* ---------- settings (wheel) ---------- */
-  var settings = { decks: 2, eq: "1", tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false, wave: false, pads: false, loop: false, tips: false };
+  var settings = { decks: 2, eq: "1", tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false, wave: false, sampler: false, fxu: false, loop: false, tips: false };
   try { var saved = JSON.parse(localStorage.getItem(KEY)); if (saved) for (var k in saved) if (k in settings) settings[k] = saved[k]; } catch (e) {}
   if (settings.eq === true) settings.eq = "1"; if (settings.eq === false) settings.eq = "off";
+  try { if (saved && saved.pads) { settings.sampler = true; settings.fxu = true; } } catch (e) {}
+  var hooks = { after: [], frame: [], load: [] };
   function applySettings() {
     ctlEl.setAttribute("data-decks", String(settings.decks));
     ["tempo", "cues", "fx", "fader"].forEach(function (f) { ctlEl.setAttribute("data-" + f, settings[f] ? "on" : "off"); });
     ctlEl.setAttribute("data-eq", settings.eq);
     ctlEl.setAttribute("data-ctl-theme", settings.theme);
     ctlEl.setAttribute("data-material", settings.material);
-    ["wave", "pads", "loop"].forEach(function (f) { ctlEl.setAttribute("data-" + f, settings[f] ? "on" : "off"); });
-    if (typeof afterSettings === "function") afterSettings();
+    ["wave", "sampler", "fxu", "loop"].forEach(function (f) { ctlEl.setAttribute("data-" + f, settings[f] ? "on" : "off"); });
+    hooks.after.forEach(function (f) { f(); }); if (!settings.tips) $("tip").hidden = true;
     setTilt(settings.tilt && settings.material !== "matte");
     try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch (e) {}
     applyCross();
@@ -43,9 +45,9 @@
   }
 
   function makeDeck(id, bpm) {
-    var d = { id: id, bpm: bpm || 0, audio: new Audio(), url: null, built: false, nodes: null, cues: [null, null, null, null], cuePoint: 0, angle: 0, peaks: null, file: null, loop: { on: false, i: 2, start: 0, end: 0 }, dragging: false, tempo: 0,
+    var d = { id: id, bpm: bpm || 0, audio: new Audio(), url: null, built: false, nodes: null, cues: [null, null, null, null], cuePoint: 0, angle: 0, pk: null, file: null, src: null, owned: false, loop: { on: false, i: 2, start: 0, end: 0 }, dragging: false, tempo: 0,
       el: { wave: $("wave-" + id), platter: $("platter-" + id), disc: $("disc-" + id), time: $("time-" + id), title: $("title-" + id), bpm: $("bpm-" + id), play: $("play-" + id), meter: $("meter-" + id) } };
-    d.audio.loop = true; d.audio.preload = "auto"; d.audio.setAttribute("playsinline", "");
+    d.audio.crossOrigin = "anonymous"; d.audio.loop = true; d.audio.preload = "auto"; d.audio.setAttribute("playsinline", "");
     return d;
   }
   var decks = [makeDeck("a", 124), makeDeck("b", 128)], byId = { a: decks[0], b: decks[1] };
@@ -72,6 +74,19 @@
   }
   function rate(d) { return 1 + d.tempo / 100; }
   function setBpm(d) { d.el.bpm.textContent = d.bpm ? (d.bpm * rate(d)).toFixed(1) : "--"; }
+
+  /* ---------- loading a track onto a deck (Load, Library and Link all come through here) ---------- */
+  function loadSource(d, src, o) {
+    o = o || {};
+    d.audio.pause(); if (d.url && d.owned) URL.revokeObjectURL(d.url);
+    d.url = src; d.owned = !!o.blob; d.src = o.meta || null; d.file = o.file || null; d.pk = o.pk || null;
+    d.audio.src = src; d.audio.load();
+    d.bpm = o.bpm || 0; d.tempo = 0; $("tempo-" + d.id).value = 0; $("tempo-out-" + d.id).textContent = "0%";
+    d.cues = [null, null, null, null]; document.querySelectorAll("#deck-" + d.id + " .cue").forEach(function (c) { c.classList.remove("is-set"); });
+    d.loop.on = false; if (typeof loopUi === "function") loopUi(d);
+    d.el.title.textContent = o.title || "Track"; setBpm(d); updatePlayUi(d);
+    hooks.load.forEach(function (f) { f(d); });
+  }
 
   /* ---------- transport ---------- */
   function updatePlayUi(d) { var on = !d.audio.paused; d.el.play.setAttribute("aria-pressed", on ? "true" : "false"); d.el.play.textContent = on ? "Pause" : "Play"; chip(); loopOn(); }
@@ -110,9 +125,8 @@
     ["low", "mid", "high"].forEach(function (b) { ["eq-", "eq2-"].forEach(function (pre) { $(pre + b + "-" + d.id).addEventListener("input", function () { var v = parseFloat(this.value); $("eq-" + b + "-" + d.id).value = v; $("eq2-" + b + "-" + d.id).value = v; if (d.nodes) d.nodes[b].gain.value = v; }); }); });
     $("file-" + d.id).addEventListener("change", function () {
       var f = this.files && this.files[0]; if (!f) return;
-      if (d.url) URL.revokeObjectURL(d.url); d.url = URL.createObjectURL(f); d.audio.src = d.url; d.bpm = 0; d.cues = [null, null, null, null];
-      document.querySelectorAll("#deck-" + d.id + " .cue").forEach(function (c) { c.classList.remove("is-set"); });
-      d.file = f; d.peaks = null; d.el.title.textContent = f.name; setBpm(d); if (settings.wave) decodePeaks(d); say("Loaded " + f.name + " on deck " + d.id.toUpperCase() + "."); this.value = "";
+      loadSource(d, URL.createObjectURL(f), { blob: true, file: f, title: f.name, meta: { kind: "file" } });
+      say("Loaded " + f.name + " on deck " + d.id.toUpperCase() + "."); this.value = "";
     });
   });
   $("xfade").addEventListener("input", applyCross);
@@ -162,7 +176,7 @@
       var playing = !d.audio.paused;
       if (playing || d.dragging) busy = true;
       if (d.loop.on && !d.dragging && playing && d.audio.currentTime >= d.loop.end) d.audio.currentTime = d.loop.start;
-      if (settings.wave && (playing || d.dragging)) drawWave(d);
+      for (var hf = 0; hf < hooks.frame.length; hf++) hooks.frame[hf](d, playing);
       if (playing && !d.dragging) d.angle += rate(d) * (360 / REV_SECONDS) * dt;
       d.el.disc.style.transform = "rotate(" + d.angle.toFixed(1) + "deg)";
       var dur = d.audio.duration; d.el.time.textContent = fmt(d.audio.currentTime) + (isFinite(dur) ? " / " + fmt(dur) : "");
@@ -176,12 +190,14 @@
 
   /* ---------- demo loops (idle) ---------- */
   function loadDemo(d, fn, name) {
-    return fn().then(function (buf) { d.peaks = peaksOf(buf); drawWave(d); d.url = URL.createObjectURL(window.GSDJDemo.bufferToWavBlob(buf)); d.audio.src = d.url; d.el.title.textContent = name + " · synthesized"; setBpm(d); })
-      .catch(function (err) { console.error("demo", err && err.message); d.el.title.textContent = "Demo unavailable. Tap Load."; });
+    return fn().then(function (buf) {
+      var pk = window.GSDJWave ? window.GSDJWave.fromBuffer(buf) : null;
+      loadSource(d, URL.createObjectURL(window.GSDJDemo.bufferToWavBlob(buf)), { blob: true, pk: pk, bpm: d.bpm, title: name + " · short demo", meta: { kind: "demo" } });
+    }).catch(function (err) { console.error("demo", err && err.message); d.el.title.textContent = "Demo unavailable. Tap Load."; });
   }
   function startDemos() {
     if (!window.GSDJDemo || !(window.OfflineAudioContext || window.webkitOfflineAudioContext)) { decks.forEach(function (d) { d.el.title.textContent = "Tap Load to add a track"; }); return; }
-    Promise.all([loadDemo(byId.a, GSDJDemo.renderHouseLoop, "House loop"), loadDemo(byId.b, GSDJDemo.renderTechnoLoop, "Techno loop")]).then(function () { say("Be the music. Tap Play, drag a disc to scratch."); });
+    Promise.all([loadDemo(byId.a, GSDJDemo.renderHouseLoop, "House loop"), loadDemo(byId.b, GSDJDemo.renderTechnoLoop, "Techno loop")]).then(function () { say("Be the music. Tap the A or B tag for full-length tracks."); });
   }
   if (window.requestIdleCallback) requestIdleCallback(startDemos, { timeout: 2000 }); else setTimeout(startDemos, 300);
 
@@ -204,41 +220,6 @@
   }
 
 
-  /* ---------- add-on: waveform strips ---------- */
-  var BINS = 220;
-  function peaksOf(buf) {
-    var ch = buf.getChannelData(0), n = ch.length, step = Math.max(1, Math.floor(n / BINS / 40)), out = new Float32Array(BINS), per = n / BINS;
-    for (var b = 0; b < BINS; b++) { var m = 0, from = Math.floor(b * per), to = Math.min(n, Math.floor((b + 1) * per)); for (var i = from; i < to; i += step) { var v = Math.abs(ch[i]); if (v > m) m = v; } out[b] = m; }
-    var top = 0; for (var k = 0; k < BINS; k++) if (out[k] > top) top = out[k]; if (top > 0) for (var q = 0; q < BINS; q++) out[q] /= top;
-    return out;
-  }
-  function decodePeaks(d) {
-    if (!d.file || d.peaks) return;
-    if (d.file.size > 40e6) { say("This file is large, so its waveform is skipped."); return; }
-    if (!ensureCtx()) return;
-    d.file.arrayBuffer().then(function (ab) { return actx.decodeAudioData(ab); }).then(function (buf) { d.peaks = peaksOf(buf); drawWave(d); }).catch(function () { say("Could not read this file's waveform."); });
-  }
-  function drawWave(d) {
-    var cv = d.el.wave; if (!cv || !settings.wave) return;
-    var w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
-    var dpr = window.devicePixelRatio || 1; if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-    var g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
-    var col = getComputedStyle(cv).getPropertyValue("--dk").trim() || "#ff9f1c", dur = d.audio.duration, prog = isFinite(dur) && dur > 0 ? d.audio.currentTime / dur : 0;
-    var bw = w / BINS, mid = h / 2;
-    for (var i = 0; i < BINS; i++) { var a = d.peaks ? d.peaks[i] : 0.08; var bh = Math.max(2, a * (h - 6)); g.fillStyle = i / BINS < prog ? col : "rgba(255,255,255,.28)"; g.fillRect(i * bw + 0.5, mid - bh / 2, Math.max(1, bw - 1), bh); }
-    g.fillStyle = "#fff"; g.fillRect(Math.round(prog * w) - 1, 0, 2, h);
-    if (d.loop.on && isFinite(dur) && dur > 0) { g.fillStyle = "rgba(255,255,255,.18)"; g.fillRect(d.loop.start / dur * w, 0, (d.loop.end - d.loop.start) / dur * w, h); }
-  }
-  decks.forEach(function (d) {
-    var cv = d.el.wave; if (!cv) return;
-    function seek(e) { var r = cv.getBoundingClientRect(), dur = d.audio.duration; if (!isFinite(dur) || dur <= 0) return; d.audio.currentTime = clamp((e.clientX - r.left) / r.width, 0, 1) * dur; drawWave(d); }
-    var down = false;
-    cv.addEventListener("pointerdown", function (e) { down = true; try { cv.setPointerCapture(e.pointerId); } catch (x) {} seek(e); });
-    cv.addEventListener("pointermove", function (e) { if (down) seek(e); });
-    cv.addEventListener("pointerup", function () { down = false; }); cv.addEventListener("pointercancel", function () { down = false; });
-  });
-  window.addEventListener("resize", function () { if (settings.wave) decks.forEach(drawWave); });
-
   /* ---------- add-on: loop control ---------- */
   var LOOPS = [1, 2, 4, 8, 16, 32];
   function loopLen(d) { var bpm = d.bpm ? d.bpm * rate(d) : 120; return LOOPS[d.loop.i] * 60 / bpm; }
@@ -252,51 +233,6 @@
       if (d.loop.on) { d.loop.start = d.audio.currentTime; d.loop.end = Math.min(d.audio.duration || 1e9, d.loop.start + loopLen(d)); say("Loop " + LOOPS[d.loop.i] + " beats."); } else say("Loop off.");
       loopUi(d);
     });
-  });
-
-  /* ---------- add-on: pad + FX drawer ---------- */
-  var noiseBuf = null;
-  function noise() { if (!noiseBuf) { noiseBuf = actx.createBuffer(1, actx.sampleRate, actx.sampleRate); var a = noiseBuf.getChannelData(0); for (var i = 0; i < a.length; i++) a[i] = Math.random() * 2 - 1; } return noiseBuf; }
-  function env(g, t, peak, dur) { g.gain.setValueAtTime(peak, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); }
-  var SOUNDS = [
-    ["Kick", function (t, o) { var x = actx.createOscillator(), g = actx.createGain(); x.frequency.setValueAtTime(150, t); x.frequency.exponentialRampToValueAtTime(42, t + 0.14); env(g, t, 0.95, 0.3); x.connect(g); g.connect(o); x.start(t); x.stop(t + 0.32); }],
-    ["Snare", function (t, o) { var n = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain(); n.buffer = noise(); f.type = "highpass"; f.frequency.value = 1500; env(g, t, 0.6, 0.18); n.connect(f); f.connect(g); g.connect(o); n.start(t); n.stop(t + 0.2); var x = actx.createOscillator(), g2 = actx.createGain(); x.frequency.value = 190; env(g2, t, 0.4, 0.1); x.connect(g2); g2.connect(o); x.start(t); x.stop(t + 0.12); }],
-    ["Clap", function (t, o) { [0, 0.012, 0.025].forEach(function (dt) { var n = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain(); n.buffer = noise(); f.type = "bandpass"; f.frequency.value = 1400; env(g, t + dt, 0.5, 0.1); n.connect(f); f.connect(g); g.connect(o); n.start(t + dt); n.stop(t + dt + 0.12); }); }],
-    ["Hat", function (t, o) { var n = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain(); n.buffer = noise(); f.type = "highpass"; f.frequency.value = 7000; env(g, t, 0.35, 0.05); n.connect(f); f.connect(g); g.connect(o); n.start(t); n.stop(t + 0.08); }],
-    ["Open", function (t, o) { var n = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain(); n.buffer = noise(); f.type = "highpass"; f.frequency.value = 6000; env(g, t, 0.3, 0.32); n.connect(f); f.connect(g); g.connect(o); n.start(t); n.stop(t + 0.35); }],
-    ["Tom", function (t, o) { var x = actx.createOscillator(), g = actx.createGain(); x.frequency.setValueAtTime(190, t); x.frequency.exponentialRampToValueAtTime(95, t + 0.2); env(g, t, 0.7, 0.3); x.connect(g); g.connect(o); x.start(t); x.stop(t + 0.32); }],
-    ["Stab", function (t, o) { var f = actx.createBiquadFilter(), g = actx.createGain(); f.type = "lowpass"; f.frequency.value = 1800; env(g, t, 0.18, 0.4); f.connect(g); g.connect(o); [220, 261.63, 329.63].forEach(function (hz) { var x = actx.createOscillator(); x.type = "sawtooth"; x.frequency.value = hz; x.connect(f); x.start(t); x.stop(t + 0.42); }); }],
-    ["Zap", function (t, o) { var x = actx.createOscillator(), g = actx.createGain(); x.type = "sawtooth"; x.frequency.setValueAtTime(1800, t); x.frequency.exponentialRampToValueAtTime(90, t + 0.25); env(g, t, 0.25, 0.3); x.connect(g); g.connect(o); x.start(t); x.stop(t + 0.32); }]
-  ];
-  var PCOL = ["#ff4d6d", "#ff6a3d", "#ff9f1c", "#ffd21a", "#b6ff1a", "#3dff9a", "#35d0ff", "#b56bff"];
-  function filterTo(d, hz) { if (d.nodes) d.nodes.flt.frequency.setTargetAtTime(hz, actx.currentTime, 0.05); }
-  decks.forEach(function (d) {
-    var dr = $("drawer-" + d.id), grid = dr.querySelector(".pd-grid");
-    SOUNDS.forEach(function (snd, i) {
-      var b = document.createElement("button"); b.type = "button"; b.className = "pd-pad"; b.textContent = snd[0]; b.style.setProperty("--pc", PCOL[i]);
-      b.addEventListener("pointerdown", function (e) { e.preventDefault(); if (!ensureCtx()) return; snd[1](actx.currentTime, master); b.classList.add("is-hit"); if (navigator.vibrate) navigator.vibrate(6); });
-      ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { b.addEventListener(ev, function () { b.classList.remove("is-hit"); }); });
-      grid.appendChild(b);
-    });
-    $("pads-" + d.id).addEventListener("click", function () { var open = dr.hidden; dr.hidden = !open; this.setAttribute("aria-expanded", open ? "true" : "false"); });
-    dr.querySelector(".pd-close").addEventListener("click", function () { dr.hidden = true; $("pads-" + d.id).setAttribute("aria-expanded", "false"); });
-    dr.querySelectorAll(".pd-tab").forEach(function (t) { t.addEventListener("click", function () {
-      dr.querySelectorAll(".pd-tab").forEach(function (x) { x.setAttribute("aria-selected", x === t ? "true" : "false"); });
-      dr.querySelector("[data-panel=sampler]").hidden = t.getAttribute("data-tab") !== "sampler"; dr.querySelector("[data-panel=fx]").hidden = t.getAttribute("data-tab") !== "fx"; }); });
-    // momentary FX
-    dr.querySelectorAll(".fxb").forEach(function (b) {
-      var kind = b.getAttribute("data-fx"), prevRate = 1;
-      function on() { ensureCtx(); build(d); b.classList.add("is-down"); if (kind === "echo" && echoWet) echoWet.gain.value = 0.8; if (kind === "brake") { prevRate = rate(d); d.audio.playbackRate = Math.max(0.0625, prevRate * 0.5); } if (kind === "filter") filterTo(d, 500); }
-      function off() { b.classList.remove("is-down"); if (kind === "echo" && echoWet) echoWet.gain.value = $("echo-btn").getAttribute("aria-pressed") === "true" ? 0.5 : 0; if (kind === "brake") d.audio.playbackRate = rate(d); if (kind === "filter") filterTo(d, 20000); }
-      b.addEventListener("pointerdown", function (e) { e.preventDefault(); on(); }); ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { b.addEventListener(ev, off); });
-    });
-    // XY pad: x = filter sweep, y = echo amount
-    var xy = $("xy-" + d.id), dot = xy.querySelector(".xy-dot"), xyDown = false;
-    function xyMove(e) { var r = xy.getBoundingClientRect(), x = clamp((e.clientX - r.left) / r.width, 0, 1), y = clamp(1 - (e.clientY - r.top) / r.height, 0, 1); dot.style.left = x * 100 + "%"; dot.style.top = (1 - y) * 100 + "%"; filterTo(d, 200 * Math.pow(100, x)); if (echoWet) echoWet.gain.value = y * 0.8; }
-    xy.addEventListener("pointerdown", function (e) { e.preventDefault(); ensureCtx(); build(d); xyDown = true; xy.classList.add("is-down"); try { xy.setPointerCapture(e.pointerId); } catch (x) {} xyMove(e); });
-    xy.addEventListener("pointermove", function (e) { if (xyDown) xyMove(e); });
-    function xyUp() { if (!xyDown) return; xyDown = false; xy.classList.remove("is-down"); dot.style.left = "50%"; dot.style.top = "50%"; filterTo(d, 20000); if (echoWet) echoWet.gain.value = $("echo-btn").getAttribute("aria-pressed") === "true" ? 0.5 : 0; }
-    xy.addEventListener("pointerup", xyUp); xy.addEventListener("pointercancel", xyUp);
   });
 
   /* ---------- add-on: first-run tips ---------- */
@@ -315,7 +251,6 @@
   $("tip-next").addEventListener("click", function () { tipI++; if (tipI >= TIPS.length) endTips(); else showTip(); });
   $("tip-skip").addEventListener("click", endTips);
 
-  function afterSettings() { if (settings.wave) decks.forEach(function (d) { if (!d.peaks && d.file) decodePeaks(d); drawWave(d); }); if (!settings.pads) decks.forEach(function (d) { $("drawer-" + d.id).hidden = true; }); if (!settings.tips) $("tip").hidden = true; }
 
   /* ---------- settings wheel ---------- */
   var ITEM = {
@@ -326,7 +261,8 @@
     fx: { icon: "∿", label: function () { return "Echo"; }, on: function () { return settings.fx; }, tap: function () { settings.fx = !settings.fx; } },
     fader: { icon: "↔", label: function () { return "Fader"; }, on: function () { return settings.fader; }, tap: function () { settings.fader = !settings.fader; } },
     wave: { icon: "▁▃▆", label: function () { return "Wave"; }, on: function () { return settings.wave; }, tap: function () { settings.wave = !settings.wave; } },
-    pads: { icon: "▣", label: function () { return "Sampler + FX"; }, on: function () { return settings.pads; }, tap: function () { settings.pads = !settings.pads; } },
+    sampler: { icon: "▣", label: function () { return "Sampler"; }, on: function () { return settings.sampler; }, tap: function () { settings.sampler = !settings.sampler; } },
+    fxu: { icon: "✧", label: function () { return "FX"; }, on: function () { return settings.fxu; }, tap: function () { settings.fxu = !settings.fxu; } },
     loop: { icon: "⟲", label: function () { return "Loop"; }, on: function () { return settings.loop; }, tap: function () { settings.loop = !settings.loop; } },
     tips: { icon: "?", label: function () { return "Tips"; }, on: function () { return settings.tips; }, tap: function () { settings.tips = !settings.tips; if (settings.tips) pendingTips = true; } },
     material: { icon: "▤", label: function () { return { matte: "Matte", carbon: "Carbon", titanium: "Titanium" }[settings.material]; }, on: function () { return settings.material !== "matte"; }, tap: function () { settings.material = { matte: "carbon", carbon: "titanium", titanium: "matte" }[settings.material]; } },
@@ -335,7 +271,7 @@
     full: { icon: "⛶", label: function () { return "Full"; }, on: function () { return !!document.fullscreenElement; }, tap: function () { var el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else (el.requestFullscreen || el.webkitRequestFullscreen).call(el); } }
   };
   var canFull = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
-  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "cues", "fx", "fader"] }, { name: "Add-ons", ids: ["wave", "pads", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
+  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "cues", "fx", "fader"] }, { name: "Add-ons", ids: ["wave", "sampler", "fxu", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
   var wheelPage = 0, pendingTips = false, ring = $("wheel-ring");
   function drawWheel() {
     var pg = PAGES[wheelPage]; ring.textContent = ""; $("wheel-title").textContent = pg.name;
@@ -369,5 +305,9 @@
   $("wheel").addEventListener("click", function (e) { if (e.target === this) openWheel(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("wheel").hidden) openWheel(false); });
 
+  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, setBpm: setBpm,
+    updatePlayUi: updatePlayUi, applySettings: applySettings, loadSource: loadSource, loopOn: loopOn, el: ctlEl,
+    audio: function () { return { ctx: actx, master: master, echoWet: echoWet }; } };
+  window.dispatchEvent(new Event("gsdj-ctl-ready"));
   applySettings(); decks.forEach(setBpm); loopOn();
 })();

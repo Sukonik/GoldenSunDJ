@@ -97,7 +97,7 @@
   <div class="ctl-stage">
     <section class="deck deck-a" id="deck-a" data-deck="a" aria-label="Deck A">
       <header class="deck-top">
-        <span class="deck-tag">A</span>
+        <button type="button" class="deck-tag" id="tag-a" aria-haspopup="dialog" aria-label="Deck A: choose a track">A<small aria-hidden="true">▾</small></button>
         <span class="deck-title" id="title-a">Loading demo loop…</span>
         <output class="deck-bpm" id="bpm-a" aria-label="Deck A tempo">--</output>
         <label class="deck-load" title="Load a file onto deck A">
@@ -105,7 +105,7 @@
         </label>
       </header>
       <div class="meter" aria-hidden="true"><i id="meter-a"></i></div>
-      <canvas class="wave" id="wave-a" height="56" role="img" aria-label="Deck A waveform. Tap to seek."></canvas>
+      <div class="wave-wrap" id="wavewrap-a"><canvas class="wave" id="wave-a" height="72" role="img" aria-label="Deck A waveform. Drag to scrub."></canvas><button type="button" class="wave-zoom" id="zoom-a" aria-pressed="false" aria-label="Zoom waveform">Zoom</button></div>
       <div class="deck-body">
         <div class="plat-zone">
           <div class="platter" id="platter-a" role="slider" tabindex="0" aria-label="Deck A scratch disc. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -128,29 +128,15 @@
       <div class="opt opt-cues" role="group" aria-label="Deck A hot cues">
         <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
       </div>
+      <div class="deck-drawers" role="group" aria-label="Deck A sampler and FX"><button type="button" class="tbtn drw-samp" id="samp-a" aria-expanded="false">Sampler</button><button type="button" class="tbtn drw-fx" id="fx-a" aria-expanded="false">FX</button></div>
       <div class="opt opt-loop" role="group" aria-label="Deck A loop">
         <button type="button" class="lp-step" id="lp-minus-a" aria-label="Shorter loop">−</button>
         <button type="button" class="lp-toggle" id="loop-a" aria-pressed="false">⟲ <span id="loop-n-a">4</span> beats</button>
         <button type="button" class="lp-step" id="lp-plus-a" aria-label="Longer loop">+</button>
       </div>
       <div class="deck-actions">
-        <button type="button" class="tbtn pads-btn" id="pads-a" aria-expanded="false">Sampler</button>
         <button type="button" class="tbtn cue-btn" id="cue-a">Cue</button>
         <button type="button" class="tbtn play-btn" id="play-a" aria-pressed="false">Play</button>
-      </div>
-      <div class="pad-drawer" id="drawer-a" hidden>
-        <div class="pd-top">
-          <div class="pd-tabs" role="tablist" aria-label="Deck A sampler and FX">
-            <button type="button" role="tab" class="pd-tab" data-tab="sampler" aria-selected="true">Sampler</button>
-            <button type="button" role="tab" class="pd-tab" data-tab="fx" aria-selected="false">FX</button>
-          </div>
-          <button type="button" class="pd-close" aria-label="Close sampler">✕</button>
-        </div>
-        <div class="pd-grid" data-panel="sampler"></div>
-        <div class="pd-fx" data-panel="fx" hidden>
-          <div class="xy" id="xy-a" role="application" aria-label="XY effect pad. Left to right sweeps the filter, bottom to top adds echo."><i class="xy-dot"></i><span>Filter ↔ · Echo ↕</span></div>
-          <div class="pd-fxbtns"><button type="button" class="fxb" data-fx="echo">Echo</button><button type="button" class="fxb" data-fx="brake">Brake</button><button type="button" class="fxb" data-fx="filter">Filter</button></div>
-        </div>
       </div>
     </section>
     <section class="center" aria-label="Mixer">
@@ -166,7 +152,7 @@
     </section>
     <section class="deck deck-b" id="deck-b" data-deck="b" aria-label="Deck B">
       <header class="deck-top">
-        <span class="deck-tag">B</span>
+        <button type="button" class="deck-tag" id="tag-b" aria-haspopup="dialog" aria-label="Deck B: choose a track">B<small aria-hidden="true">▾</small></button>
         <span class="deck-title" id="title-b">Loading demo loop…</span>
         <output class="deck-bpm" id="bpm-b" aria-label="Deck B tempo">--</output>
         <label class="deck-load" title="Load a file onto deck B">
@@ -174,7 +160,7 @@
         </label>
       </header>
       <div class="meter" aria-hidden="true"><i id="meter-b"></i></div>
-      <canvas class="wave" id="wave-b" height="56" role="img" aria-label="Deck B waveform. Tap to seek."></canvas>
+      <div class="wave-wrap" id="wavewrap-b"><canvas class="wave" id="wave-b" height="72" role="img" aria-label="Deck B waveform. Drag to scrub."></canvas><button type="button" class="wave-zoom" id="zoom-b" aria-pressed="false" aria-label="Zoom waveform">Zoom</button></div>
       <div class="deck-body">
         <div class="plat-zone">
           <div class="platter" id="platter-b" role="slider" tabindex="0" aria-label="Deck B scratch disc. Drag to scratch. Arrow keys nudge." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -197,29 +183,15 @@
       <div class="opt opt-cues" role="group" aria-label="Deck B hot cues">
         <button type="button" class="cue" data-cue="0">1</button><button type="button" class="cue" data-cue="1">2</button><button type="button" class="cue" data-cue="2">3</button><button type="button" class="cue" data-cue="3">4</button>
       </div>
+      <div class="deck-drawers" role="group" aria-label="Deck B sampler and FX"><button type="button" class="tbtn drw-samp" id="samp-b" aria-expanded="false">Sampler</button><button type="button" class="tbtn drw-fx" id="fx-b" aria-expanded="false">FX</button></div>
       <div class="opt opt-loop" role="group" aria-label="Deck B loop">
         <button type="button" class="lp-step" id="lp-minus-b" aria-label="Shorter loop">−</button>
         <button type="button" class="lp-toggle" id="loop-b" aria-pressed="false">⟲ <span id="loop-n-b">4</span> beats</button>
         <button type="button" class="lp-step" id="lp-plus-b" aria-label="Longer loop">+</button>
       </div>
       <div class="deck-actions">
-        <button type="button" class="tbtn pads-btn" id="pads-b" aria-expanded="false">Sampler</button>
         <button type="button" class="tbtn cue-btn" id="cue-b">Cue</button>
         <button type="button" class="tbtn play-btn" id="play-b" aria-pressed="false">Play</button>
-      </div>
-      <div class="pad-drawer" id="drawer-b" hidden>
-        <div class="pd-top">
-          <div class="pd-tabs" role="tablist" aria-label="Deck B sampler and FX">
-            <button type="button" role="tab" class="pd-tab" data-tab="sampler" aria-selected="true">Sampler</button>
-            <button type="button" role="tab" class="pd-tab" data-tab="fx" aria-selected="false">FX</button>
-          </div>
-          <button type="button" class="pd-close" aria-label="Close sampler">✕</button>
-        </div>
-        <div class="pd-grid" data-panel="sampler"></div>
-        <div class="pd-fx" data-panel="fx" hidden>
-          <div class="xy" id="xy-b" role="application" aria-label="XY effect pad. Left to right sweeps the filter, bottom to top adds echo."><i class="xy-dot"></i><span>Filter ↔ · Echo ↕</span></div>
-          <div class="pd-fxbtns"><button type="button" class="fxb" data-fx="echo">Echo</button><button type="button" class="fxb" data-fx="brake">Brake</button><button type="button" class="fxb" data-fx="filter">Filter</button></div>
-        </div>
       </div>
     </section>
   </div>
@@ -241,6 +213,10 @@
 </main>
 <script src="../js/shell.js"></script>
 <script src="../js/demo-loops.js"></script>
+<script src="../js/genre-tracks.js"></script>
 <script src="controller.js"></script>
+<script src="wave.js"></script>
+<script src="sampler.js"></script>
+<script src="deckmenu.js"></script>
 </body>
 </html>

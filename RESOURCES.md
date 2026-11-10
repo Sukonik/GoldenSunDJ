@@ -116,6 +116,21 @@ What fits GoldenSunDJ: the waveform strip, glowing corner Play buttons, the over
 - [MusicRadar: best DJ controllers](https://www.musicradar.com/news/the-best-dj-controllers-in-world-today) — a survey of current controllers; guide for layout and feature choices.
 - Numark, Pioneer DJ and Denon DJ product lines — the "mix of the three" look we describe in BRAND.md.
 
+## 4b. Free music sources for the Link tab (researched 2026-11-10)
+
+Tested from our own environment (search, CORS headers and streaming ranges):
+
+| Source | Keyless? | Verdict |
+| --- | --- | --- |
+| **[Audius](https://api.audius.co/docs)** | Yes. Add `app_name=GoldenSunDJ`. | **In use.** Search, trending by genre, and `/v1/tracks/{id}/stream` all work from a browser (CORS `*`, range requests supported, so it plays through the Web Audio chain). Full-length independent tracks. Rights belong to the artists, so we show the artist, link back to Audius and credit it. |
+| **[Internet Archive](https://archive.org/advancedsearch.php)** | Yes. | Search works from a browser (CORS `*`). Huge collection; licenses vary per item (filter for Creative Commons). Good next source. |
+| **iTunes Search** | Yes. | 30-second previews only. Useful for artwork and metadata, not for DJing. |
+| **MusicBrainz** | Yes (send a user agent). | Metadata (artist, release, tags), not audio. Could help tempo and key hints. |
+| **[Free To Use](https://freetouse.com/music)** | Site is open; a public API was not verified. | Worth a closer look for direct downloads, with license limits. Not integrated. |
+| Jamendo, Spotify, Deezer, Apple Music | Need a key or give previews only. | Not suitable for a keyless build. |
+
+Notes: streamed tracks are played through an `<audio>` element. Tap a streamed track's waveform to cache it on the device, which makes scratching, loops and cues instant. Decoding every track to an audio buffer (best for reverse play) uses a lot of memory on phones, so it stays on the roadmap.
+
 ## 5. Tools and data we use
 
 - [Open-Meteo](https://open-meteo.com/) — free weather, geocoding and air-quality APIs (no key).

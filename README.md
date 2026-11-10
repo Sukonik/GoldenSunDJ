@@ -47,10 +47,14 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
 - **Scratch disc.** Drag to scratch: the audio seeks by the angle you turn, and pitch bends with your speed. The disc spins at 33 rpm while a deck plays.
 - **Per deck, by default:** Cue, Play/Pause, 4 hot cues (tap to set or jump, hold to clear), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
 - **Center strip:** Echo, master volume and a crossfader. Status messages show here and clear themselves.
-- **Demo loops:** a house loop on deck A and a techno loop on deck B, synthesized in your browser when it is idle.
+- **Tap the A or B tag on a deck** to open the deck menu:
+  - **Library:** eight full-length tracks (about 3 minutes each) in the NAKO GOLD styles: **Gold, Trance, House, Techno, Pulsewave, Synthpop, Eurodance, Nightdrive**. They are arranged (intro, build, drop, breakdown, build, drop, outro) and synthesized on your device, so the first tap takes a few seconds.
+  - **Load:** a file from your device (it never leaves it).
+  - **Link:** search or browse recommended tracks from **[Audius](https://audius.co)**, a free music platform that needs no account or API key, and stream them onto the deck. Tracks belong to their artists and each result links back to Audius. A streamed track can be cached on your device (tap its waveform) for smooth scratching.
+- **Demo loops:** short house and techno loops start on the decks for instant play; use the deck menu for full tracks.
 - **Settings wheel (the gear button):** a round menu in three pages.
   - **Controls:** Decks (1 or 2), **EQ**, Tempo, Cues, Echo, Fader. **EQ 1** is the full slider rail (default). **EQ 2** is a compact one-row strip that frees width so the discs can be bigger. Tap again for EQ off.
-  - **Add-ons** (all off until you add them, so the screen stays clean): **Wave** (a waveform strip per deck with a playhead, tap to seek), **Sampler + FX** (a drawer with 8 glowing sampler pads, an XY effect pad and momentary Echo, Brake and Filter), **Loop** (a − loop N + control, 1 to 32 beats, with a glowing Play button) and **Tips** (short skippable first-run tooltips).
+  - **Add-ons** (all off until you add them, so the screen stays clean): **Wave** (a waveform strip per deck: beat bars, hot cue flags, loop region, elapsed and remaining time, drag to scrub, tap a flag to jump, and a **Zoom** close-up for precise cueing), **Sampler** (6 banks of 8 glowing pads: Drums, Hats and Perc, 808 and Bass, Stabs and Leads, Keys, Hits and Risers, with arrows, numbered bank chips and swipe), **FX** (its own drawer: an XY pad for filter and echo plus hold-to-use Echo, Brake, Filter and Gate), **Loop** (a − loop N + control, 1 to 32 beats, with a glowing Play button) and **Tips** (short skippable first-run tooltips).
   - **Look:** Material, Tilt, Themes and Full screen.
 - **8 controller themes** (separate from the site theme): Night Club, Chrome Plate, Neon Grid, Gold Rush, Glacier, Magma, Violet Haze, Jade Rack. Deck A and deck B are color-coded, like real hardware.
 - **Materials (semi-3D, CSS only):** *Matte*, *Carbon* (woven carbon fiber) and *Titanium* (brushed metal), with beveled buttons and metal discs.
@@ -85,7 +89,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11`.
 
 | Version | What it was |
 | --- | --- |
@@ -99,6 +103,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v8** | **Mobile pass:** a static, light build on phones and iPads (no animations, plain emblem image, no fixed pattern layers) that fixes the home-screen crash, an **Animations on/off** switch in the menu, a responsive header and menu, 44 px touch targets across every page, safe-area support, and [RESOURCES.md](RESOURCES.md) with the controller projects we study. |
 | **v9** | **Clean header and status:** one tidy row at every width (brand left, a clear *Menu* button, weather and theme chips that never overlap), the page nav moves into the menu below 1280 px, the cluttered header status chip is gone (status now lives in the page), the Controller's status line sits inside the center strip and clears itself, and the journey bar has soft edges. |
 | **v10** | **Suno/Spotify-style header** (page links stay visible on tablets, with an *All tools* link to the menu, and a compact **Home + Menu** bar in full screen or installed mode). **Controller add-ons** you turn on from the settings wheel: waveform strips, a sampler + FX drawer with an XY pad, loop control and first-run tips. **EQ 1 / EQ 2** (full or compact) so the discs can be bigger. |
+| **v11** | **Deck menu** on the A and B tags (Library of eight full-length NAKO GOLD style tracks, Load, and **Link** to search free music on Audius), **Sampler** and **FX** as separate add-ons with 6 sampler banks, a refreshed borderless FX drawer, and a much better **Wave** (beat bars, cue flags, loop region, zoom). |
 
 ## Under the hood
 
@@ -141,7 +146,9 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 ## Roadmap
 
 - Real-iPad tuning of the Controller (scratch feel, tilt, layout) from hands-on feedback.
-- A Web Audio scratch engine for true vinyl-style scratching.
+- A Web Audio scratch engine for true vinyl-style scratching (decode tracks to buffers for reverse play and instant scratching).
+- A glass icon and favicon system: eight colored-glass icons with the black logo (one per site theme, interchangeable, default glass blue), plus white-logo variants.
+- More Link sources (Internet Archive, Free To Use) and tempo detection for streamed tracks.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
 - Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
 
