@@ -309,7 +309,7 @@
     decks: { icon: "◎", label: function () { return settings.decks + " deck" + (settings.decks > 1 ? "s" : ""); }, on: function () { return settings.decks === 2; }, tap: function () { settings.decks = settings.decks === 2 ? 1 : 2; } },
     eq: { icon: "≋", label: function () { return settings.eq === "off" ? "EQ off" : "EQ " + settings.eq; }, on: function () { return settings.eq !== "off"; }, tap: function () { settings.eq = { "1": "2", "2": "off", "off": "1" }[settings.eq]; } },
     tempo: { icon: "↕", label: function () { return "Tempo"; }, on: function () { return settings.tempo; }, tap: function () { settings.tempo = !settings.tempo; } },
-    cues: { icon: "▦", label: function () { return "Cues"; }, on: function () { return settings.cues; }, tap: function () { settings.cues = !settings.cues; } },
+    cues: { icon: "▦", label: function () { return "Hot cues"; }, on: function () { return settings.cues; }, tap: function () { settings.cues = !settings.cues; } },
     fx: { icon: "∿", label: function () { return "Echo"; }, on: function () { return settings.fx; }, tap: function () { settings.fx = !settings.fx; } },
     fader: { icon: "↔", label: function () { return "Fader"; }, on: function () { return settings.fader; }, tap: function () { settings.fader = !settings.fader; } },
     wave: { icon: "▁▃▆", label: function () { return "Wave"; }, on: function () { return settings.wave; }, tap: function () { settings.wave = !settings.wave; } },
@@ -325,11 +325,11 @@
     full: { icon: "⛶", label: function () { return "Full"; }, on: function () { return !!document.fullscreenElement; }, tap: function () { var el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else (el.requestFullscreen || el.webkitRequestFullscreen).call(el); } }
   };
   var canFull = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
-  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "cues", "fx", "fader", "scratch"] }, { name: "Add-ons", ids: ["wave", "sampler", "fxu", "patterns", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
+  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "fx", "fader", "scratch"] }, { name: "Add-ons", ids: ["cues", "wave", "sampler", "fxu", "patterns", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
   var wheelPage = 0, pendingTips = false, ring = $("wheel-ring");
   function drawWheel() {
     var pg = PAGES[wheelPage]; ring.textContent = ""; $("wheel-title").textContent = pg.name;
-    $("wheel-hint").textContent = wheelPage === 1 ? "Extras, off until you add them" : (wheelPage === 0 ? "EQ 2 is compact: bigger discs" : "Tap to add or remove");
+    $("wheel-hint").textContent = wheelPage === 1 ? "Turn on what you need. Hot cues off = more room" : (wheelPage === 0 ? "EQ 2 is compact: bigger discs" : "Tap to add or remove");
     $("wheel-dots").innerHTML = PAGES.map(function (_, i) { return "<i class=\"" + (i === wheelPage ? "on" : "") + "\"></i>"; }).join("");
     pg.ids.forEach(function (id, i) {
       var it = ITEM[id], b = document.createElement("button"); b.type = "button"; b.className = "wheel-item"; b.style.setProperty("--ang", (i * 360 / pg.ids.length) + "deg");
