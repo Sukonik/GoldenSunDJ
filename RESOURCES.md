@@ -141,7 +141,8 @@ Notes: streamed tracks are played through an `<audio>` element. Tap a streamed t
 - A tiny **platter model** (finger velocity / 33 rpm, one-pole smoothing for weight, motor spin-up on release) turns touch into speed, so identical settings always feel identical. Presets: Natural, Tight, Heavy, Bend.
 - The normal player keeps running silently during a scratch, which is what makes **Slip mode** possible.
 - Limits: tracks over about 30 MB use Bend instead; streamed tracks are prepared once they start playing.
-- Ideas: scratch patterns (baby, chirp, transform), crossfader-cut helper, reverse and brake buttons, recording your scratch.
+- Patterns are short speed-and-gate scripts (in beats) played by the worklet over the track, so each one sounds the same every time and scales with the deck's tempo. Tempo detection runs on the same mono copy (kick and onset energy at 100 frames per second, autocorrelation with harmonic weighting, then a beat-grid phase search).
+- Ideas: crossfader-cut helper, recording your scratch, more patterns.
 
 ## 5. Tools and data we use
 

@@ -14,14 +14,18 @@
     var SR = 22050, MAX_BYTES = 30e6, workletReady = null;
 
     var WORKLET = [
-      "class P extends AudioWorkletProcessor{constructor(){super();this.d=null;this.sr=22050;this.pos=0;this.r=0;this.t=0;this.g=0;this.tg=0;this.on=false;this.tau=0.006;this.n=0;",
-      "this.port.onmessage=(e)=>{var m=e.data;if(m.t==='load'){this.d=m.data;this.sr=m.sr;}else if(m.t==='start'){this.pos=m.pos*this.sr;this.r=m.rate;this.t=m.rate;this.tg=1;this.g=0;this.on=true;}",
-      "else if(m.t==='rate'){this.t=m.r;}else if(m.t==='tau'){this.tau=m.tau;}else if(m.t==='stop'){this.tg=0;}}}",
+      "class P extends AudioWorkletProcessor{constructor(){super();this.d=null;this.sr=22050;this.pos=0;this.r=0;this.t=0;this.g=0;this.tg=0;this.on=false;this.tau=0.006;this.n=0;this.pat=null;this.pi=0;this.pt=0;",
+      "this.port.onmessage=(e)=>{var m=e.data;if(m.t==='load'){this.d=m.data;this.sr=m.sr;}else if(m.t==='start'){this.pos=m.pos*this.sr;this.r=m.rate;this.t=m.rate;this.tg=1;this.g=0;this.on=true;this.pat=null;}",
+      "else if(m.t==='rate'){this.t=m.r;}else if(m.t==='tau'){this.tau=m.tau;}else if(m.t==='pat'){this.pat=m.frames;this.pi=0;this.pt=0;this.tau=0.003;}else if(m.t==='stop'){this.tg=0;this.pat=null;}}}",
       "process(i,o){var out=o[0][0];var n=out.length;if(!this.on||!this.d){out.fill(0);return true;}",
-      "var d=this.d,len=d.length,ratio=this.sr/sampleRate,a=1-Math.exp(-1/(sampleRate*this.tau)),ga=1-Math.exp(-1/(sampleRate*0.004));",
-      "for(var k=0;k<n;k++){this.r+=(this.t-this.r)*a;this.g+=(this.tg-this.g)*ga;var p=this.pos,i0=Math.floor(p),f=p-i0;",
+      "var d=this.d,len=d.length,ratio=this.sr/sampleRate,a=1-Math.exp(-1/(sampleRate*this.tau)),ga=1-Math.exp(-1/(sampleRate*0.004)),fin=false;",
+      "for(var k=0;k<n;k++){",
+      "if(this.pat){var F=this.pat,tt=this.pt/sampleRate;this.pt++;while(this.pi+1<F.length&&F[this.pi+1][0]<=tt)this.pi++;",
+      "if(this.pi+1>=F.length){this.pat=null;fin=true;}else{var f0=F[this.pi],f1=F[this.pi+1],u=(tt-f0[0])/Math.max(1e-6,f1[0]-f0[0]);this.t=f0[1]+(f1[1]-f0[1])*u;this.tg=f0[2];}}",
+      "this.r+=(this.t-this.r)*a;this.g+=(this.tg-this.g)*ga;var p=this.pos,i0=Math.floor(p),f=p-i0;",
       "var a0=d[((i0%len)+len)%len],a1=d[(((i0+1)%len)+len)%len];out[k]=(a0+(a1-a0)*f)*this.g;this.pos+=this.r*ratio;if(this.pos>=len)this.pos-=len;else if(this.pos<0)this.pos+=len;}",
-      "if(++this.n%6===0)this.port.postMessage({p:this.pos/this.sr});",
+      "if(++this.n%6===0)this.port.postMessage({p:this.pos/this.sr,r:this.r});",
+      "if(fin)this.port.postMessage({p:this.pos/this.sr,r:this.r,done:true});",
       "if(this.tg===0&&this.g<0.001){this.on=false;this.port.postMessage({p:this.pos/this.sr,stopped:true});}return true;}}",
       "registerProcessor('gsdj-scratch',P);"
     ].join("");
@@ -60,8 +64,12 @@
           for (var c = 0; c < ch; c++) { var a = buf.getChannelData(c); for (var i = 0; i < n; i++) mono[i] += a[i] / ch; }
           if (!d.scr.node) {
             var node = new AudioWorkletNode(C.audio().ctx, "gsdj-scratch", { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [1] });
-            node.connect(d.nodes.low); node.port.onmessage = function (e) { if (e.data && typeof e.data.p === "number" && d.touch) d.livePos = e.data.p; if (e.data && e.data.stopped && d.scr) d.scr.stopped = true; };
+            node.connect(d.nodes.low); node.port.onmessage = function (e) { var m = e.data || {}; if (typeof m.p === "number" && (d.touch || d.pat)) d.livePos = m.p; if (typeof m.r === "number") d.lastR = m.r; if (m.done && d.pat) endPattern(d); if (m.stopped && d.scr) d.scr.stopped = true; };
             d.scr.node = node;
+          }
+          if (!d.bpm && window.GSDJTempo) {                        // unknown tempo: detect it from the same copy (before it moves to the worklet)
+            var trk = d.url;
+            window.GSDJTempo.detect(mono, buf.sampleRate).then(function (r) { if (r && d.scr === st && d.url === trk && !d.bpm && r.confidence > 3) { window.GSDJTempo.apply(d, r.bpm, r.offset, "auto"); C.say("Detected " + (r.bpm * C.rate(d)).toFixed(1) + " BPM on deck " + d.id.toUpperCase() + ". Tap the number to correct it."); } });
           }
           d.scr.node.port.postMessage({ t: "load", data: mono, sr: buf.sampleRate }, [mono.buffer]);
           d.scr.state = "ready"; return true;
@@ -111,6 +119,7 @@
     function begin(d, e) {
       var s = sc();
       if (!d.audio.src) { C.say("Load a track first. Tap Load."); return; }
+      if (d.pat) cancelPattern(d);
       C.build(d); C.ensureCtx();
       var wasPlaying = !d.audio.paused, mode = s.mode;
       var t = { id: e.pointerId, a: angleOf(d, e), acc: 0, wasPlaying: wasPlaying, r: wasPlaying ? C.rate(d) : 0, holdBrake: s.brake && wasPlaying, mode: mode, wall: performance.now(), startPos: d.audio.currentTime };
@@ -149,7 +158,7 @@
       d.scr.node.port.postMessage({ t: "rate", r: target });
       t.releasing = true; t.rEnd = performance.now() + ret * 1000 * 1.6;
       // not in Slip mode: park the normal player where the record will be when the motor is back at speed
-      if (t.wasPlaying && !s.slip) { var pos = d.livePos != null ? d.livePos : d.audio.currentTime; var dur = d.audio.duration; var predicted = pos + target * ret + (t.r - target) * (ret / 3) * (1 - Math.exp(-3)) + 0.06; if (isFinite(dur) && dur > 0) predicted = ((predicted % dur) + dur) % dur; try { d.audio.currentTime = predicted; } catch (x) {} }
+      if (t.wasPlaying && !s.slip && !(d.src && d.src.kind === "audius")) { var pos = d.livePos != null ? d.livePos : d.audio.currentTime; var dur = d.audio.duration; var predicted = pos + target * ret + (t.r - target) * (ret / 3) * (1 - Math.exp(-3)) + 0.06; if (isFinite(dur) && dur > 0) predicted = ((predicted % dur) + dur) % dur; try { d.audio.currentTime = predicted; } catch (x) {} }
       t.r = target;                                                // the model no longer follows the finger
       var idx = touching.indexOf(d); if (idx >= 0) touching.splice(idx, 1);
       // wait until the worklet reaches the target speed, then hand back to the normal player
@@ -199,6 +208,75 @@
       pl.addEventListener("pointerenter", function () { if (d.audio.src && sc().mode === "scratch" && d.scr && d.scr.state === "idle") prepare(d); }, { once: true });
     });
 
+
+    /* ---------- scratch patterns: one tap, same sound every time ---------- */
+    function sine(beats, amp, per) { var f = [], n = Math.round(beats * 16); for (var i = 0; i <= n; i++) f.push([i / 16, amp * Math.sin(2 * Math.PI * (i / 16) / per), 1]); return f; }
+    function gates(beats, pat) { var f = [], step = 0.125; pat.forEach(function (g, i) { f.push([i * step, 1, g]); f.push([(i + 1) * step - 0.001, 1, g]); }); f.push([beats, 1, 1]); return f; }
+    var PATS = [
+      { id: "baby", name: "Baby", note: "push and pull", beats: 2, frames: function () { var f = sine(2, 2.2, 1); f.push([2.15, 1, 1]); return f; } },
+      { id: "chirp", name: "Chirp", note: "sharp forward", beats: 1, frames: function () { return [[0, 3.2, 1], [0.24, 3.2, 1], [0.25, -3.2, 0], [0.49, -3.2, 0], [0.5, 3.2, 1], [0.74, 3.2, 1], [0.75, -3.2, 0], [0.99, -3.2, 0], [1, 1, 1], [1.15, 1, 1]]; } },
+      { id: "transform", name: "Transform", note: "cut in time", beats: 2, frames: function () { return gates(2, [1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1]); } },
+      { id: "tear", name: "Tear", note: "stutter stroke", beats: 1, frames: function () { return [[0, 2.4, 1], [0.12, 2.4, 1], [0.13, 0.25, 1], [0.22, 0.25, 1], [0.23, 2.4, 1], [0.45, 2.4, 1], [0.46, 0.25, 1], [0.6, 0.25, 1], [0.61, -2, 1], [0.8, -2, 1], [0.81, 1, 1], [1, 1, 1]]; } },
+      { id: "flare", name: "Flare", note: "two clicks", beats: 1.5, frames: function () { return [[0, 3, 1], [0.2, 3, 1], [0.201, 3, 0], [0.27, 3, 0], [0.271, 3, 1], [0.5, 3, 1], [0.501, 3, 0], [0.57, 3, 0], [0.571, 3, 1], [0.8, -3, 0], [1, -3, 0], [1.01, 1, 1], [1.5, 1, 1]]; } },
+      { id: "scribble", name: "Scribble", note: "tiny and fast", beats: 1, frames: function () { var f = []; for (var i = 0; i <= 24; i++) f.push([i / 24, i % 2 ? -4 : 4, 1]); f.push([1.1, 1, 1]); return f; } },
+      { id: "brake", name: "Brake", note: "stop and go", beats: 1.5, frames: function () { return [[0, 1, 1], [0.9, 0.03, 1], [1.1, 0.0, 1], [1.5, 1, 1]]; } },
+      { id: "backspin", name: "Backspin", note: "spin back", beats: 1.5, frames: function () { return [[0, -3.5, 1], [0.15, -3.5, 1], [1.2, 1, 1], [1.5, 1, 1]]; } }
+    ];
+    var PCOL = ["#ff4d6d", "#ff6a3d", "#ff9f1c", "#ffd21a", "#b6ff1a", "#3dff9a", "#35d0ff", "#b56bff"], patLoop = null, prevP = 0;
+    function patFrame(now) {
+      var dt = Math.min(0.05, (now - prevP) / 1000); prevP = now; var any = false;
+      C.decks.forEach(function (d) { if (d.pat) { any = true; d.angle += (d.lastR || 0) * NOMINAL * dt; } });
+      patLoop = any ? requestAnimationFrame(patFrame) : null;
+    }
+    function runPattern(d, id, padEl) {
+      var def = PATS.filter(function (p) { return p.id === id; })[0]; if (!def) return;
+      if (!d.audio.src) { C.say("Load a track first. Tap Load."); return; }
+      var st = d.scr && d.scr.state;
+      if (st === "big" || st === "off") { C.say("Patterns need a shorter track or a newer browser."); return; }
+      if (st !== "ready") { C.say("Getting the track ready…"); prepare(d).then(function (ok) { if (ok) runPattern(d, id, padEl); else C.say("Could not prepare this track for patterns."); }); return; }
+      if (d.touch) return; if (d.pat) cancelPattern(d);
+      C.build(d); C.ensureCtx();
+      var wasPlaying = !d.audio.paused, start = d.audio.currentTime, beatSec = 60 / ((d.bpm || 120) * C.rate(d));
+      var frames = def.frames().map(function (f) { return [f[0] * beatSec, f[1], f[2]]; });
+      d.pat = { id: id, wasPlaying: wasPlaying, pad: padEl }; d.dragging = true; d.lastR = wasPlaying ? C.rate(d) : 0; d.livePos = start;
+      if (padEl) padEl.classList.add("is-hit");
+      var node = d.scr.node, now = C.audio().ctx.currentTime;
+      node.port.postMessage({ t: "start", pos: start, rate: wasPlaying ? C.rate(d) : 0 });
+      node.port.postMessage({ t: "pat", frames: frames });
+      d.nodes.elg.gain.cancelScheduledValues(now); d.nodes.elg.gain.setTargetAtTime(0, now, 0.004);       // the normal player keeps running silently, so you land back on the beat
+      C.loopOn(); if (patLoop == null) { prevP = performance.now(); patLoop = requestAnimationFrame(patFrame); }
+    }
+    function endPattern(d) {
+      var p = d.pat; if (!p) return; d.pat = null;
+      var ctx = C.audio().ctx, now = ctx.currentTime;
+      d.nodes.elg.gain.cancelScheduledValues(now); d.nodes.elg.gain.setTargetAtTime(1, now, 0.006);
+      if (d.scr && d.scr.node) d.scr.node.port.postMessage({ t: "stop" });
+      if (p.pad) p.pad.classList.remove("is-hit");
+      d.livePos = null; d.dragging = false; d.audio.playbackRate = C.rate(d); C.updatePlayUi(d);
+    }
+    function cancelPattern(d) { if (d.pat) endPattern(d); }
+
+    C.decks.forEach(function (d) {
+      var deck = $("deck-" + d.id), L = d.id.toUpperCase();
+      var pd = document.createElement("div"); pd.className = "drawer-x drawer-pat"; pd.hidden = true; pd.setAttribute("role", "dialog"); pd.setAttribute("aria-label", "Deck " + L + " scratch patterns");
+      pd.innerHTML = '<div class="dx-top"><div class="dx-title"><strong>Scratch patterns</strong><span>Deck ' + L + '</span></div><button type="button" class="dx-close" aria-label="Close patterns">✕</button></div><div class="pd-grid"></div><p class="fx-hint">One tap plays a scratch on top of the track, then drops you back on the beat.</p>';
+      deck.appendChild(pd);
+      var grid = pd.querySelector(".pd-grid");
+      PATS.forEach(function (p, i) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "pd-pad"; b.style.setProperty("--pc", PCOL[i]); b.innerHTML = "<i>" + (i + 1) + "</i><span>" + p.name + "</span><small>" + p.note + "</small>";
+        b.addEventListener("pointerdown", function (e) { e.preventDefault(); runPattern(d, p.id, b); });
+        grid.appendChild(b);
+      });
+      var btn = $("pat-" + d.id);
+      function setOpen(open) {
+        if (open) { deck.querySelectorAll(".drawer-x").forEach(function (x) { if (x !== pd) x.hidden = true; }); deck.querySelectorAll(".deck-drawers button").forEach(function (x) { x.setAttribute("aria-expanded", "false"); }); }
+        pd.hidden = !open; btn.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      btn.addEventListener("click", function () { setOpen(pd.hidden); });
+      pd.querySelector(".dx-close").addEventListener("click", function () { setOpen(false); });
+      C.hooks.after.push(function () { if (!settings.patterns) { setOpen(false); cancelPattern(d); } });
+    });
+
     /* ---------- settings panel ---------- */
     var panel = document.createElement("div"); panel.className = "dm-scrim sp-scrim"; panel.hidden = true;
     panel.innerHTML = '<div class="dm sp" role="dialog" aria-modal="true" aria-labelledby="sp-title"><header class="dm-head"><h2 id="sp-title">Scratch feel</h2><button type="button" class="dx-close" id="sp-close" aria-label="Close">✕</button></header>' +
@@ -235,7 +313,7 @@
     $("sp-close").addEventListener("click", close); panel.addEventListener("click", function (e) { if (e.target === panel) close(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) close(); });
 
-    window.GSDJScratch = { openPanel: open, presets: PRESETS };
+    window.GSDJScratch = { openPanel: open, presets: PRESETS, patterns: PATS, run: runPattern };
   }
   if (window.GSDJCtl) init(); else window.addEventListener("gsdj-ctl-ready", init, { once: true });
 })();

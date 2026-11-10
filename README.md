@@ -52,10 +52,12 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
   - **Library:** eight full-length tracks (about 3 minutes each) in the NAKO GOLD styles: **Gold, Trance, House, Techno, Pulsewave, Synthpop, Eurodance, Nightdrive**. They are arranged (intro, build, drop, breakdown, build, drop, outro) and synthesized on your device, so the first tap takes a few seconds.
   - **Load:** a file from your device (it never leaves it).
   - **Link:** search or browse recommended tracks from **[Audius](https://audius.co)**, a free music platform that needs no account or API key, and stream them onto the deck. Tracks belong to their artists and each result links back to Audius. A streamed track can be cached on your device (tap its waveform) for smooth scratching.
+- **Tempo detection.** Tracks without a known tempo (your files and Audius streams) are analysed automatically once they are ready, and the BPM shows with an "auto" tag. The beat grid on the waveform and loop snapping follow it. **Tap the BPM number four times** (or more) on a deck to set the tempo and beat by hand. In my tests the detector found all four generated tracks I checked to within 0.5 BPM; real recordings with swing, tempo changes or no clear kick can be harder, which is what tap tempo is for.
+- **Playback safety.** Moving EQ, tempo, faders or effects never stops a track. Held effects (Echo, Brake, Filter, Gate, XY) let go if your finger lifts anywhere, the page loses focus or the app is hidden; the audio engine restarts itself if iOS suspends it; and a watchdog nudges a deck that says it is playing but has stopped moving.
 - **Demo loops:** short house and techno loops start on the decks for instant play; use the deck menu for full tracks.
 - **Settings wheel (the gear button):** a round menu in three pages.
   - **Controls:** Decks (1 or 2), **EQ**, Tempo, Cues, Echo, Fader. **EQ 1** is the full slider rail (default). **EQ 2** is a compact one-row strip that frees width so the discs can be bigger. Tap again for EQ off.
-  - **Add-ons** (all off until you add them, so the screen stays clean): **Wave** (a waveform strip per deck: beat bars, hot cue flags, loop region, elapsed and remaining time, drag to scrub, tap a flag to jump, and a **Zoom** close-up for precise cueing), **Sampler** (6 banks of 8 glowing pads: Drums, Hats and Perc, 808 and Bass, Stabs and Leads, Keys, Hits and Risers, with arrows, numbered bank chips and swipe), **FX** (its own drawer: an XY pad for filter and echo plus hold-to-use Echo, Brake, Filter and Gate), **Loop** (a − loop N + control, 1 to 32 beats, with a glowing Play button) and **Tips** (short skippable first-run tooltips).
+  - **Add-ons** (all off until you add them, so the screen stays clean): **Patterns** (a Scratch drawer per deck with eight one-tap scratches: Baby, Chirp, Transform, Tear, Flare, Scribble, Brake and Backspin, timed to the deck's tempo; they play on top of the track and drop you back on the beat), **Wave** (a waveform strip per deck: beat bars, hot cue flags, loop region, elapsed and remaining time, drag to scrub, tap a flag to jump, and a **Zoom** close-up for precise cueing), **Sampler** (6 banks of 8 glowing pads: Drums, Hats and Perc, 808 and Bass, Stabs and Leads, Keys, Hits and Risers, with arrows, numbered bank chips and swipe), **FX** (its own drawer: an XY pad for filter and echo plus hold-to-use Echo, Brake, Filter and Gate), **Loop** (a − loop N + control, 1 to 32 beats, with a glowing Play button) and **Tips** (short skippable first-run tooltips).
   - **Look:** Material, Tilt, Themes and Full screen.
 - **8 controller themes** (separate from the site theme): Night Club, Chrome Plate, Neon Grid, Gold Rush, Glacier, Magma, Violet Haze, Jade Rack. Deck A and deck B are color-coded, like real hardware.
 - **Materials (semi-3D, CSS only):** *Matte*, *Carbon* (woven carbon fiber) and *Titanium* (brushed metal), with beveled buttons and metal discs.
@@ -91,7 +93,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15`.
 
 | Version | What it was |
 | --- | --- |
@@ -109,6 +111,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v12** | **Glass icon system:** eight Murano-style blown-glass app icons with the black (or white) logo, default Glass Blue, a picker in the menu, a favicon that follows your choice, and a Home Screen icon. Fixes the Animations toggle label. |
 | **v13** | **iPhone fixes from real-device screenshots:** the settings wheel now stays fully on screen on narrow phones, and the tempo and EQ sliders, disc, waveform and button rows never overlap, even with every add-on on (checked at six phone and iPad sizes in both EQ modes). |
 | **v14** | **Scratch engine** (audio worklet, forward and backward, glitch-free) with a repeatable platter model and a **Scratch feel** panel (Natural, Tight, Heavy, Bend, Slip mode). The deck **Load** button now opens the full deck menu (Library, Load, Link). |
+| **v15** | **Scratch patterns** (8 one-tap scratches per deck), **tempo detection** (automatic, with tap tempo to correct it) and a beat grid that follows it, plus **playback safety** (held effects always release, the audio engine self-restarts, a watchdog keeps decks moving). |
 
 ## Under the hood
 
@@ -152,9 +155,9 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 ## Roadmap
 
 - Real-iPad tuning of the Controller (scratch feel, tilt, layout) from hands-on feedback.
-- Scratch patterns (baby, chirp, transform), a crossfader cut helper and a record-your-scratch option.
+- A crossfader cut helper, record-your-scratch, and more patterns.
 - More glass icon variants (a Home Screen icon for every color, an SVG favicon).
-- More Link sources (Internet Archive, Free To Use) and tempo detection for streamed tracks.
+- More Link sources (Internet Archive, Free To Use), key detection, and a sync button using the detected tempo.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
 - Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
 

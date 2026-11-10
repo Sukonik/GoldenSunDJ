@@ -55,6 +55,11 @@
         ["Horn", function (c, d, t) { saw(c, d, t, 233, 0.9, 0.35, "sawtooth", 1500); saw(c, d, t, 349, 0.9, 0.3, "sawtooth", 1500); }],
         ["Stop", function (c, d, t) { sweep(c, d, t, 600, 30, 0.6, 0.4, "triangle"); }] ] }
     ];
+    var RELEASERS = [];
+    // never leave an effect stuck on: let go of everything when a touch ends anywhere, the page loses focus, or it is hidden
+    ["pointerup", "pointercancel"].forEach(function (ev) { window.addEventListener(ev, function (e) { RELEASERS.forEach(function (f) { f(e.pointerId); }); }, true); });   // only the finger that lifted
+    window.addEventListener("blur", function () { RELEASERS.forEach(function (f) { f(); }); });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) RELEASERS.forEach(function (f) { f(); }); });
     var PCOL = ["#ff4d6d", "#ff6a3d", "#ff9f1c", "#ffd21a", "#b6ff1a", "#3dff9a", "#35d0ff", "#b56bff"];
 
     C.decks.forEach(function (d) {
@@ -92,34 +97,37 @@
       function filterTo(hz) { if (d.nodes) d.nodes.flt.frequency.setTargetAtTime(hz, A().ctx.currentTime, 0.05); }
       function echoLevel() { return $("echo-btn").getAttribute("aria-pressed") === "true" ? 0.5 : 0; }
       fd.querySelectorAll(".fxt").forEach(function (b) {
-        var kind = b.getAttribute("data-fx"), prev = 1;
+        var kind = b.getAttribute("data-fx"), prev = 1, gateTimer = null;
+        function armGate() { if (!d.nodes || !b.classList.contains("is-down")) return; var g = d.nodes.gate.gain, t = A().ctx.currentTime, step = 60 / ((d.bpm || 120) * C.rate(d)) / 2; g.cancelScheduledValues(t); for (var i = 0; i < 8; i++) g.setValueAtTime(i % 2 ? 0.0001 : 1, t + i * step); g.setValueAtTime(1, t + 8 * step); }
         function on() {
           C.ensureCtx(); C.build(d); b.classList.add("is-down"); var a = A();
           if (kind === "echo" && a.echoWet) a.echoWet.gain.value = 0.85;
           if (kind === "brake") { prev = C.rate(d); d.audio.playbackRate = Math.max(0.0625, prev * 0.45); }
           if (kind === "filter") filterTo(450);
-          if (kind === "gate" && d.nodes) { var g = d.nodes.cross.gain, t = a.ctx.currentTime, step = 60 / ((d.bpm || 120) * C.rate(d)) / 2; g.cancelScheduledValues(t); var base = g.value; for (var i = 0; i < 64; i++) { g.setValueAtTime(i % 2 ? 0.0001 : base, t + i * step); } }
+          if (kind === "gate" && d.nodes) { armGate(); gateTimer = setInterval(armGate, 900); }
         }
         function off() {
           b.classList.remove("is-down"); var a = A(); if (!a.ctx) return;
           if (kind === "echo" && a.echoWet) a.echoWet.gain.value = echoLevel();
           if (kind === "brake") d.audio.playbackRate = C.rate(d);
           if (kind === "filter") filterTo(20000);
-          if (kind === "gate" && d.nodes) { d.nodes.cross.gain.cancelScheduledValues(a.ctx.currentTime); C.applySettings(); }
+          if (kind === "gate" && d.nodes) { clearInterval(gateTimer); gateTimer = null; d.nodes.gate.gain.cancelScheduledValues(a.ctx.currentTime); d.nodes.gate.gain.setValueAtTime(1, a.ctx.currentTime); d.nodes.gate.gain.value = 1; }
         }
-        b.addEventListener("pointerdown", function (e) { e.preventDefault(); on(); }); ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { b.addEventListener(ev, function () { if (b.classList.contains("is-down")) off(); }); });
+        b.addEventListener("pointerdown", function (e) { e.preventDefault(); b._pid = e.pointerId; on(); }); ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { b.addEventListener(ev, function () { if (b.classList.contains("is-down")) off(); }); });
+        RELEASERS.push(function (pid) { if (b.classList.contains("is-down") && (pid == null || pid === b._pid)) off(); });
       });
-      var xy = fd.querySelector(".xy"), dot = xy.querySelector(".xy-dot"), xyDown = false;
+      var xy = fd.querySelector(".xy"), dot = xy.querySelector(".xy-dot"), xyDown = false, xyPid = null;
       function xyMove(e) { var r = xy.getBoundingClientRect(), x = clamp((e.clientX - r.left) / r.width, 0, 1), y = clamp(1 - (e.clientY - r.top) / r.height, 0, 1); dot.style.left = x * 100 + "%"; dot.style.top = (1 - y) * 100 + "%"; filterTo(200 * Math.pow(100, x)); var a = A(); if (a.echoWet) a.echoWet.gain.value = y * 0.85; }
-      xy.addEventListener("pointerdown", function (e) { e.preventDefault(); C.ensureCtx(); C.build(d); xyDown = true; xy.classList.add("is-down"); try { xy.setPointerCapture(e.pointerId); } catch (x) {} xyMove(e); });
+      xy.addEventListener("pointerdown", function (e) { e.preventDefault(); C.ensureCtx(); C.build(d); xyDown = true; xyPid = e.pointerId; xy.classList.add("is-down"); try { xy.setPointerCapture(e.pointerId); } catch (x) {} xyMove(e); });
       xy.addEventListener("pointermove", function (e) { if (xyDown) xyMove(e); });
       function xyUp() { if (!xyDown) return; xyDown = false; xy.classList.remove("is-down"); dot.style.left = "50%"; dot.style.top = "50%"; filterTo(20000); var a = A(); if (a.echoWet) a.echoWet.gain.value = echoLevel(); }
       xy.addEventListener("pointerup", xyUp); xy.addEventListener("pointercancel", xyUp);
+      RELEASERS.push(function (pid) { if (xyDown && (pid == null || pid === xyPid)) xyUp(); });
 
       /* ---------- open / close (only one drawer per deck at a time) ---------- */
       function setOpen(which, open) {
         var drawer = which === "samp" ? sd : fd, btn = $((which === "samp" ? "samp-" : "fx-") + d.id), other = which === "samp" ? fd : sd, otherBtn = $((which === "samp" ? "fx-" : "samp-") + d.id);
-        if (open) { other.hidden = true; otherBtn.setAttribute("aria-expanded", "false"); }
+        if (open) { deck.querySelectorAll(".drawer-x").forEach(function (x) { if (x !== drawer) x.hidden = true; }); deck.querySelectorAll(".deck-drawers button").forEach(function (x) { x.setAttribute("aria-expanded", "false"); }); }
         drawer.hidden = !open; btn.setAttribute("aria-expanded", open ? "true" : "false");
       }
       $("samp-" + d.id).addEventListener("click", function () { setOpen("samp", sd.hidden); });

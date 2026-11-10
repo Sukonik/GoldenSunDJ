@@ -347,3 +347,18 @@ body.is-controller .site-footer { display: none; }
 .sp-foot span { color: rgba(255,255,255,.55); font-size: .8rem; }
 .sp-toggles .chip { min-height: 44px; }
 @media (max-width: 34rem) { .sp-row { grid-template-columns: 1fr auto; } .sp-row label { grid-column: 1 / -1; } }
+
+/* ======== v15: scratch patterns button, tap-tempo BPM ======== */
+.deck-drawers { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; }
+.ctl[data-patterns="on"] .deck-drawers { display: grid; }
+.drw-pat { display: none; }
+.ctl[data-patterns="on"] .drw-pat { display: inline-flex; align-items: center; justify-content: center; }
+.drw-pat[aria-expanded="true"] { background: var(--dk); color: #0a0b0f; border-color: transparent; }
+.drawer-pat .pd-pad small { font-weight: 400; font-size: .62rem; opacity: .7; text-transform: none; }
+.deck-bpm { cursor: pointer; padding: .3rem .4rem; border-radius: 8px; min-height: 32px; display: inline-grid; place-items: center; }
+.deck-bpm:hover, .deck-bpm:focus-visible { background: rgba(255,255,255,.08); }
+.deck-bpm.is-auto::after { content: "auto"; margin-left: .3rem; font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+.ctl .deck-drawers, .ctl[data-sampler] .deck-drawers { grid-template-columns: none !important; }
+.drawer-pat .pd-grid { flex: 1; min-height: 0; }
+.drawer-pat .pd-pad span { font-size: .8rem; }
+.drawer-pat .pd-pad i { top: 5px; }

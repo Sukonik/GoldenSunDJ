@@ -30,11 +30,6 @@
       if (d.pk || d.analyzing || !d.src || d.src.kind !== "audius") return;
       d.analyzing = true; C.say("Loading the waveform…"); draw(d);
       fetch(d.url).then(function (r) { if (!r.ok) throw new Error("bad"); return r.blob(); }).then(function (b) {
-        // keep a local copy so scratching, loops and cues are instant (no network seeking)
-        var t = d.audio.currentTime || 0, was = !d.audio.paused, u = URL.createObjectURL(b);
-        d.audio.pause(); if (d.url && d.owned) URL.revokeObjectURL(d.url); d.url = u; d.owned = true; d.audio.src = u;
-        d.audio.addEventListener("loadedmetadata", function once() { d.audio.removeEventListener("loadedmetadata", once); try { d.audio.currentTime = t; } catch (e) {} if (was) d.audio.play().catch(function () {}); }, { once: true });
-        C.say("Saved on this device for smooth scratching.");
         return decodeBlob(d, b);
       })
         .catch(function () { C.say("Could not load the waveform for this stream."); }).then(function () { d.analyzing = false; draw(d); });
@@ -53,11 +48,11 @@
       var mid = h / 2, top = 14, bot = 14, ah = h - top - bot, pk = d.pk;
       function xOf(t) { return (t - tStart) / tSpan * w; }
       // beat bars
-      var bpm = d.bpm ? d.bpm * C.rate(d) : 0;
+      var bpm = d.bpm || 0, goff = d.gridOffset || 0;                    // the grid lives in track time
       if (bpm && have) {
-        var beat = 60 / bpm, barLen = beat * 4, first = Math.floor(tStart / beat) * beat;
+        var beat = 60 / bpm, barLen = beat * 4, first = Math.floor((tStart - goff) / beat) * beat + goff;
         for (var tb = first; tb <= tStart + tSpan + beat; tb += beat) {
-          var isBar = Math.abs(tb / barLen - Math.round(tb / barLen)) < 0.001, x = xOf(tb);
+          var isBar = Math.abs((tb - goff) / barLen - Math.round((tb - goff) / barLen)) < 0.001, x = xOf(tb);
           if (!isBar && tSpan > 40) continue; if (isBar && w / (tSpan / barLen) < 7) continue;
           g.fillStyle = isBar ? "rgba(255,255,255,.22)" : "rgba(255,255,255,.08)"; g.fillRect(Math.round(x), top, 1, ah);
         }
@@ -112,6 +107,7 @@
     });
 
     C.decks.forEach(function (d) { ["loadedmetadata", "durationchange", "seeked"].forEach(function (ev) { d.audio.addEventListener(ev, function () { if (settings.wave) draw(d); }); }); });
+    window.addEventListener("gsdj-grid", function () { C.decks.forEach(draw); });
     C.hooks.frame.push(function (d, playing) { if (settings.wave && (playing || d.dragging)) draw(d); });
     C.hooks.load.push(function (d) { d.analyzing = false; if (settings.wave) { ensurePeaks(d); } draw(d); });
     C.hooks.after.push(function () { C.decks.forEach(function (d) { if (settings.wave) { ensurePeaks(d); draw(d); } }); });
