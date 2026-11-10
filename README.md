@@ -46,7 +46,7 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
 - **1 or 2 scratch discs** (the rotating pads). Two by default. Switch from the settings wheel.
 - **Scratch disc.** Drag to scratch. A real scratch engine plays a light decoded copy of the track through an audio worklet, so it can run at any speed, forward or backward, with no glitches. A small platter model makes it repeatable: finger speed sets playback speed, a held finger stops the record, and letting go spins the motor back up. The disc spins at 33 rpm while a deck plays. Until a track is ready (or if it is too long), the disc uses **Bend**, a gentle pitch nudge.
 - **Scratch feel (wheel → Scratch):** presets **Natural** (default), **Tight**, **Heavy** and **Bend**, plus Sensitivity, Weight and Return time sliders, **Stop on touch** and **Slip mode** (let go and the track jumps back to where it would have been, so you stay on the beat). The same settings give the same result every time.
-- **Per deck, by default:** Cue, Play/Pause, 4 hot cues (tap to set or jump, hold to clear), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
+- **Per deck, by default:** Cue, Play/Pause, 4 hot cues (see *Cue and hot cues* below), a tempo fader (±8%), a 3-band EQ, a level meter and a Load button for your own audio.
 - **Center strip:** Echo, master volume and a crossfader. Status messages show here and clear themselves.
 - **Tap the A or B tag on a deck** to open the deck menu:
   - **Library:** eight full-length tracks (about 3 minutes each) in the NAKO GOLD styles: **Gold, Trance, House, Techno, Pulsewave, Synthpop, Eurodance, Nightdrive**. They are arranged (intro, build, drop, breakdown, build, drop, outro) and synthesized on your device, so the first tap takes a few seconds.
@@ -64,6 +64,20 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
 - **Tilt:** on an iPad or iPhone the specular highlight moves as you tilt the device (it asks for motion access once). On a computer, the light follows your pointer.
 - **Full screen:** in full screen mode or when installed to the Home Screen, the top bar shrinks to **Home** and **Menu** buttons, and everything else lives in the menu drawer.
 - **Layouts for every screen:** three columns on tablets in landscape, stacked decks in portrait, and a compact layout for phones in landscape.
+
+### Cue and hot cues (the Cue button and the 1 2 3 4 buttons)
+
+These work for **any** track (Library, Load, Link, demo loops), not just local files. They are *markers* you place yourself, so they do nothing visible until you set one.
+
+- **Cue button.** Press **Cue while the deck is paused** to mark the current spot as the cue point. Press **Cue while it is playing** to jump back to that cue point and pause. A new deck's cue point is the very start (0:00), so pressing Cue right away just returns to the beginning.
+- **1 2 3 4 (hot cues).** Each is a saved spot. **Tap an empty one** to save the current position into it (it lights up). **Tap a lit one** to jump straight to that spot, even while playing. **Press and hold** a lit one for about 0.6 s to clear it. They reset when you load a new track.
+- **Why they can feel like nothing happens:** the only feedback is the button lighting up and a short status line, and the position moves instantly. Turn on the **Wave** add-on to see numbered flags on the waveform and the jump.
+
+**Known gaps and ideas for a future update (cues):**
+- Hot cues are not remembered between sessions or per track, and are not quantized (they save the exact instant you tap). Snapping to the beat grid, saving cues per track, and a brief on-screen flash or toast ("Cue 2 set at 1:12") would make them much clearer.
+- Cue does not yet preview while held (the usual "hold to listen, release to return" behavior).
+- Jumping to a hot cue on a streamed (Link) track can pause briefly while the stream buffers; it is faster once the track is saved on the device.
+- Loop and Gate are quantized to the beat grid, but cues and the Cue button are not.
 
 ### Test it on an iPad
 
@@ -154,6 +168,7 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 
 ## Roadmap
 
+- Make the Cue button and hot cues clearer and more useful (see *Known gaps* under *Cue and hot cues*).
 - Real-iPad tuning of the Controller (scratch feel, tilt, layout) from hands-on feedback.
 - A crossfader cut helper, record-your-scratch, and more patterns.
 - More glass icon variants (a Home Screen icon for every color, an SVG favicon).
