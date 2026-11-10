@@ -18,6 +18,28 @@
   ];
   // v1-v4 theme ids -> current ids (so saved choices keep working)
   var LEGACY = { master: "gold-disc", house: "sunset-cans", synthpop: "pink-cans", techno: "mint-buds", eurodance: "cobalt-disc", trance: "rainbow-cd", chrome: "silver-cd", sunset: "sunset-cans" };
+  /* App icon / favicon: eight Murano-style glass icons (one per theme color), interchangeable.
+     Default is Glass Blue with the black logo. Dark glass uses the white logo. */
+  var ICONS = [
+    { id: "cobalt-disc", name: "Glass Blue", logo: "black" }, { id: "gold-disc", name: "Amber", logo: "black" },
+    { id: "silver-cd", name: "Cristallo", logo: "black" }, { id: "rainbow-cd", name: "Opal", logo: "black" },
+    { id: "studio-black", name: "Smoke", logo: "white" }, { id: "pink-cans", name: "Rose", logo: "black" },
+    { id: "mint-buds", name: "Emerald", logo: "black" }, { id: "sunset-cans", name: "Ruby", logo: "black" }
+  ];
+  var ICON_KEY = "gsdj-icon", LOGO_KEY = "gsdj-icon-logo";
+  function iconPath(id, logo, size) { var a = document.querySelector(".brand"); var pre = a && /^\.\.\//.test(a.getAttribute("href") || "") ? "../" : ""; return pre + "assets/icons/glass-" + id + "-" + logo + "-" + size + ".png"; }
+  function iconState() {
+    var id = store(ICON_KEY), def = ICONS.filter(function (i) { return i.id === id; })[0] || ICONS[0], pick = store(LOGO_KEY);
+    return { icon: def, logo: pick === "black" || pick === "white" ? pick : def.logo };
+  }
+  function applyIcon() {
+    var st = iconState(), f = document.getElementById("favicon"), t = document.getElementById("touch-icon");
+    // only the default icon ships large sizes; others use the 64 px art for the home screen too
+    if (f) f.setAttribute("href", iconPath(st.icon.id, st.logo, 64));
+    if (t) t.setAttribute("href", st.icon.id === "cobalt-disc" && st.logo === "black" ? iconPath("cobalt-disc", "black", 180) : iconPath(st.icon.id, st.logo, 64));
+    document.querySelectorAll("[data-set-icon]").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-set-icon") === st.icon.id ? "true" : "false"); });
+    document.querySelectorAll("[data-set-logo]").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-set-logo") === st.logo ? "true" : "false"); });
+  }
   var KEY = "gsdj-theme";
   var root = document.documentElement;
 
@@ -50,7 +72,7 @@
   function motionState() { var m = store(MOTION_KEY); return m === "on" || m === "off" ? m : motionDefault(); }
   function applyMotion() {
     var m = motionState(); root.setAttribute("data-motion", m);
-    document.querySelectorAll("[data-motion-toggle]").forEach(function (b) { b.setAttribute("aria-pressed", m === "on" ? "true" : "false"); var t = b.querySelector("span"); if (t) t.textContent = m === "on" ? "On" : "Off"; });
+    document.querySelectorAll("[data-motion-toggle]").forEach(function (b) { b.setAttribute("aria-pressed", m === "on" ? "true" : "false"); var t = b.querySelector(".mt-state"); if (t) t.textContent = m === "on" ? "On" : "Off"; });
   }
   applyMotion();
   /* Full screen / installed app: a slim bar with Home + Menu (see css). */
@@ -290,11 +312,24 @@
   function initMotionToggle() {
     var dr = document.getElementById("drawer"); if (!dr || dr.querySelector("[data-motion-toggle]")) return;
     var g = document.createElement("div"); g.className = "drawer-group";
-    g.innerHTML = '<h2>Motion</h2><button type="button" class="swatch motion-toggle" data-motion-toggle aria-pressed="false"><span class="swatch-dot" style="--sw-a:#ffc933;--sw-b:#ff8a1f;--sw-c:#5c3a00" aria-hidden="true"></span>Animations <span>Off</span></button><p class="drawer-note">Off keeps pages light and steady on phones and iPads.</p>';
+    g.innerHTML = '<h2>Motion</h2><button type="button" class="swatch motion-toggle" data-motion-toggle aria-pressed="false"><span class="swatch-dot" style="--sw-a:#ffc933;--sw-b:#ff8a1f;--sw-c:#5c3a00" aria-hidden="true"></span>Animations <span class="mt-state">Off</span></button><p class="drawer-note">Off keeps pages light and steady on phones and iPads.</p>';
     var themeGroup = dr.querySelector(".swatches"); var host = themeGroup && themeGroup.parentNode ? themeGroup.parentNode : dr;
     host.parentNode.insertBefore(g, host.nextSibling);
     g.querySelector("button").addEventListener("click", function () { store(MOTION_KEY, motionState() === "on" ? "off" : "on"); applyMotion(); });
     applyMotion();
+  }
+  function initIconPicker() {
+    var dr = document.getElementById("drawer"); if (!dr || dr.querySelector(".icon-picker")) return;
+    var g = document.createElement("div"); g.className = "drawer-group icon-picker";
+    var h = '<h2>App icon</h2><div class="icon-grid" role="group" aria-label="App icon">';
+    ICONS.forEach(function (i) { h += '<button type="button" class="icon-opt" data-set-icon="' + i.id + '" aria-pressed="false" aria-label="' + i.name + ' glass icon"><img src="' + iconPath(i.id, i.logo, 64) + '" width="40" height="40" alt="" loading="lazy"><span>' + i.name + "</span></button>"; });
+    h += '</div><div class="logo-pick" role="group" aria-label="Logo color"><button type="button" class="chip" data-set-logo="black" aria-pressed="false">Black logo</button><button type="button" class="chip" data-set-logo="white" aria-pressed="false">White logo</button></div><p class="drawer-note">Changes the tab icon. To update your Home Screen icon, add the site again after picking.</p>';
+    g.innerHTML = h;
+    var motion = dr.querySelector("[data-motion-toggle]"), anchor = motion ? motion.closest(".drawer-group") : null;
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(g, anchor.nextSibling); else dr.appendChild(g);
+    g.querySelectorAll("[data-set-icon]").forEach(function (b) { b.addEventListener("click", function () { var id = b.getAttribute("data-set-icon"); store(ICON_KEY, id); store(LOGO_KEY, ""); applyIcon(); }); });
+    g.querySelectorAll("[data-set-logo]").forEach(function (b) { b.addEventListener("click", function () { store(LOGO_KEY, b.getAttribute("data-set-logo")); applyIcon(); }); });
+    applyIcon();
   }
   function initMarks() {
     var fw = document.querySelector(".site-footer .wrap");
@@ -310,10 +345,10 @@
   }
   function initYear() { var y = document.getElementById("year"); if (y) y.textContent = String(new Date().getFullYear()); }
 
-  window.GSDJ = { motion: motionState, setTheme: setTheme, setChip: setChip, theme: currentTheme, themes: THEMES };
+  window.GSDJ = { icons: ICONS, setIcon: function (id, logo) { store(ICON_KEY, id); store(LOGO_KEY, logo || ""); applyIcon(); }, motion: motionState, setTheme: setTheme, setChip: setChip, theme: currentTheme, themes: THEMES };
 
   function init() {
-    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initMotionToggle(); initMarks(); initYear(); initWeather();
+    buildSwatches(); initChipDefault(); initDrawer(); initHeader(); initMotionToggle(); initIconPicker(); initMarks(); initYear(); initWeather();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

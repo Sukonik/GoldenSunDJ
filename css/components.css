@@ -290,3 +290,12 @@ html[data-fs="on"] .brand::after { content: "Home"; font-family: var(--mono); fo
 html[data-fs="on"] .menu-label { display: none; }
 html[data-fs="on"] .menu-btn { width: 44px; padding: 0; }
 html[data-fs="on"] .site-header-inner { min-height: var(--header-h); }
+
+/* App icon picker (drawer) */
+.icon-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; margin-bottom: .6rem; }
+.icon-opt { display: grid; justify-items: center; gap: .2rem; padding: .45rem .2rem; border-radius: 12px; border: 1px solid var(--hair); background: rgba(255,255,255,.03); font-size: .62rem; color: var(--text-2); min-height: 44px; }
+.icon-opt img { width: 40px; height: 40px; }
+.icon-opt[aria-pressed="true"] { border-color: var(--a); background: color-mix(in srgb, var(--a) 14%, transparent); color: #fff; }
+.logo-pick { display: flex; gap: .4rem; }
+.logo-pick .chip { min-height: 44px; padding: 0 .9rem; border-radius: 999px; border: 1px solid var(--border-strong); background: transparent; color: var(--text); font-size: .85rem; }
+.logo-pick .chip[aria-pressed="true"] { background: var(--a); color: var(--accent-ink); border-color: transparent; font-weight: 700; }

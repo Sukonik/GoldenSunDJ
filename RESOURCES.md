@@ -131,6 +131,10 @@ Tested from our own environment (search, CORS headers and streaming ranges):
 
 Notes: streamed tracks are played through an `<audio>` element. Tap a streamed track's waveform to cache it on the device, which makes scratching, loops and cues instant. Decoding every track to an audio buffer (best for reverse play) uses a lot of memory on phones, so it stays on the roadmap.
 
+## 4c. Icon direction
+
+**Material Design + Italian blown glass (Murano).** Material gives the tile (rounded square, soft elevation, simple geometry); blown glass gives the surface (translucent color that is dark at the thick rim and luminous in the thin center, a window highlight, lattimo swirls, trapped air bubbles). Eight colors match the eight site themes; Glass Blue is the default. Generated with `tools/make_glass_icons.py` from our own emblem mask.
+
 ## 5. Tools and data we use
 
 - [Open-Meteo](https://open-meteo.com/) — free weather, geocoding and air-quality APIs (no key).
