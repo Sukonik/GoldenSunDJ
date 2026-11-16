@@ -561,7 +561,7 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 .ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq .nm { min-width: 2.6rem; }
 .ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq2 { display: grid; }
 .ctl[data-controller-mode="spotify-ninja"][data-eq="1"] #deck-a .opt-eq2 { display: none; }
-.ctl[data-controller-mode="spotify-ninja"] #loop-a[inert] { opacity: 1; filter: none; pointer-events: none; }
+
 
 /* Ninja Pads and Ninja FX: the sampler and FX drawers on deck A */
 .ctl[data-controller-mode="spotify-ninja"] #deck-a .deck-drawers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -620,3 +620,39 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 .tmini { min-width: 0; min-height: 30px; }
 @media (max-width: 40rem) and (orientation: portrait) { .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body { min-height: 9.4rem; } }
 @media (max-width: 40rem) { .nbpm small { display: none; } }
+
+/* ====== v23: tidy result rows, matching Ninja branding on both decks, Ninja Scratch ====== */
+/* every result row: art, text and the main button on top, small actions underneath (never squeezed beside the button) */
+.res-list li { grid-template-columns: 44px minmax(0, 1fr) auto; grid-template-areas: "art txt go" ". more more"; row-gap: .35rem; }
+.res-list li > img, .res-list li > .no-art { grid-area: art; } .res-list li > .res-text { grid-area: txt; } .res-list li > .res-load { grid-area: go; } .res-list li > .res-more { grid-area: more; }
+.res-list li > .res-load:only-of-type { grid-area: go; }
+.res-more { flex-wrap: wrap; align-items: center; gap: .4rem; }
+.res-more .res-link { display: inline-flex !important; align-items: center; min-height: 34px; padding: 0 .3rem; font-size: .72rem; }
+.res-sub { min-height: 38px; min-width: 4.2rem; padding: 0 .9rem; }
+.res-list li:not(:has(.res-more)) { grid-template-areas: "art txt go"; }
+.lib-list li { display: grid; grid-template-columns: minmax(0, 1fr); gap: .3rem; }
+.lib-list .lib-q { justify-self: end; min-height: 34px; min-width: 4.4rem; padding: 0 .9rem; margin: -.1rem .5rem .1rem 0; }
+@media (max-width: 30rem) { .res-list li { grid-template-columns: 44px minmax(0, 1fr) auto; } .res-list li .res-more, .res-list li > .res-sub { grid-column: 2 / -1; justify-self: start; } }
+
+/* Deck B wears the same Ninja branding as Deck A */
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .plat-label .sun-mark { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .plat-label .nj-plat { display: block; background: linear-gradient(135deg, #1ed760, #d6ffe4); }
+.ctl[data-controller-mode="spotify-ninja"] .deck-tag { box-shadow: 0 0 0 2px color-mix(in srgb, var(--dk) 40%, transparent); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .deck-top::after, .ctl[data-controller-mode="spotify-ninja"] #deck-a .deck-top::after { content: none; }
+.ctl[data-controller-mode="spotify-ninja"] .deck-top .deck-title { font-weight: 600; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .plat-disc { box-shadow: 0 0 0 4px color-mix(in srgb, #1ed760 70%, #000), 0 0 0 6px rgba(255,255,255,.12), 0 14px 40px -10px rgba(30,215,96,.5); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .plat-disc { box-shadow: 0 0 0 4px color-mix(in srgb, #ffc933 70%, #000), 0 0 0 6px rgba(255,255,255,.12), 0 14px 40px -10px rgba(255,201,51,.5); }
+.ctl[data-controller-mode="spotify-ninja"] .plat-marker { background: #fff; }
+.ctl[data-controller-mode="spotify-ninja"] .platter { cursor: grab; }
+.ctl[data-controller-mode="spotify-ninja"] .platter:active .plat-disc { filter: brightness(1.12); }
+.ctl[data-controller-mode="spotify-ninja"] .ninja-badge { grid-column: 1 / -1; }
+
+/* Ninja Scratch: the third drawer button becomes a toggle */
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .drw-pat { display: inline-flex; align-items: center; justify-content: center; }
+#pat-a[aria-pressed="true"] { background: var(--dk); color: #0a0b0f; border-color: transparent; box-shadow: 0 0 18px color-mix(in srgb, var(--dk) 70%, transparent); }
+.ctl[data-ninja-scratch="1"] #deck-a .plat-disc { box-shadow: 0 0 0 4px #fff, 0 0 0 7px color-mix(in srgb, #ffc933 80%, transparent), 0 0 34px rgba(255,201,51,.8); }
+.ctl[data-ninja-scratch="1"] #deck-a .plat-grooves { background: repeating-radial-gradient(circle, rgba(255,201,51,.28) 0 1px, transparent 1px 6px); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .drw-pat { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .deck-drawers { grid-auto-flow: column; }
+.np-grid[data-n="8"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 40rem) { .np-banks .bank-num { min-width: 2.6rem; } .np-top { gap: .4rem; } }

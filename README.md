@@ -125,6 +125,18 @@ The Spotify tab has a source row: **Search**, **Liked Songs**, **Playlists**. Th
 
 Under each deck's tempo slider: **Sync** matches this deck's tempo to the other deck (it also tries half and double time, and says so if the tempos are more than 8% apart; it matches tempo, not beat position). **◂ ▸ Nudge** briefly slows down or speeds up the deck by 5% while you hold it, so you can line the beats up by ear.
 
+#### Batch 3: Ninja Scratch, loops, fades, Auto-next, Auto-mix (v23)
+
+- **Ninja Scratch** (the *Scratch* button under Deck A becomes **Ninja Scratch**, a toggle). Spotify's audio cannot be scratched, so this is a **scratch layer of quick seeks**, built on the original scratch patterns. When it is on, the disc glows white and gold and works differently from Ninja Scrub: Spotify keeps playing and the song position follows your finger live (about 9 seeks a second, so it sounds choppy, like a stutter). **Flick forward** for a Chirp, **flick backward** for a Backspin (8 s, or 16 s if you flick hard), **zig-zag** quickly for a Scribble. The **Scratch bank** of Ninja Pads (bank 3) runs Baby, Chirp, Transform, Tear, Flare, Scribble, Brake and Backspin by button, timed to your tapped BPM (120 if none). Spotify cannot play backwards or cut the sound in time, so this is an approximation, not the real thing.
+- **Backspin without Ninja Scratch:** in plain Ninja Scrub, a fast backward flick also jumps back 8 s (16 s when very fast), then resumes.
+- **Deck B's disc** now turns too: turn it to choose where the next track starts.
+- **Ninja Loop:** the Moves pads have **Loop** (a beat loop of the Beats macro size, timed by tap tempo) and **A–B** (a loop between Cue 1 and Cue 2). The loop button in the loop row works too. Spotify answers seeks after a short delay, so a loop has a small seam at the jump, and the timeline shows the loop as a band.
+- **Fade and Fade length** on the Track circle's Level page (and a **Fade** pad): one tap fades the target deck out, the next fades it back in; Fade length is a slider (0.5 to 8 s) that sets Smoke Fade, Fade pad, Ninja Switch and Auto-next, and is separate for GoldenSun tracks. Normal tracks fade with real Web Audio gain; Spotify fades are volume commands (see the iOS note).
+- **Auto-next** (Track circle page 3, SpotifyNinja only): near the end of a track it runs a Ninja Switch to what is up next. Needs a Prep track or a queue.
+- **Auto-mix** (gear → Add-ons → Auto-mix, GoldenSun Controller only): when the playing deck nears its end, the next track mixes in on the other deck. It uses the track waiting on the other deck, or loads the next one from Up next. It syncs tempos first, starts the other deck and glides the crossfader (at least 4 s). It turns Repeat off so tracks can finish. It never touches Spotify tracks.
+- **Cleaner menus:** in every track list (Library, Audius, Spotify, Playlists) the main button stays beside the title, and the small actions (Queue, Prep, Audius link) sit underneath, instead of being squeezed beside it. Deck B now wears the same Ninja branding as Deck A.
+- **Still not shipped:** the beat gate (Spotify cannot be gated in time) and Spotify Mix now / Auto-mix, which Spotify's policy does not allow.
+
 ### The Track circle (everyday track controls)
 
 A round **Track** button sits beside the gear in the center strip. It opens a small radial menu for **one deck at a time, the target**. The target is written inside the button (**TRACK A**, **TRACK B**, or **LIVE** / **NEXT** in SpotifyNinja) and shown by a **colored outline on that deck**. Touch a deck to target it, or tap the **TRACK A ⇄** label in the middle of the circle to switch.
@@ -220,6 +232,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v20** | Spotify search fix ("Invalid limit": results are now requested in sizes Spotify accepts, with automatic fallback) and **genre chips** in the Spotify tab with recommended tracks for the eight NAKO GOLD styles. |
 | **v21** | **Track circle** (two radial pages, explicit TRACK A/B or LIVE/NEXT target with a colored outline), per-deck volume and mute, Repeat, **beat jump**, tap tempo for Spotify, the SpotifyNinja **timeline** and **Ninja Scrub**. First batch of the approved plan. |
 | **v22** | **Batch 2 and the Ninja control set.** Ninja Pads, Ninja FX (Smoke Fade, Shadow Mute, Shuriken Skip, Vanish, Teleport), Ninja BPM, Ninja Macros, Spotify Master and the **Ninja Switch** (a faded, one-track-at-a-time crossfader); the **Prep Deck** and an **Up next** queue with Previous, Next and Shuffle (Spotify and GoldenSun); **Playlists and Liked Songs**; **Sync and Nudge**; the shuriken and ninja icons with black-and-gold SpotifyNinja accents. |
+| **v23** | **Batch 3.** **Ninja Scratch** (a scratch layer: live seeks, flicks, scribble, Scratch pads), Backspin 8/16 s, Ninja Loop (beat and A–B), Fade and Fade length, Auto-next, GoldenSun **Auto-mix**, a draggable Prep disc, cleaner result rows and matching Ninja branding on Deck B. |
 
 ## Under the hood
 
@@ -269,7 +282,7 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 - More sources for the Audius tab (Internet Archive, Free To Use), key detection, and a sync button using the detected tempo.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
 - Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
-- **Approved plan, remaining:** *Batch 3 (conditional)* Spotify loop (calculated A to B and beat loops), an automatic end-of-track transition option, Ninja Scrub gesture variations (backspin 8 or 16 s), Fade length and Fade in on the Track circle, and GoldenSun Auto-mix for Library, Device and Audius tracks. *Experimental, only after latency testing:* a beat gate. *Held or dropped:* Spotify "Mix now" and Spotify Auto-mix (held), and anything that overlaps Spotify audio. Spotify's public developer policy does not allow mixing, segueing or overlapping its content.
+- **Approved plan, remaining (Batch 3 shipped in v23, apart from the held items):** *formerly Batch 3* Spotify loop (calculated A to B and beat loops), an automatic end-of-track transition option, Ninja Scrub gesture variations (backspin 8 or 16 s), Fade length and Fade in on the Track circle, and GoldenSun Auto-mix for Library, Device and Audius tracks. *Experimental, only after latency testing:* a beat gate. *Held or dropped:* Spotify "Mix now" and Spotify Auto-mix (held), and anything that overlaps Spotify audio. Spotify's public developer policy does not allow mixing, segueing or overlapping its content.
 
 ## Resources
 

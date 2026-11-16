@@ -15,7 +15,7 @@
   function say(t) { if (!statusEl) return; statusEl.textContent = t; clearTimeout(sayTimer); sayTimer = setTimeout(function () { statusEl.textContent = ""; }, 5000); }
 
   /* ---------- settings (wheel) ---------- */
-  var settings = { decks: 2, eq: "1", tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false, wave: false, sampler: false, fxu: false, loop: false, tips: false, patterns: false,
+  var settings = { decks: 2, eq: "1", tempo: true, cues: true, fx: true, fader: true, theme: "night-club", material: "matte", tilt: false, wave: false, sampler: false, fxu: false, loop: false, tips: false, patterns: false, automix: false,
     scratch: { preset: "natural", mode: "scratch", sens: 1, weight: 0.5, ret: 0.25, brake: true, slip: false } };
   var SCRATCH_DEFAULT = JSON.parse(JSON.stringify(settings.scratch));
   try { var saved = JSON.parse(localStorage.getItem(KEY)); if (saved) for (var k in saved) if (k in settings) settings[k] = saved[k]; } catch (e) {}
@@ -325,6 +325,7 @@
     fxu: { icon: "✧", label: function () { return "FX"; }, on: function () { return settings.fxu; }, tap: function () { settings.fxu = !settings.fxu; } },
     loop: { icon: "⟲", label: function () { return "Loop"; }, on: function () { return settings.loop; }, tap: function () { settings.loop = !settings.loop; } },
     patterns: { icon: "≈", label: function () { return "Patterns"; }, on: function () { return settings.patterns; }, tap: function () { settings.patterns = !settings.patterns; } },
+    automix: { icon: "⇄", label: function () { return "Auto-mix"; }, on: function () { return settings.automix; }, tap: function () { settings.automix = !settings.automix; if (window.GSDJAutomix) window.GSDJAutomix.changed(settings.automix); } },
     tips: { icon: "?", label: function () { return "Tips"; }, on: function () { return settings.tips; }, tap: function () { settings.tips = !settings.tips; if (settings.tips) pendingTips = true; } },
     material: { icon: "▤", label: function () { return { matte: "Matte", carbon: "Carbon", titanium: "Titanium" }[settings.material]; }, on: function () { return settings.material !== "matte"; }, tap: function () { settings.material = { matte: "carbon", carbon: "titanium", titanium: "matte" }[settings.material]; } },
     tilt: { icon: "◭", label: function () { return "Tilt"; }, on: function () { return settings.tilt; }, tap: function () { toggleTilt(); } },
@@ -334,7 +335,7 @@
     full: { icon: "⛶", label: function () { return "Full"; }, on: function () { return !!document.fullscreenElement; }, tap: function () { var el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else (el.requestFullscreen || el.webkitRequestFullscreen).call(el); } }
   };
   var canFull = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
-  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "fx", "fader", "scratch", "source"] }, { name: "Add-ons", ids: ["cues", "wave", "sampler", "fxu", "patterns", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
+  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "fx", "fader", "scratch", "source"] }, { name: "Add-ons", ids: ["cues", "wave", "sampler", "fxu", "patterns", "loop", "automix", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
   var wheelPage = 0, pendingTips = false, ring = $("wheel-ring");
   function drawWheel() {
     var pg = PAGES[wheelPage]; ring.textContent = ""; $("wheel-title").textContent = pg.name;

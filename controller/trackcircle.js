@@ -51,9 +51,13 @@
           else { var d = deck(); d.audio.loop = !d.audio.loop; toast(d.audio.loop ? "Repeat on. The track plays again when it ends." : "Repeat off. The track stops when it ends."); C.updatePlayUi(d); } } },
       { page: 1, id: "mute", icon: "⊘", label: "Mute", on: function () { return ninja() ? spMuted : !!deck().muted; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () { toggleMute(); } },
       { page: 1, id: "volume", icon: "♪", label: "Volume", on: function () { return openSlider === "volume"; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () { showSlider(openSlider === "volume" ? null : "volume"); } },
+      { page: 1, id: "fade", icon: "☁", label: "Fade", on: function () { return ninja() ? !!(T() && T().faded()) : (deck().vol != null && deck().vol < 0.05); }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : (!ninja() && !deck().audio.src ? "Load a track on this deck first." : ""); }, tap: function () {
+          if (ninja()) { T().fadeToggle(); return; } var am = window.GSDJAutomix; if (am) { var out = am.fade(deck()); toast(out ? "Fading out over " + am.fadeLen() + " seconds." : "Fading in over " + am.fadeLen() + " seconds."); } } },
+      { page: 1, id: "fadelen", icon: "⏱", label: "Fade length", on: function () { return openSlider === "fade"; }, tap: function () { showSlider(openSlider === "fade" ? null : "fade"); } },
       { page: 2, id: "prev", icon: "⏮", label: "Previous", on: function () { return false; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () { var n = nav(); if (n) n.previous(target); } },
       { page: 2, id: "next", icon: "⏭", label: "Next", on: function () { return false; }, why: function () { var n = nav(); return n && n.hasNext(target) ? "" : (n ? n.nextReason() : "No queue here yet."); }, tap: function () { var n = nav(); if (n) n.next(target); } },
       { page: 2, id: "shuffle", icon: "⤮", label: "Shuffle", on: function () { var n = nav(); return !!(n && n.shuffleOn()); }, tap: function () { var n = nav(); if (n) { n.shuffle(); toast(n.shuffleOn() ? "Shuffle on." : "Shuffle off."); } } },
+      { page: 2, id: "auto", only: "ninja", icon: "⇥", label: "Auto-next", on: function () { return !!(T() && T().auto.on()); }, why: function () { return target === "b" ? NEXT_ONLY : ""; }, tap: function () { var on = T().auto.toggle(); toast(on ? "Auto-next on. Near the end of a track, Ninja Switch brings in what is up next." : "Auto-next off."); } },
       { page: 2, id: "queue", icon: "☰", label: "Up next", on: function () { return false; }, tap: function () { close(); var m = window.GSDJDeckMenu; if (m) m.open(target, ninja() ? "spotify" : "link", { queue: true }); } }
     ];
     var PAGE_NAMES = ["Transport", "Level", "Queue"];
@@ -74,12 +78,16 @@
     var box = document.createElement("div"); box.className = "wheel-scrim tc-scrim"; box.id = "track-wheel"; box.hidden = true; var scrim = box;
     box.innerHTML = '<div class="tc-box"><div class="wheel-wrap tc-wrap" role="dialog" aria-modal="true" aria-label="Track controls"><div class="wheel" id="tc-ring"></div>' +
       '<div class="wheel-center"><button type="button" class="tc-target" id="tc-target" aria-label="Switch the target deck"></button><span id="tc-page"></span><span class="tc-why" id="tc-why"></span></div></div>' +
-      '<div class="tc-side"><div class="tc-panel" id="tc-panel" hidden><label for="tc-vol" id="tc-vol-l">Volume</label><div class="tc-row"><input type="range" id="tc-vol" min="0" max="100" step="1"><output id="tc-vol-o" class="tnum"></output></div><p class="tc-note" id="tc-note" hidden></p></div>' +
+      '<div class="tc-side"><div class="tc-panel" id="tc-panel" hidden><label for="tc-vol" id="tc-vol-l">Volume</label><div class="tc-row"><input type="range" id="tc-vol" min="0" max="100" step="1"><output id="tc-vol-o" class="tnum"></output></div><p class="tc-note" id="tc-note" hidden></p></div><div class="tc-panel" id="tc-fpanel" hidden><label for="tc-fadelen">Fade length</label><div class="tc-row"><input type="range" id="tc-fadelen" min="0.5" max="8" step="0.5"><output id="tc-fade-o" class="tnum"></output></div></div>' +
       '<div class="tc-foot"><button type="button" class="tbtn" id="tc-next">Level ▸</button><button type="button" class="tbtn" id="tc-done">Done</button></div></div></div>';
     C.el.appendChild(box);                                                      // inside the controller so it uses the controller theme colors
     var ring = $("tc-ring"), panel = $("tc-panel"), vol = $("tc-vol"), volO = $("tc-vol-o"), note = $("tc-note");
     function curVol() { return ninja() ? spVol : (deck().vol == null ? 1 : deck().vol); }
+    var fpanel = $("tc-fpanel"), flen = $("tc-fadelen"), fo = $("tc-fade-o");
+    function fadeLenNow() { return ninja() ? N().macros.fade : (window.GSDJAutomix ? window.GSDJAutomix.fadeLen() : 4); }
+    flen.addEventListener("input", function () { var v = parseFloat(flen.value); fo.textContent = v + " s"; if (ninja()) { N().macros.fade = v; N().saveMacros(); } else if (window.GSDJAutomix) window.GSDJAutomix.setFadeLen(v); });
     function showSlider(which) {
+      fpanel.hidden = which !== "fade"; if (which === "fade") { flen.value = fadeLenNow(); fo.textContent = fadeLenNow() + " s"; }
       openSlider = which; panel.hidden = which !== "volume"; if (which === "volume") { var v = Math.round(curVol() * 100); vol.value = v; volO.textContent = v + "%"; var nj = ninja(); note.hidden = !(nj && isIOS); note.textContent = nj && isIOS ? "On iPhone and iPad, the volume from a web page may not change how loud Spotify is. If it does not, use the device volume buttons." : ""; }
       draw();
     }
@@ -92,7 +100,7 @@
 
     /* ---------- drawing the ring ---------- */
     function draw() {
-      var items = ITEMS.filter(function (i) { return i.page === page; }), why = reason(); ring.textContent = "";
+      var items = ITEMS.filter(function (i) { return i.page === page && (!i.only || (i.only === "ninja") === ninja()); }), why = reason(); ring.textContent = "";
       $("tc-target").innerHTML = (ninja() ? '<i class="nj-star tc-star nj-spin" aria-hidden="true"></i>' + (target === "a" ? "LIVE" : "NEXT") : "TRACK " + target.toUpperCase()) + " <i aria-hidden=\"true\">⇄</i>";
       $("tc-page").textContent = PAGE_NAMES[page]; $("tc-next").textContent = PAGE_NAMES[(page + 1) % PAGE_NAMES.length] + " ▸"; $("tc-why").textContent = why;
       items.forEach(function (it, i) {
@@ -105,11 +113,11 @@
       var d = deck(); document.querySelectorAll(".deck").forEach(function (x) { x.classList.toggle("is-target", x.id === "deck-" + target); });
       if (openSlider === "volume") { var v = Math.round(curVol() * 100); if (parseInt(vol.value, 10) !== v) vol.value = v; volO.textContent = v + "%"; }
     }
-    function open() { paintTarget(); page = 0; openSlider = null; panel.hidden = true; box.hidden = false; btn.setAttribute("aria-expanded", "true"); draw(); var f = ring.querySelector("button"); if (f) f.focus(); }
-    function close() { box.hidden = true; panel.hidden = true; openSlider = null; btn.setAttribute("aria-expanded", "false"); btn.focus(); }
+    function open() { paintTarget(); page = 0; openSlider = null; panel.hidden = true; fpanel.hidden = true; box.hidden = false; btn.setAttribute("aria-expanded", "true"); draw(); var f = ring.querySelector("button"); if (f) f.focus(); }
+    function close() { box.hidden = true; panel.hidden = true; fpanel.hidden = true; openSlider = null; btn.setAttribute("aria-expanded", "false"); btn.focus(); }
     btn.addEventListener("click", open);
     $("tc-done").addEventListener("click", close); box.addEventListener("click", function (e) { if (e.target === box) close(); });
-    $("tc-next").addEventListener("click", function () { page = (page + 1) % PAGE_NAMES.length; openSlider = null; panel.hidden = true; draw(); });
+    $("tc-next").addEventListener("click", function () { page = (page + 1) % PAGE_NAMES.length; openSlider = null; panel.hidden = true; fpanel.hidden = true; draw(); });
     $("tc-target").addEventListener("click", function () { if (C.settings.decks === 1) { toast("Only one deck is on. Turn on 2 decks in the settings wheel to use deck B."); return; } setTarget(target === "a" ? "b" : "a"); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !box.hidden) close(); });
     // when a track ends and Repeat is off, make sure the play button says so

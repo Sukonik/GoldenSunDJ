@@ -156,7 +156,8 @@
         });
         var link = document.createElement("a"); link.className = "res-link"; link.target = "_blank"; link.rel = "noopener"; link.textContent = "Audius ↗"; link.href = t.permalink ? "https://audius.co" + t.permalink : "https://audius.co/search/" + encodeURIComponent(t.title);
         var qb = document.createElement("button"); qb.type = "button"; qb.className = "res-sub"; qb.textContent = "Queue"; qb.setAttribute("aria-label", "Add " + t.title + " to Up next"); qb.addEventListener("click", function () { enqueueDesc({ kind: "audius", id: t.id, title: t.title + " · " + (t.user && t.user.name || "Audius") }); });
-        li.appendChild(img); li.appendChild(txt); li.appendChild(link); li.appendChild(load); li.appendChild(qb); $("res-list").appendChild(li);
+        var more = document.createElement("span"); more.className = "res-more"; more.appendChild(qb); more.appendChild(link);
+        li.appendChild(img); li.appendChild(txt); li.appendChild(load); li.appendChild(more); $("res-list").appendChild(li);
       });
     }
   }

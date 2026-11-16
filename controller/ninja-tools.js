@@ -7,6 +7,8 @@
      Crossfader-> Ninja Switch  fade the live track down, load the prepared track at its start, fade up. One track at a time.
      EQ knobs  -> Ninja Macros  Jump size, Fade length, Scrub sensitivity
      Deck B    -> Prep Deck     the next track, its start point, and the Up next queue
+     Loops     -> Ninja Loop    a timed seek back to the loop start (beat loop from tap tempo, or Cue 1 to Cue 2)
+     Scratch   -> Ninja Scratch a layer of quick seeks: touch the disc, flick it, or use the Scratch pads (patterns from scratch.js)
    Nothing here mixes or overlaps Spotify audio. */
 (function () {
   "use strict";
@@ -114,7 +116,10 @@
       { name: "Moves", pads: [
         ["Restart", function () { T("restart"); }], ["Repeat", function () { T("repeat"); }, function () { return TS("repeat"); }], ["Previous", previous],
         ["Next", function () { if (!hasNext()) { say(nextReason()); return; } next(); }], ["Shuffle", toggleShuffle, function () { return Q.shuffle; }],
-        ["Up next", function () { var m = menu(); if (m) m.open("a", "spotify", { queue: true }); }] ] }
+        ["Up next", function () { var m = menu(); if (m) m.open("a", "spotify", { queue: true }); }],
+        ["Loop", function () { toggleLoop(); }, function () { return NL.on && !NL.ab; }], ["A–B", function () { loopAB(); }, function () { return NL.on && NL.ab; }] ] },
+      { name: "Scratch", pads: [["Baby", function () { pattern("baby"); }], ["Chirp", function () { pattern("chirp"); }], ["Transform", function () { pattern("transform"); }], ["Tear", function () { pattern("tear"); }],
+        ["Flare", function () { pattern("flare"); }], ["Scribble", function () { pattern("scribble"); }], ["Brake", function () { pattern("brake"); }], ["Backspin", function () { backspin(8); }]] }
     ];
     var PCOL = ["#ffc933", "#ffb12a", "#ff9f1c", "#ffd86b", "#8ee07a", "#35d0ff", "#b56bff", "#ff6bd0"], padBank = 0, padsEl = null, padBtns = [];
     function buildPads() {
@@ -174,7 +179,7 @@
     function buildMacros() {
       [["#deck-a .opt-eq", "v"], ["#deck-a .opt-eq2", "h"]].forEach(function (cfg) {
         var host = document.querySelector(cfg[0]); if (!host || host.querySelector(".nm")) return;
-        var defs = [["jump", "Jump", "Jump size in beats", 0, C.loops().length - 1, 1], ["fade", "Fade", "Fade length in seconds", 0.5, 8, 0.5], ["sens", "Scrub", "Scrub sensitivity", 0.5, 2, 0.1]], set = {};
+        var defs = [["jump", "Beats", "Beat size for jumps and loops", 0, C.loops().length - 1, 1], ["fade", "Fade", "Fade length in seconds", 0.5, 8, 0.5], ["sens", "Scrub", "Scrub sensitivity", 0.5, 2, 0.1]], set = {};
         defs.forEach(function (d) {
           var el = document.createElement(cfg[1] === "v" ? "div" : "label"); el.className = (cfg[1] === "v" ? "eqcol " : "") + "nm nm-" + d[0];
           var inp = '<input type="range" ' + (cfg[1] === "v" ? 'class="vslider" ' : "") + 'min="' + d[3] + '" max="' + d[4] + '" step="' + d[5] + '" aria-label="' + d[2] + '">';
@@ -194,6 +199,7 @@
     }
     function sync() {
       var vals = { jump: A.loop.i, fade: N.macros.fade, sens: N.macros.sens }, txt = { jump: C.loops()[A.loop.i] + " beats", fade: N.macros.fade + " s", sens: "×" + N.macros.sens.toFixed(1) };
+      if (NL.on && !NL.ab) { var tt = N.core.tempoFor(cur().track.uri); if (tt) NL.end = NL.start + C.loops()[A.loop.i] * 60000 / tt.bpm; }
       macroSets.forEach(function (set) { Object.keys(set).forEach(function (k) { if (parseFloat(set[k].input.value) !== vals[k]) set[k].input.value = vals[k]; set[k].out.textContent = txt[k]; }); });
       var o = document.querySelector("#deck-a .nbpm-out"); if (o) o.textContent = A.el.bpm.textContent;
     }
@@ -273,13 +279,12 @@
     document.addEventListener("change", function (e) { if (!on() || e.target !== xf) return; e.stopImmediatePropagation(); if (switching) return; if (+xf.value >= 85) doSwitch(); else xfBack(); }, true);
 
     /* =============== labels and mode switching =============== */
-    var LABELS = [["#samp-a", "Ninja Pads"], ["#fx-a", "Ninja FX"], [".master label", "Spotify Master"], [".opt-xfade label", "Ninja Switch"], ["#deck-a .opt-tempo > label", "Ninja BPM"]];
+    var LABELS = [["#pat-a", "Ninja Scratch"], ["#samp-a", "Ninja Pads"], ["#fx-a", "Ninja FX"], [".master label", "Spotify Master"], [".opt-xfade label", "Ninja Switch"], ["#deck-a .opt-tempo > label", "Ninja BPM"]];
     function relabel(onNow) {
       LABELS.forEach(function (x) { var el = document.querySelector(x[0]); if (!el) return; if (el.getAttribute("data-gs") == null) el.setAttribute("data-gs", el.textContent); el.textContent = onNow ? x[1] : el.getAttribute("data-gs"); });
       var ends = document.querySelectorAll(".xf-ends span"); if (ends.length === 2) { if (ends[0].getAttribute("data-gs") == null) { ends[0].setAttribute("data-gs", ends[0].textContent); ends[1].setAttribute("data-gs", ends[1].textContent); } ends[0].textContent = onNow ? "LIVE" : ends[0].getAttribute("data-gs"); ends[1].textContent = onNow ? "NEXT" : ends[1].getAttribute("data-gs"); }
-      var lt = $("loop-a"); if (lt) { var first = lt.firstChild; if (first && first.nodeType === 3) { if (lt.getAttribute("data-gs-t") == null) lt.setAttribute("data-gs-t", first.nodeValue); first.nodeValue = onNow ? "Jump " : lt.getAttribute("data-gs-t"); } }
       var db = document.querySelector("#deck-b .deck-actions"); if (db) db.setAttribute("data-ninja", onNow ? "1" : "");
-      var star = document.querySelector("#deck-a .plat-label"); if (star && !star.querySelector(".nj-star")) { var i = document.createElement("i"); i.className = "nj-star nj-plat"; i.setAttribute("aria-hidden", "true"); star.appendChild(i); }
+      document.querySelectorAll("#deck-a .plat-label, #deck-b .plat-label").forEach(function (star) { if (!star.querySelector(".nj-star")) { var i = document.createElement("i"); i.className = "nj-star nj-plat"; i.setAttribute("aria-hidden", "true"); star.appendChild(i); } });
     }
     function onMode(isOn) {
       relabel(isOn);
@@ -289,7 +294,7 @@
         var note = document.querySelector(".master .ninja-note"); if (!note) { note = document.createElement("span"); note.className = "ninja-note"; note.textContent = isIOS ? "On iPhone and iPad, use the device volume buttons." : "Spotify volume"; document.querySelector(".master").appendChild(note); }
         curVol = baseVol(); ensurePrep(); renderPrep(); sync();
       } else {
-        cancelFade(); switching = false;
+        cancelFade(); cancelPattern(); NL.on = false; if (scratchOn) setScratch(false); switching = false;
         if (xf && xfSaved != null) { xf.value = xfSaved; xfSaved = null; xf.dispatchEvent(new Event("input", { bubbles: true })); }
         var m = menu(); if (m && m.refreshQueue) m.refreshQueue();
       }
@@ -299,7 +304,66 @@
     window.addEventListener("gsdj:modechange", function (e) { if (!(e.detail && e.detail.mode === "spotify-ninja")) ctl.removeAttribute("data-sp-playing"); });
     window.addEventListener("pagehide", function () { save(); });
 
+    /* =============== position clock, Ninja Loop, Auto-next =============== */
+    var stAt = performance.now(), loopUri = null;
+    window.addEventListener("gsdj:state", function () { stAt = performance.now(); var u = cur().track.uri; if (NL.on && loopUri && u !== loopUri) { NL.on = false; paintLoop(); } });
+    function proj() { var c = cur(); return c.paused ? c.pos : Math.min(c.dur || 1e12, c.pos + (performance.now() - stAt)); }
+    var NL = { on: false, start: 0, end: 0, ab: false }, lastSeek = 0;
+    function paintLoop() { var b = $("loop-a"); if (b) b.setAttribute("aria-pressed", NL.on ? "true" : "false"); refreshPads(); N.core.drawTimeline(); }
+    function toggleLoop() {
+      if (NL.on) { NL.on = false; paintLoop(); say("Loop off."); return; }
+      var t = N.core.tempoFor(cur().track.uri); if (!t) { say("Tap the BPM button four times first, then loop by beats."); return; }
+      var beat = 60000 / t.bpm, p = proj(), st = Math.floor((p - t.off) / beat) * beat + t.off; st = Math.max(0, st);
+      NL = { on: true, start: st, end: st + C.loops()[A.loop.i] * beat, ab: false }; loopUri = cur().track.uri; paintLoop(); say("Loop " + C.loops()[A.loop.i] + " beats. It is timed by tapping, so expect a small seam at the jump.");
+    }
+    function loopAB() {
+      if (NL.on && NL.ab) { NL.on = false; paintLoop(); say("Loop off."); return; }
+      var c = N.core.cuesFor(cur().track.uri).c; if (c[0] == null || c[1] == null || c[1] <= c[0]) { say("Save Cue 1, then Cue 2 later in the song, to loop between them."); return; }
+      NL = { on: true, start: c[0], end: c[1], ab: true }; loopUri = cur().track.uri; paintLoop(); say("Looping between Cue 1 and Cue 2.");
+    }
+    setInterval(function () { if (!on() || !NL.on || cur().paused) return; var n = performance.now(); if (proj() >= NL.end - 30 && n - lastSeek > 400) { lastSeek = n; cmd("seek", "a", { position_ms: Math.round(NL.start) }, "loop"); } }, 50);
+    var AK = "gsdj-ninja-auto", autoOn = false, autoFor = null; try { autoOn = localStorage.getItem(AK) === "1"; } catch (e) {}
+    setInterval(function () {
+      if (!on() || !autoOn || switching || NL.on || cur().paused) return; var c = cur(); if (!c.dur || !hasNext()) return;
+      if (c.dur - proj() <= N.macros.fade * 1000 + 1500 && autoFor !== c.track.uri) { autoFor = c.track.uri; doSwitch(); }
+    }, 250);
+
+    /* =============== Ninja Scratch: a layer of quick seeks =============== */
+    var scratchOn = false, patTimer = null;
+    function setScratch(v) {
+      scratchOn = v; ctl.setAttribute("data-ninja-scratch", v ? "1" : ""); var b = $("pat-a"); if (b) b.setAttribute("aria-pressed", v ? "true" : "false");
+      say(v ? "Ninja Scratch on. Touch the disc and move it. Flick forward for a Chirp, flick back for a Backspin, zig-zag for a Scribble. More on the Scratch pads." : "Ninja Scratch off. The disc is Ninja Scrub again.");
+    }
+    document.addEventListener("click", function (e) { if (!on()) return; var t = e.target.closest && e.target.closest("#pat-a, #pat-b"); if (!t) return; e.stopImmediatePropagation(); e.preventDefault(); if (t.id === "pat-a") setScratch(!scratchOn); }, true);
+    function cancelPattern() { if (patTimer) { clearInterval(patTimer); patTimer = null; } }
+    function pattern(id) {
+      var S = window.GSDJScratch, def = S && S.patterns.filter(function (x) { return x.id === id; })[0]; if (!def) return;
+      var c = cur(); if (c.paused) { say("Press Play first. Ninja Scratch works on the playing track."); return; }
+      cancelPattern(); var tp = N.core.tempoFor(c.track.uri), beatMs = 60000 / (tp ? tp.bpm : 120), frames = def.frames(), totalB = frames[frames.length - 1][0], start = proj(), t0 = performance.now(), last = t0, pos = start, seekAt = 0;
+      function at(b) { for (var i = frames.length - 1; i >= 0; i--) if (frames[i][0] <= b) { var f = frames[i], n = frames[i + 1], r = f[1]; if (n && n[0] > f[0]) r = f[1] + (n[1] - f[1]) * (b - f[0]) / (n[0] - f[0]); return [r, f[2]]; } return [1, 1]; }
+      patTimer = setInterval(function () {
+        var now = performance.now(), dt = now - last; last = now; var b = (now - t0) / beatMs;
+        if (b >= totalB) { cancelPattern(); cmd("seek", "a", { position_ms: Math.round(Math.max(0, Math.min(c.dur - 100, start + totalB * beatMs))) }, "scratch-pattern"); return; }
+        var f = at(b); pos = Math.max(0, Math.min(c.dur - 100, pos + f[0] * f[1] * dt)); if (now - seekAt >= 100) { seekAt = now; cmd("seek", "a", { position_ms: Math.round(pos) }, "scratch-pattern"); }
+      }, 40);
+      say(def.name + " (" + def.note + ").");
+    }
+    function backspin(secs) { cancelPattern(); var t = Math.max(0, proj() - secs * 1000); cmd("seek", "a", { position_ms: Math.round(t) }, "backspin"); say("Backspin " + secs + " seconds."); }
+    var bAng = 0;
+    function platterB(e) {                                            // Deck B's disc: turn it to move the start point of the next track
+      if (!Q.prep) { say(N.core.PREP_MSG, "b"); return true; }
+      var pl = $("platter-b"), r = pl.getBoundingClientRect(), id = e.pointerId, pos = Q.prep.start, dur = Q.prep.track.duration_ms || 0;
+      function ang(ev) { return Math.atan2(ev.clientY - (r.top + r.height / 2), ev.clientX - (r.left + r.width / 2)) * 180 / Math.PI; }
+      var a0 = ang(e); try { pl.setPointerCapture(id); } catch (x) {} say("Turn the disc to choose where the next track starts.", "b");
+      function mv(ev) { if (ev.pointerId !== id) return; var a = ang(ev), d = a - a0; if (d > 180) d -= 360; if (d < -180) d += 360; a0 = a; pos = Math.max(0, Math.min(Math.max(0, dur - 3000), pos + d / 360 * (12000 / N.macros.sens))); Q.prep.start = Math.round(pos); bAng += d; $("disc-b").style.transform = "rotate(" + bAng.toFixed(1) + "deg)"; B.el.time.textContent = fmt(pos); drawPrep(); }
+      function up(ev) { if (ev.pointerId !== id) return; pl.removeEventListener("pointermove", mv); pl.removeEventListener("pointerup", up); pl.removeEventListener("pointercancel", up); setStart(pos); }
+      pl.addEventListener("pointermove", mv); pl.addEventListener("pointerup", up); pl.addEventListener("pointercancel", up); return true;
+    }
+
     window.GSDJNinjaTools = {
+      loopRegion: function () { return NL.on ? { start: NL.start, end: NL.end } : null; }, toggleLoop: toggleLoop, loopAB: loopAB,
+      scratchActive: function () { return scratchOn; }, pattern: pattern, backspin: backspin, platterB: platterB, faded: function () { return curVol < 0.05; }, fadeToggle: fadeToggle,
+      auto: { on: function () { return autoOn; }, toggle: function () { autoOn = !autoOn; try { localStorage.setItem(AK, autoOn ? "1" : "0"); } catch (e) {} autoFor = null; return autoOn; } },
       deckB: deckB, prep: prep, enqueue: enqueue, pushHistory: pushHistory, queueView: queueView, renderPrep: renderPrep,
       nav: { next: next, previous: previous, hasNext: hasNext, nextReason: nextReason, shuffle: toggleShuffle, shuffleOn: function () { return Q.shuffle; }, clear: clearQueue },
       prepStart: function () { return Q.prep ? { start: Q.prep.start, dur: Q.prep.track.duration_ms } : null; }, setStart: setStart, doSwitch: doSwitch, fadeTo: fadeTo

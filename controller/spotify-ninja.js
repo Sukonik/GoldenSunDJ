@@ -102,7 +102,7 @@
     }
 
     // controls that cannot work with protected audio are switched off, not hidden, with a reason
-    var INERT = ["#loop-a", "#deck-b .opt-eq2", "#deck-b .lp-toggle", "#deck-b .lp-step:not(.bj)", "#deck-b .deck-drawers", ".center .opt-fx"];            // everything else is rebuilt as a Ninja control (Pads, FX, BPM, Macros, Switch, Prep Deck)
+    var INERT = ["#deck-b .opt-eq2", "#deck-b .lp-toggle", "#deck-b .lp-step:not(.bj)", "#deck-b .deck-drawers", ".center .opt-fx"];            // everything else is rebuilt as a Ninja control (Pads, FX, BPM, Macros, Switch, Prep Deck)
     function setInert(on) {
       INERT.forEach(function (sel) { document.querySelectorAll(sel).forEach(function (el) { if (on) { el.setAttribute("inert", ""); el.setAttribute("aria-disabled", "true"); } else { el.removeAttribute("inert"); el.removeAttribute("aria-disabled"); } }); });
       ["a", "b"].forEach(function (id) { var t = $("toast-" + id); if (t) t.hidden = true; });
@@ -133,11 +133,11 @@
     }
     document.addEventListener("click", function (e) {
       if (!inNinja()) return;
-      var t = e.target.closest && e.target.closest("#play-a, #play-b, .cue, #cue-a, #cue-b, #bj-back-a, #bj-fwd-a, #bj-back-b, #bj-fwd-b, #bpm-a, #bpm-b"); if (!t) return;
+      var t = e.target.closest && e.target.closest("#play-a, #play-b, .cue, #cue-a, #cue-b, #bj-back-a, #bj-fwd-a, #bj-back-b, #bj-fwd-b, #bpm-a, #bpm-b, #loop-a"); if (!t) return;
       var deckEl = t.closest(".deck"), id = deckEl && deckEl.id === "deck-b" ? "b" : "a";
       e.stopImmediatePropagation(); e.preventDefault();
       if (id === "b") { if (!(Tools() && Tools().deckB(t))) say("b", PREP_MSG); return; }
-      if (t.id === "bj-back-a") { beatJump(-1); return; } if (t.id === "bj-fwd-a") { beatJump(1); return; } if (t.id === "bpm-a") { tapTempo(); return; }
+      if (t.id === "loop-a") { if (Tools()) Tools().toggleLoop(); return; } if (t.id === "bj-back-a") { beatJump(-1); return; } if (t.id === "bj-fwd-a") { beatJump(1); return; } if (t.id === "bpm-a") { tapTempo(); return; }
       if (t.id === "play-a") { if (SP) SP.activate(); command("toggle-play", "a", {}, "play"); return; }
       var keyboard = e.detail === 0;                                           // pointer taps were already handled on pointerdown
       if (t.id === "cue-a") { if (keyboard) cueButton(); return; }
@@ -190,6 +190,7 @@
       var top = 16, bh = 18, by = Math.round(h / 2 - bh / 2) + 2, px = pos / dur * w, tp = tempoFor(cur.track.uri);
       g.fillStyle = "rgba(255,255,255,.12)"; g.beginPath(); g.roundRect ? g.roundRect(0, by, w, bh, 9) : g.rect(0, by, w, bh); g.fill();
       g.fillStyle = col; g.beginPath(); g.roundRect ? g.roundRect(0, by, Math.max(bh, px), bh, 9) : g.rect(0, by, px, bh); g.fill();
+      var lr = Tools() && Tools().loopRegion(); if (lr) { g.fillStyle = "rgba(255,255,255,.3)"; g.fillRect(Math.round(lr.start / dur * w), by - 3, Math.max(2, Math.round((lr.end - lr.start) / dur * w)), bh + 6); }
       if (tp) { var beat = 60000 / tp.bpm, bar = beat * 4, step = w / (dur / bar) < 7 ? bar * 4 : bar; for (var t = tp.off; t < dur; t += step) { var x = Math.round(t / dur * w); g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(x, by - 4, 1, bh + 8); } }
       var cs2 = cuesFor(cur.track.uri); g.font = "800 10px " + cs.fontFamily; g.textAlign = "center";
       for (var i = 0; i < 4; i++) { var c = cs2.c[i]; if (c == null) continue; var cx = Math.round(c / dur * w); g.fillStyle = col; g.fillRect(cx, 0, 2, h); g.fillRect(cx, 0, 14, 13); g.fillStyle = "#0a0b0f"; g.fillText(String(i + 1), cx + 8, 10); }
@@ -221,23 +222,31 @@
     function spinTick(t) { var dt = Math.min(0.05, (t - spinPrev) / 1000); spinPrev = t; if (mode !== MODE_SN || (cur.paused && !scrub)) { spinRaf = null; return; } if (!scrub || !scrub.disc) { ang += 198 * dt * (cur.paused ? 0 : 1); discTurn(); } spinRaf = requestAnimationFrame(spinTick); }
     (function wireScrub() {
       var pl = C.byId.a.el.platter; function angleOf(e) { var r = pl.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI; }
-      document.addEventListener("pointerdown", function (e) { if (mode !== MODE_SN) return; var p = e.target.closest && e.target.closest(".platter"); if (!p) return; e.stopImmediatePropagation(); if (p.id !== "platter-a") { say("b", PREP_MSG); return; } e.preventDefault(); begin(e); }, true);
+      document.addEventListener("pointerdown", function (e) { if (mode !== MODE_SN) return; var p = e.target.closest && e.target.closest(".platter"); if (!p) return; e.stopImmediatePropagation(); if (p.id !== "platter-a") { if (!(Tools() && Tools().platterB(e))) say("b", PREP_MSG); return; } e.preventDefault(); begin(e); }, true);
       function begin(e) {
         if (scrub) return; var was = !cur.paused;
-        scrub = { disc: true, id: e.pointerId, a: angleOf(e), pos: cur.pos, was: was, t: performance.now() };
+        var layer = !!(Tools() && Tools().scratchActive());                       // Ninja Scratch: a live scratch layer instead of preview-then-jump
+        scrub = { disc: true, id: e.pointerId, a: angleOf(e), pos: cur.pos, was: was, t: performance.now(), layer: layer, v: 0, revs: [], lastD: 0, sent: null };
         try { pl.setPointerCapture(e.pointerId); } catch (x) {}
-        if (was) command("pause", "a", {}, "scrub"); say("a", "Turn the disc to move through the song. It jumps there when you let go."); spinOn(); drawTimeline();
+        if (layer) { scrub.timer = setInterval(function () { if (scrub && scrub.layer && scrub.sent !== scrub.pos) { scrub.sent = scrub.pos; command("seek", "a", { position_ms: Math.round(scrub.pos) }, "scratch"); } }, 110); }
+        else { if (was) command("pause", "a", {}, "scrub"); say("a", "Turn the disc to move through the song. It jumps there when you let go. Flick it backward for a Backspin."); }
+        spinOn(); drawTimeline();
       }
       pl.addEventListener("pointermove", function (e) {
         if (!scrub || !scrub.disc || e.pointerId !== scrub.id) return; var a = angleOf(e), d = a - scrub.a; if (d > 180) d -= 360; if (d < -180) d += 360; scrub.a = a;
         var n = performance.now(), dt = Math.max(8, n - scrub.t) / 1000; scrub.t = n; var mult = 1 + Math.min(3, Math.abs(d) / dt / 360);
-        scrub.pos = Math.max(0, Math.min(Math.max(0, cur.dur - 50), scrub.pos + d / 360 * (REV_MS / macros.sens) * mult)); ang += d; discTurn();
+        scrub.v = scrub.v * 0.6 + (d / dt) * 0.4; if (Math.abs(d) > 1 && Math.sign(d) !== Math.sign(scrub.lastD)) { scrub.revs.push(n); scrub.lastD = d; } scrub.revs = scrub.revs.filter(function (x) { return n - x < 900; });
+        scrub.pos = Math.max(0, Math.min(Math.max(0, cur.dur - 50), scrub.pos + d / 360 * ((scrub.layer ? 3000 : REV_MS) / macros.sens) * mult)); ang += d; discTurn();
         C.byId.a.el.time.textContent = fmt(scrub.pos) + " / " + fmt(cur.dur); drawTimeline();
       });
       function end(e) {
-        if (!scrub || !scrub.disc) return; if (e && e.pointerId !== undefined && e.pointerId !== scrub.id) return; var s = scrub; scrub = null;
+        if (!scrub || !scrub.disc) return; if (e && e.pointerId !== undefined && e.pointerId !== scrub.id) return; var s = scrub; scrub = null; clearInterval(s.timer);
         try { pl.releasePointerCapture(s.id); } catch (x) {}
-        command("seek", "a", { position_ms: Math.round(s.pos) }, "scrub"); if (s.was) command("play", "a", {}, "scrub"); say("a", "Jumped to " + fmt(s.pos) + "."); spinOn(); drawTimeline();
+        var T = Tools(), fast = Math.abs(s.v) > 900;
+        if (T && s.layer && s.revs.length >= 4) { T.pattern("scribble"); spinOn(); drawTimeline(); return; }                 // zig-zag: Scribble
+        if (T && s.layer && fast) { if (s.v > 0) T.pattern("chirp"); else T.backspin(s.v < -2200 ? 16 : 8); spinOn(); drawTimeline(); return; }   // flick forward: Chirp, back: Backspin
+        if (T && !s.layer && s.v < -1100) { T.backspin(s.v < -2400 ? 16 : 8); if (s.was) command("play", "a", {}, "scrub"); spinOn(); drawTimeline(); return; }
+        command("seek", "a", { position_ms: Math.round(s.pos) }, "scrub"); if (s.was && !s.layer) command("play", "a", {}, "scrub"); say("a", "Jumped to " + fmt(s.pos) + "."); spinOn(); drawTimeline();
       }
       pl.addEventListener("pointerup", end); pl.addEventListener("pointercancel", end);
       document.addEventListener("keydown", function (e) { if (mode !== MODE_SN || e.target !== pl) return; if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return; e.stopImmediatePropagation(); e.preventDefault(); command("seek", "a", { position_ms: Math.max(0, Math.min(Math.max(0, cur.dur - 50), Math.round(cur.pos + (e.key === "ArrowRight" ? 5000 : -5000)))) }, "scrub"); }, true);
