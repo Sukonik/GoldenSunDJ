@@ -436,3 +436,33 @@ body.is-controller .site-footer { display: none; }
   .deck { grid-template-rows: auto auto minmax(6.5rem, 1fr) auto auto auto; }
   .deck > .deck-body { min-height: 0; }
 }
+
+/* ======== v18: SpotifyNinja shell (Patch 1) ======== */
+.dm-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 30rem) { .dm-tabs button { font-size: .62rem; letter-spacing: .04em; padding: 0 .1rem; } }
+.sn-title { font-family: var(--font-display); font-size: 1.15rem; }
+.sn-prompt, .sn-active { display: grid; gap: .6rem; padding: .9rem 1rem; border-radius: 16px; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
+.sn-prompt p, .sn-active p { color: rgba(255,255,255,.72); font-size: .9rem; line-height: 1.45; }
+.sn-active { box-shadow: inset 0 0 0 1px rgba(30,215,96,.55); }
+.sn-prompt[hidden], .sn-active[hidden] { display: none; }
+.sn-btns { display: flex; flex-wrap: wrap; gap: .5rem; }
+.sn-status p { color: rgba(255,255,255,.6); font-size: .82rem; line-height: 1.4; }
+.sn-search input:disabled, .sn-search button:disabled { opacity: .5; }
+.sn-soon { font-size: .82rem; }
+
+/* in SpotifyNinja mode the other source tabs say so instead of offering tracks the Spotify controls cannot use */
+.dm[data-mode="spotify-ninja"] .dm-pane:not([data-pane="spotify"]) > * { display: none; }
+.dm[data-mode="spotify-ninja"] .dm-pane:not([data-pane="spotify"])::before { content: "SpotifyNinja is active. Open the Spotify tab and choose Return to GoldenSun Controller to use Library, Load or Audius."; color: rgba(255,255,255,.7); font-size: .9rem; line-height: 1.45; }
+
+/* mode badge and disabled capabilities */
+.ninja-badge { grid-column: 1 / -1; order: -1; display: flex; align-items: center; justify-content: center; gap: .4rem; padding: .3rem .6rem; border-radius: 999px; background: rgba(30,215,96,.14); box-shadow: inset 0 0 0 1px rgba(30,215,96,.5); font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: #fff; }
+.ninja-badge[hidden] { display: none; }
+.ninja-badge i { width: 8px; height: 8px; border-radius: 50%; background: #1ed760; box-shadow: 0 0 8px #1ed760; }
+.ninja-badge small { opacity: .65; font-size: .55rem; }
+.ctl[data-controller-mode="spotify-ninja"] [inert] { opacity: .32; filter: grayscale(.7); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b [inert] { opacity: .2; }
+.ninja-note { font-family: var(--mono); font-size: .56rem; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.65); text-align: center; line-height: 1.25; }
+.ninja-prep { position: absolute; left: 10%; right: 10%; top: 44%; z-index: 2; padding: .5rem .6rem; border-radius: 12px; background: rgba(10,12,18,.85); font-size: .66rem; letter-spacing: .03em; text-transform: none; pointer-events: none; }
+.ctl:not([data-controller-mode="spotify-ninja"]) .ninja-note, .ctl:not([data-controller-mode="spotify-ninja"]) .ninja-badge { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] .wave-wrap { display: none !important; }
+@media (orientation: landscape) and (max-height: 34rem) { .ninja-badge { font-size: .5rem; padding: .2rem .4rem; } .ninja-badge small { display: none; } .ninja-prep { top: 36%; font-size: .56rem; } }

@@ -1,6 +1,7 @@
 /* GoldenSunDJ Controller: the deck menu (tap the A or B tag).
    Library: eight full-length genre tracks (about 3 minutes each, built in your browser).
-   Load: a file from your device.   Link: search and stream from Audius (free, no key).
+   Load: a file from your device.   Audius: search and stream from Audius (free, no key; the tab's internal id is still "link").
+   Spotify: opt-in SpotifyNinja controller mode (see spotify-ninja.js).
    Tracks from Audius belong to their artists; each result links back to Audius. */
 (function () {
   "use strict";
@@ -11,11 +12,16 @@
     menu.innerHTML =
       '<div class="dm" role="dialog" aria-modal="true" aria-labelledby="dm-title">' +
       '<header class="dm-head"><h2 id="dm-title">Deck A</h2><button type="button" class="dx-close" id="dm-close" aria-label="Close">✕</button></header>' +
-      '<div class="dm-tabs" role="tablist" aria-label="Where to get a track"><button type="button" role="tab" data-tab="library" aria-selected="true">Library</button><button type="button" role="tab" data-tab="load" aria-selected="false">Load</button><button type="button" role="tab" data-tab="link" aria-selected="false">Link</button></div>' +
+      '<div class="dm-tabs" role="tablist" aria-label="Where to get a track"><button type="button" role="tab" data-tab="library" aria-selected="true">Library</button><button type="button" role="tab" data-tab="load" aria-selected="false">Load</button><button type="button" role="tab" data-tab="link" aria-selected="false">Audius</button><button type="button" role="tab" data-tab="spotify" aria-selected="false">Spotify</button></div>' +
       '<section class="dm-pane" data-pane="library"><p class="dm-note">Full-length tracks in eight NAKO GOLD styles, about 3 minutes each. They are built on your device, so the first tap takes a few seconds.</p><ul class="lib-list" id="lib-list"></ul><div class="lib-progress" id="lib-progress" hidden><div class="bar"><i id="lib-bar"></i></div><p id="lib-msg" role="status"></p></div></section>' +
       '<section class="dm-pane" data-pane="load" hidden><p class="dm-note">Pick an audio file from this device. It plays on the deck and never leaves your device.</p><label class="btn dm-file">Choose a file<input type="file" accept="audio/*" id="dm-file" class="visually-hidden"></label></section>' +
       '<section class="dm-pane" data-pane="link" hidden><form class="dm-search" id="dm-search" role="search"><label class="visually-hidden" for="dm-q">Search music</label><input id="dm-q" type="search" placeholder="Search songs, artists, styles" autocomplete="off" enterkeyhint="search"><button class="btn" type="submit">Search</button></form>' +
       '<div class="dm-chips" id="dm-chips" role="group" aria-label="Recommended styles"></div><p class="dm-note" id="dm-status" role="status"></p><ul class="res-list" id="res-list"></ul><p class="dm-credit">Free music from <a href="https://audius.co" target="_blank" rel="noopener">Audius</a>. Tracks belong to their artists, so please support them.</p></section>' +
+      '<section class="dm-pane" data-pane="spotify" hidden id="sp-pane"><h3 class="sn-title">SpotifyNinja Controller</h3><p class="dm-note">Control Spotify with the GoldenSunDJ surface. Play, pause, find tracks, save cue positions and use the platter to move through a song. Spotify protects its audio, so tempo, EQ, effects and true scratching remain available only with Library, Device and Audius tracks.</p>' +
+      '<div class="sn-prompt" id="sn-prompt"><strong>Switch to SpotifyNinja Controller?</strong><p>Use the GoldenSunDJ surface to control Spotify playback, seek positions, cue points, track preparation and playlists. Spotify keeps its audio protected, so some GoldenSun effects are unavailable in this mode.</p><div class="sn-btns"><button type="button" class="btn" id="sn-switch">Switch to SpotifyNinja</button><button type="button" class="btn btn--ghost" id="sn-keep">Keep GoldenSun Controller</button></div></div>' +
+      '<div class="sn-active" id="sn-active" hidden><strong>SpotifyNinja is active.</strong><p>Deck A controls Spotify. Deck B prepares what plays next.</p><div class="sn-btns"><button type="button" class="btn btn--ghost" id="sn-return">Return to GoldenSun Controller</button></div></div>' +
+      '<form class="dm-search sn-search" id="sn-search" role="search" onsubmit="return false"><label class="visually-hidden" for="sn-q">Search Spotify</label><input id="sn-q" type="search" placeholder="Search Spotify (sign-in comes next)" disabled><button class="btn" type="submit" disabled>Search</button></form><p class="dm-note sn-soon">Searching and loading Spotify tracks works like Audius, and arrives with the next update: you will sign in to Spotify once, then search and tap Load. Spotify requires a sign-in, and playback through a web page needs Spotify Premium.</p>' +
+      '<div class="sn-status" id="sn-status" role="status"></div></section>' +
       '</div>';
     document.body.appendChild(menu);
     var dm = menu.querySelector(".dm"), title = $("dm-title"), cur = null, opener = null, token = 0, building = false;
@@ -26,8 +32,9 @@
       if (name === "link" && !$("res-list").children.length) recommend(0);
     }
     menu.querySelectorAll(".dm-tabs [role=tab]").forEach(function (t) { t.addEventListener("click", function () { tab(t.getAttribute("data-tab")); }); });
-    function open(d, from) { cur = d; opener = from; title.textContent = "Deck " + d.id.toUpperCase(); menu.hidden = false; tab("library"); $("dm-close").focus(); }
+    function open(d, from, first) { cur = d; opener = from; title.textContent = "Deck " + d.id.toUpperCase(); menu.hidden = false; tab(first || "library"); $("dm-close").focus(); }
     function close() { token++; building = false; setBusy(false); menu.hidden = true; if (opener) opener.focus(); }
+    window.GSDJDeckMenu = { open: function (deckId, tabName) { open(C.byId[deckId] || C.decks[0], null, tabName); }, close: close, tab: tab, el: menu };
     $("dm-close").addEventListener("click", close);
     menu.addEventListener("click", function (e) { if (e.target === menu) close(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !menu.hidden) close(); });

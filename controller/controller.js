@@ -320,12 +320,13 @@
     tips: { icon: "?", label: function () { return "Tips"; }, on: function () { return settings.tips; }, tap: function () { settings.tips = !settings.tips; if (settings.tips) pendingTips = true; } },
     material: { icon: "▤", label: function () { return { matte: "Matte", carbon: "Carbon", titanium: "Titanium" }[settings.material]; }, on: function () { return settings.material !== "matte"; }, tap: function () { settings.material = { matte: "carbon", carbon: "titanium", titanium: "matte" }[settings.material]; } },
     tilt: { icon: "◭", label: function () { return "Tilt"; }, on: function () { return settings.tilt; }, tap: function () { toggleTilt(); } },
+    source: { icon: "♫", label: function () { return window.GSDJNinja && window.GSDJNinja.active() ? "Exit Ninja" : "Spotify"; }, on: function () { return !!(window.GSDJNinja && window.GSDJNinja.active()); }, tap: function () { openWheel(false); if (!window.GSDJNinja) return; if (window.GSDJNinja.active()) window.GSDJNinja.exit("settings"); else window.GSDJNinja.openPane(); } },
     scratch: { icon: "✺", label: function () { return "Scratch"; }, on: function () { return false; }, tap: function () { if (window.GSDJScratch) { openWheel(false); window.GSDJScratch.openPanel(); } } },
     themes: { icon: "◐", label: function () { return "Themes"; }, on: function () { return false; }, tap: function () { showThemes(true); } },
     full: { icon: "⛶", label: function () { return "Full"; }, on: function () { return !!document.fullscreenElement; }, tap: function () { var el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else (el.requestFullscreen || el.webkitRequestFullscreen).call(el); } }
   };
   var canFull = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
-  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "fx", "fader", "scratch"] }, { name: "Add-ons", ids: ["cues", "wave", "sampler", "fxu", "patterns", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
+  var PAGES = [{ name: "Controls", ids: ["decks", "eq", "tempo", "fx", "fader", "scratch", "source"] }, { name: "Add-ons", ids: ["cues", "wave", "sampler", "fxu", "patterns", "loop", "tips"] }, { name: "Look", ids: ["material", "tilt", "themes"].concat(canFull ? ["full"] : []) }];
   var wheelPage = 0, pendingTips = false, ring = $("wheel-ring");
   function drawWheel() {
     var pg = PAGES[wheelPage]; ring.textContent = ""; $("wheel-title").textContent = pg.name;

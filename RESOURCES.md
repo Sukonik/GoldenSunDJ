@@ -116,7 +116,7 @@ What fits GoldenSunDJ: the waveform strip, glowing corner Play buttons, the over
 - [MusicRadar: best DJ controllers](https://www.musicradar.com/news/the-best-dj-controllers-in-world-today) — a survey of current controllers; guide for layout and feature choices.
 - Numark, Pioneer DJ and Denon DJ product lines — the "mix of the three" look we describe in BRAND.md.
 
-## 4b. Free music sources for the Link tab (researched 2026-11-10)
+## 4b. Free music sources for the Audius tab (researched 2026-11-10)
 
 Tested from our own environment (search, CORS headers and streaming ranges):
 
@@ -143,6 +143,16 @@ Notes: streamed tracks are played through an `<audio>` element. Tap a streamed t
 - Limits: tracks over about 30 MB use Bend instead; streamed tracks are prepared once they start playing.
 - Patterns are short speed-and-gate scripts (in beats) played by the worklet over the track, so each one sounds the same every time and scales with the deck's tempo. Tempo detection runs on the same mono copy (kick and onset energy at 100 frames per second, autocorrelation with harmonic weighting, then a beat-grid phase search).
 - Ideas: crossfader-cut helper, recording your scratch, more patterns.
+
+## 4e. Spotify (SpotifyNinja)
+
+Official references:
+- [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) (create the app, get the Client ID, register redirect URIs)
+- [Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk) (plays Spotify in the browser; needs Premium)
+- [Authorization Code with PKCE](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow) (the login flow for a static site; no client secret)
+- [Scopes](https://developer.spotify.com/documentation/web-api/concepts/scopes) and [Redirect URI rules](https://developer.spotify.com/documentation/web-api/concepts/redirect_uri)
+
+Design: the controller emits plain JSON packets; an adapter turns supported ones into Spotify playback commands. Spotify keeps its audio protected, so GoldenSunDJ never downloads, decodes, records or caches it, and tempo, EQ, FX, true scratching and two live decks stay GoldenSun-only. Research references named in the handoff (kept as ideas, not dependencies): SpotAPI, djay, Serato DJ, rekordbox and the music-hackathon projects. I did not verify links for SpotAPI or the hackathon projects.
 
 ## 5. Tools and data we use
 
