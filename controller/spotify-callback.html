@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Connecting to Spotify — GoldenSunDJ</title>
+  <style>
+    html { background: #05060b; color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; font-family: Inter, Verdana, "DejaVu Sans", sans-serif; color: #fff; text-align: center; padding: 1.5rem; }
+    main { max-width: 26rem; display: grid; gap: .8rem; }
+    h1 { font-size: 1.3rem; margin: 0; }
+    p { margin: 0; color: rgba(255,255,255,.7); line-height: 1.5; }
+    a { color: #ffc933; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="t">Connecting to Spotify…</h1>
+    <p id="m">One moment. You will go straight back to the Controller.</p>
+    <p id="back" hidden><a href="index.html#spotify">Back to the Controller</a></p>
+  </main>
+  <script>
+  /* Finishes the Spotify login (Authorization Code with PKCE). No client secret is used or stored.
+     It exchanges the one-time code for tokens, keeps them for this browser session only, then returns to the Controller. */
+  (function () {
+    "use strict";
+    var q = new URLSearchParams(location.search), T = document.getElementById("t"), M = document.getElementById("m");
+    function fail(msg) { try { sessionStorage.setItem("gsdj-sp-error", msg); } catch (e) {} T.textContent = "Spotify did not connect"; M.textContent = msg; document.getElementById("back").hidden = false; setTimeout(function () { location.replace("index.html#spotify"); }, 2500); }
+    var pending = null; try { pending = JSON.parse(localStorage.getItem("gsdj-sp-pkce") || "null"); localStorage.removeItem("gsdj-sp-pkce"); } catch (e) {}
+    if (q.get("error")) return fail(q.get("error") === "access_denied" ? "You chose not to give GoldenSunDJ access. Nothing was connected." : "Spotify returned: " + q.get("error"));
+    if (!pending || !q.get("code")) return fail("The login could not be finished (no login in progress). Please try Connect Spotify again.");
+    if (q.get("state") !== pending.state) return fail("The login response did not match this browser, so it was ignored. Please try again.");
+    if (Date.now() - pending.t > 15 * 60 * 1000) return fail("The login took too long. Please try again.");
+    var body = new URLSearchParams({ client_id: pending.clientId, grant_type: "authorization_code", code: q.get("code"), redirect_uri: pending.redirect, code_verifier: pending.verifier });
+    fetch("https://accounts.spotify.com/api/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error_description || j.error || "token request failed"); return j; }); })
+      .then(function (j) {
+        sessionStorage.setItem("gsdj-sp-token", JSON.stringify({ access_token: j.access_token, refresh_token: j.refresh_token || null, expires_at: Date.now() + (j.expires_in || 3600) * 1000, scope: j.scope || "" }));
+        sessionStorage.removeItem("gsdj-sp-error");
+        location.replace(pending.returnTo || "index.html#spotify");
+      })
+      .catch(function (e) { fail("Spotify would not finish the login: " + (e && e.message ? e.message : "unknown error") + ". Check that the Client ID and the Redirect URI in your Spotify app match."); });
+  })();
+  </script>
+</body>
+</html>

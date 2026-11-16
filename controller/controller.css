@@ -466,3 +466,17 @@ body.is-controller .site-footer { display: none; }
 .ctl:not([data-controller-mode="spotify-ninja"]) .ninja-note, .ctl:not([data-controller-mode="spotify-ninja"]) .ninja-badge { display: none; }
 .ctl[data-controller-mode="spotify-ninja"] .wave-wrap { display: none !important; }
 @media (orientation: landscape) and (max-height: 34rem) { .ninja-badge { font-size: .5rem; padding: .2rem .4rem; } .ninja-badge small { display: none; } .ninja-prep { top: 36%; font-size: .56rem; } }
+
+/* ======== v19: Spotify connection ======== */
+.sn-card { display: grid; gap: .6rem; padding: .9rem 1rem; border-radius: 16px; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
+.sn-card p { color: rgba(255,255,255,.72); font-size: .88rem; line-height: 1.45; }
+.sn-err { color: #ff9aa6 !important; }
+.sn-setup { display: grid; gap: .5rem; padding: .7rem .8rem; border-radius: 12px; background: rgba(0,0,0,.25); font-size: .85rem; }
+.sn-setup ol { margin: 0; padding-left: 1.2rem; display: grid; gap: .5rem; color: rgba(255,255,255,.75); line-height: 1.4; }
+.sn-setup code { display: inline-block; max-width: 100%; overflow-wrap: anywhere; padding: .15rem .4rem; border-radius: 6px; background: rgba(255,255,255,.1); font-size: .75rem; color: #fff; }
+.sn-setup a, .sn-status a { text-decoration: underline; }
+.sn-card .chip { min-height: 36px; padding: 0 .8rem; border-radius: 999px; border: 0; background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; }
+.sn-prompt.is-flash { box-shadow: inset 0 0 0 2px var(--k-a, var(--a)), 0 0 24px color-mix(in srgb, var(--k-a, var(--a)) 50%, transparent); }
+.sn-hint { min-height: 1.2em; }
+.sn-card input, .sn-setup input { min-height: 44px; }
+.sn-setup ol { list-style: decimal; }

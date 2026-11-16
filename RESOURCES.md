@@ -152,6 +152,8 @@ Official references:
 - [Authorization Code with PKCE](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow) (the login flow for a static site; no client secret)
 - [Scopes](https://developer.spotify.com/documentation/web-api/concepts/scopes) and [Redirect URI rules](https://developer.spotify.com/documentation/web-api/concepts/redirect_uri)
 
+Setup used by GoldenSunDJ: Redirect URI `https://sukonik.github.io/GoldenSunDJ/controller/spotify-callback.html`; scopes `streaming user-read-private user-read-email user-read-playback-state user-modify-playback-state` now, and `playlist-read-private`, `user-library-read`, `user-read-currently-playing` later for playlists and liked music. Spotify requires Premium for the `streaming` scope.
+
 Design: the controller emits plain JSON packets; an adapter turns supported ones into Spotify playback commands. Spotify keeps its audio protected, so GoldenSunDJ never downloads, decodes, records or caches it, and tempo, EQ, FX, true scratching and two live decks stay GoldenSun-only. Research references named in the handoff (kept as ideas, not dependencies): SpotAPI, djay, Serato DJ, rekordbox and the music-hackathon projects. I did not verify links for SpotAPI or the hackathon projects.
 
 ## 5. Tools and data we use
