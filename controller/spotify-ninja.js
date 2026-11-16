@@ -31,6 +31,12 @@
     var C = window.GSDJCtl, $ = C.$, ctl = C.el, menuApi = window.GSDJDeckMenu, SP = window.GSDJSpotify || null;
     if (!C || !ctl) return;
     var mode = MODE_GS, adapterTimer = null, pendingTrack = null;
+    function Tools() { return window.GSDJNinjaTools || null; }
+    var PREP_MSG = "Deck B is the Prep Deck. In the Spotify tab, tap Prep next to a track to choose what plays next.";
+    /* Ninja Macros (the EQ knobs, rebuilt): fade length in seconds and scrub sensitivity. Jump size is the loop size (beats). Saved on this device. */
+    var MACROS = "gsdj-ninja-macros", macros = { fade: 2.5, sens: 1 };
+    try { var mm = JSON.parse(localStorage.getItem(MACROS) || "null"); if (mm) { macros.fade = Math.max(0.5, Math.min(8, +mm.fade || 2.5)); macros.sens = Math.max(0.5, Math.min(2, +mm.sens || 1)); } } catch (e) {}
+    function saveMacros() { try { localStorage.setItem(MACROS, JSON.stringify(macros)); } catch (e) {} }
 
     /* ---------- cue storage, keyed by Spotify URI (local only) ---------- */
     function cueStore() { try { return JSON.parse(localStorage.getItem(CUES) || "{}"); } catch (e) { return {}; } }
@@ -96,7 +102,7 @@
     }
 
     // controls that cannot work with protected audio are switched off, not hidden, with a reason
-    var INERT = ["#deck-a .opt-tempo", "#deck-a .opt-eq", "#deck-a .opt-eq2", "#loop-a", "#deck-a .deck-drawers", "#deck-b .deck-body", "#deck-b .opt-eq2", "#deck-b .opt-loop", "#deck-b .deck-drawers", "#deck-b .deck-side", ".center .opt-fx", ".center .opt-xfade"];
+    var INERT = ["#loop-a", "#deck-b .opt-eq2", "#deck-b .lp-toggle", "#deck-b .lp-step:not(.bj)", "#deck-b .deck-drawers", ".center .opt-fx"];            // everything else is rebuilt as a Ninja control (Pads, FX, BPM, Macros, Switch, Prep Deck)
     function setInert(on) {
       INERT.forEach(function (sel) { document.querySelectorAll(sel).forEach(function (el) { if (on) { el.setAttribute("inert", ""); el.setAttribute("aria-disabled", "true"); } else { el.removeAttribute("inert"); el.removeAttribute("aria-disabled"); } }); });
       ["a", "b"].forEach(function (id) { var t = $("toast-" + id); if (t) t.hidden = true; });
@@ -105,10 +111,10 @@
     function addNotes() {
       if (document.querySelector(".ninja-note")) return;
       var make = function (txt) { var n = document.createElement("span"); n.className = "ninja-note"; n.textContent = txt; return n; };
-      document.querySelectorAll("#deck-a .opt-tempo").forEach(function (el) { el.appendChild(make("Spotify controlled")); });
-      var b = document.querySelector("#deck-b .deck-body"); if (b) { var pr = make("Prep Deck. Choosing the next track arrives in a later update."); pr.classList.add("ninja-prep"); document.getElementById("deck-b").appendChild(pr); }
+      
+      var b = document.querySelector("#deck-b .deck-body"); if (b) {  }
       var badge = document.createElement("div"); badge.className = "ninja-badge"; badge.id = "ninja-badge"; badge.setAttribute("role", "status");
-      badge.innerHTML = '<i aria-hidden="true"></i><span>SpotifyNinja</span><small>Spotify</small>';
+      badge.innerHTML = '<i class="nj-star nj-spin" aria-hidden="true"></i><span>SpotifyNinja</span><small>Spotify</small>';
       var center = document.querySelector(".center"); if (center) center.insertBefore(badge, center.firstChild);
     }
 
@@ -130,7 +136,7 @@
       var t = e.target.closest && e.target.closest("#play-a, #play-b, .cue, #cue-a, #cue-b, #bj-back-a, #bj-fwd-a, #bj-back-b, #bj-fwd-b, #bpm-a, #bpm-b"); if (!t) return;
       var deckEl = t.closest(".deck"), id = deckEl && deckEl.id === "deck-b" ? "b" : "a";
       e.stopImmediatePropagation(); e.preventDefault();
-      if (id === "b") { say("b", "Deck B is the Prep Deck. Choosing the next track arrives in a later update."); return; }
+      if (id === "b") { if (!(Tools() && Tools().deckB(t))) say("b", PREP_MSG); return; }
       if (t.id === "bj-back-a") { beatJump(-1); return; } if (t.id === "bj-fwd-a") { beatJump(1); return; } if (t.id === "bpm-a") { tapTempo(); return; }
       if (t.id === "play-a") { if (SP) SP.activate(); command("toggle-play", "a", {}, "play"); return; }
       var keyboard = e.detail === 0;                                           // pointer taps were already handled on pointerdown
@@ -215,7 +221,7 @@
     function spinTick(t) { var dt = Math.min(0.05, (t - spinPrev) / 1000); spinPrev = t; if (mode !== MODE_SN || (cur.paused && !scrub)) { spinRaf = null; return; } if (!scrub || !scrub.disc) { ang += 198 * dt * (cur.paused ? 0 : 1); discTurn(); } spinRaf = requestAnimationFrame(spinTick); }
     (function wireScrub() {
       var pl = C.byId.a.el.platter; function angleOf(e) { var r = pl.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI; }
-      document.addEventListener("pointerdown", function (e) { if (mode !== MODE_SN) return; var p = e.target.closest && e.target.closest(".platter"); if (!p) return; e.stopImmediatePropagation(); if (p.id !== "platter-a") { say("b", "Deck B is the Prep Deck. Choosing the next track arrives in a later update."); return; } e.preventDefault(); begin(e); }, true);
+      document.addEventListener("pointerdown", function (e) { if (mode !== MODE_SN) return; var p = e.target.closest && e.target.closest(".platter"); if (!p) return; e.stopImmediatePropagation(); if (p.id !== "platter-a") { say("b", PREP_MSG); return; } e.preventDefault(); begin(e); }, true);
       function begin(e) {
         if (scrub) return; var was = !cur.paused;
         scrub = { disc: true, id: e.pointerId, a: angleOf(e), pos: cur.pos, was: was, t: performance.now() };
@@ -225,7 +231,7 @@
       pl.addEventListener("pointermove", function (e) {
         if (!scrub || !scrub.disc || e.pointerId !== scrub.id) return; var a = angleOf(e), d = a - scrub.a; if (d > 180) d -= 360; if (d < -180) d += 360; scrub.a = a;
         var n = performance.now(), dt = Math.max(8, n - scrub.t) / 1000; scrub.t = n; var mult = 1 + Math.min(3, Math.abs(d) / dt / 360);
-        scrub.pos = Math.max(0, Math.min(Math.max(0, cur.dur - 50), scrub.pos + d / 360 * REV_MS * mult)); ang += d; discTurn();
+        scrub.pos = Math.max(0, Math.min(Math.max(0, cur.dur - 50), scrub.pos + d / 360 * (REV_MS / macros.sens) * mult)); ang += d; discTurn();
         C.byId.a.el.time.textContent = fmt(scrub.pos) + " / " + fmt(cur.dur); drawTimeline();
       });
       function end(e) {
@@ -248,12 +254,12 @@
       var err = SP.lastError(), html = "";
       if (err) html += '<p class="sn-err" role="alert">' + esc(err) + "</p>";
       if (!SP.configured()) {
-        html += '<strong>Connect your Spotify account</strong><p>Spotify Premium is required. GoldenSunDJ will request permission to play music and control playback. Your password is entered only on Spotify.</p>' +
+        html += '<i class="nj-ninja sn-ninja" aria-hidden="true"></i><strong>Connect your Spotify account</strong><p>Spotify Premium is required. GoldenSunDJ will request permission to play music and control playback. Your password is entered only on Spotify.</p>' +
           '<div class="sn-setup"><p><b>One-time setup (the site owner):</b></p><ol><li>Open the <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Spotify Developer Dashboard</a> and create an app (choose <i>Web Playback SDK</i>).</li><li>Add this exact Redirect URI:<br><code id="sn-ru">' + esc(SP.redirectUri()) + '</code> <button type="button" class="chip" id="sn-copy">Copy</button></li><li>Paste the app\'s <b>Client ID</b> below. It is public, and no client secret is ever needed.</li></ol>' +
           '<form class="dm-search" id="sn-cid-form"><label class="visually-hidden" for="sn-cid">Spotify Client ID</label><input id="sn-cid" type="text" autocomplete="off" spellcheck="false" placeholder="Spotify Client ID"><button class="btn" type="submit">Save</button></form></div>' +
           '<div class="sn-btns"><button type="button" class="btn" disabled>Connect Spotify</button></div>';
       } else if (!SP.connected()) {
-        html += '<strong>Connect your Spotify account</strong><p>Spotify Premium is required. GoldenSunDJ will request permission to play music and control playback. Your password is entered only on Spotify.</p><div class="sn-btns"><button type="button" class="btn" id="sn-connect">Connect Spotify</button><button type="button" class="chip" id="sn-cid-change">Change Client ID</button></div>';
+        html += '<i class="nj-ninja sn-ninja" aria-hidden="true"></i><strong>Connect your Spotify account</strong><p>Spotify Premium is required. GoldenSunDJ will request permission to play music and control playback. Your password is entered only on Spotify.</p><div class="sn-btns"><button type="button" class="btn" id="sn-connect">Connect Spotify</button><button type="button" class="chip" id="sn-cid-change">Change Client ID</button></div>';
       } else {
         var u = SP.user();
         html += '<strong>' + (u ? "Connected as " + esc(u.name) : "Connected to Spotify") + '</strong>' +
@@ -262,7 +268,7 @@
       }
       account.innerHTML = html;
       var c = $("sn-connect"); if (c) c.addEventListener("click", function () { SP.clearError(); c.disabled = true; c.textContent = "Opening Spotify…"; SP.connect().catch(function (er) { c.disabled = false; c.textContent = "Connect Spotify"; setStatus('<p class="sn-err">' + esc(er.message || "Could not start the login.") + "</p>"); }); });
-      var d = $("sn-disconnect"); if (d) d.addEventListener("click", function () { var wasNinja = inNinja(); SP.disconnect(); results.textContent = ""; if (wasNinja) mockPlaying(false); renderAll(); setStatus('<p>Disconnected. To remove GoldenSunDJ from your Spotify account completely, open <a href="https://www.spotify.com/account/apps/" target="_blank" rel="noopener">spotify.com/account/apps</a>.</p>'); });
+      var d = $("sn-disconnect"); if (d) d.addEventListener("click", function () { var wasNinja = inNinja(); SP.disconnect(); results.textContent = ""; srcNow = "search"; if (wasNinja) mockPlaying(false); renderAll(); setStatus('<p>Disconnected. To remove GoldenSunDJ from your Spotify account completely, open <a href="https://www.spotify.com/account/apps/" target="_blank" rel="noopener">spotify.com/account/apps</a>.</p>'); });
       var ch = $("sn-cid-change"); if (ch) ch.addEventListener("click", function () { SP.setClientId(null); renderAll(); });
       var cf = $("sn-cid-form"); if (cf) cf.addEventListener("submit", function (ev) { ev.preventDefault(); var v = $("sn-cid").value.trim(); if (!/^[A-Za-z0-9]{16,64}$/.test(v)) { setStatus('<p class="sn-err">That does not look like a Spotify Client ID (letters and numbers, usually 32 characters).</p>'); return; } SP.setClientId(v); renderAll(); });
       var cp = $("sn-copy"); if (cp) cp.addEventListener("click", function () { var t = $("sn-ru").textContent; (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { cp.textContent = "Copied"; }, function () { cp.textContent = "Select and copy"; }); });
@@ -273,6 +279,30 @@
       if (!SP || !SP.connected()) return; hint.textContent = "Finding " + label + "…"; results.textContent = "";
       SP.search(query).then(showResults).catch(function (er) { hint.textContent = er && er.status === 403 ? "Spotify said this account is not allowed to use the app yet. In development mode, add the account under User Management in the Spotify Dashboard." : "Search is unavailable right now. " + (er && er.message ? er.message : ""); });
     }
+    var srcRow = document.createElement("div"); srcRow.className = "dm-chips sn-src"; srcRow.setAttribute("role", "group"); srcRow.setAttribute("aria-label", "Where to look");
+    var SRCS = [["Search", "search"], ["Liked Songs", "liked"], ["Playlists", "playlists"]], srcNow = "search";
+    SRCS.forEach(function (x) { var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = x[0]; b.setAttribute("data-src", x[1]); b.setAttribute("aria-pressed", x[1] === "search" ? "true" : "false"); b.addEventListener("click", function () { setSource(x[1]); }); srcRow.appendChild(b); });
+    form.parentNode.insertBefore(srcRow, form);
+    function libraryOk() { if (!SP || !SP.connected()) return false; if (SP.hasLibrary()) return true; hint.innerHTML = 'To browse Liked Songs and playlists, Spotify needs your permission once more. <button type="button" class="chip" id="sn-reauth">Reconnect Spotify</button>'; var r = $("sn-reauth"); if (r) r.addEventListener("click", function () { SP.disconnect(); SP.connect().catch(function () {}); }); results.textContent = ""; return false; }
+    function setSource(src) {
+      srcNow = src; Array.prototype.forEach.call(srcRow.children, function (c) { c.setAttribute("aria-pressed", c.getAttribute("data-src") === src ? "true" : "false"); });
+      var isSearch = src === "search"; form.hidden = !isSearch; chips.hidden = !isSearch; results.textContent = "";
+      if (!SP || !SP.connected()) return;
+      if (src === "liked") { if (!libraryOk()) return; hint.textContent = "Loading your Liked Songs…"; SP.liked(0).then(function (l) { showResults(l, "Liked Songs"); }).catch(function (er) { hint.textContent = "Could not load Liked Songs. " + (er && er.message ? er.message : ""); }); }
+      else if (src === "playlists") { if (!libraryOk()) return; hint.textContent = "Loading your playlists…"; SP.playlists().then(showPlaylists).catch(function (er) { hint.textContent = "Could not load playlists. " + (er && er.message ? er.message : ""); }); }
+      else { renderSearch(); if (!results.children.length) runGenre(genreIdx < 0 ? 0 : genreIdx); }
+    }
+    function showPlaylists(list) {
+      results.textContent = ""; if (!list.length) { hint.textContent = "No playlists found on this account."; return; } hint.textContent = list.length + " playlists. Tap one to see its tracks.";
+      list.forEach(function (p) {
+        var li = document.createElement("li"), img = document.createElement("img"); img.alt = ""; img.width = 44; img.height = 44; img.loading = "lazy"; if (p.art) img.src = p.art; else img.className = "no-art";
+        var txt = document.createElement("span"); txt.className = "res-text"; var a = document.createElement("strong"); a.textContent = p.name; var b = document.createElement("small"); b.textContent = (p.count ? p.count + " tracks" : "Playlist") + (p.owner ? " · " + p.owner : ""); txt.appendChild(a); txt.appendChild(b);
+        var open = document.createElement("button"); open.type = "button"; open.className = "res-load"; open.textContent = "Open";
+        open.addEventListener("click", function () { hint.textContent = "Loading " + p.name + "…"; results.textContent = ""; SP.playlistTracks(p.id).then(function (l) { showResults(l, p.name, true); }).catch(function (er) { hint.textContent = er && er.status === 403 ? "Spotify did not allow reading this playlist." : "Could not open the playlist. " + (er && er.message ? er.message : ""); showPlaylistsBack(list); }); });
+        li.appendChild(img); li.appendChild(txt); li.appendChild(open); results.appendChild(li);
+      });
+    }
+    function showPlaylistsBack(list) { var li = document.createElement("li"), b = document.createElement("button"); b.type = "button"; b.className = "res-load"; b.textContent = "‹ Playlists"; b.addEventListener("click", function () { showPlaylists(list); }); li.appendChild(b); results.insertBefore(li, results.firstChild); }
     function runGenre(i) { genreIdx = i; Array.prototype.forEach.call(chips.children, function (c, k) { c.setAttribute("aria-pressed", k === i ? "true" : "false"); }); runSearch(GENRES[i][1], GENRES[i][0] + " tracks"); }
     function renderSearch() {
       var on = !!(SP && SP.connected()); q.disabled = !on; form.querySelector("button").disabled = !on; Array.prototype.forEach.call(chips.children, function (c) { c.disabled = !on; });
@@ -285,30 +315,40 @@
       if (on && !(SP && SP.connected())) setStatus('<p><b>Preview.</b> Nothing plays until Spotify is connected. Cue points and the controls you can use here already work, and they are saved on this device.</p>');
       else if (!on && !(SP && SP.connected())) setStatus("<p>Spotify is not connected. Opening this tab never changes your controller.</p>");
     }
-    function showResults(list) {
+    function showResults(list, label, fromPlaylist) {
       results.textContent = "";
-      if (!list.length) { hint.textContent = "No tracks found. Try another search."; return; }
+      if (fromPlaylist) { var back = document.createElement("li"), bb = document.createElement("button"); bb.type = "button"; bb.className = "res-load"; bb.textContent = "‹ Playlists"; bb.addEventListener("click", function () { setSource("playlists"); }); back.appendChild(bb); results.appendChild(back); }
+      if (!list.length) { hint.textContent = srcNow === "search" ? "No tracks found. Try another search." : "No tracks to show here."; return; }
       var prem = !(SP.user() && !SP.user().premium);
-      hint.textContent = list.length + " tracks." + (prem ? " Tap Load to put one on Deck A." : " Premium is required to play them.");
+      hint.textContent = (label ? label + ": " : "") + list.length + " tracks." + (prem ? " Load plays on Deck A. Prep sets the next track on Deck B. Queue adds it to Up next." : " Premium is required to play them.");
       list.forEach(function (t) {
         var li = document.createElement("li"), img = document.createElement("img"); img.alt = ""; img.width = 44; img.height = 44; img.loading = "lazy"; if (t.art) img.src = t.art; else img.className = "no-art";
         var txt = document.createElement("span"); txt.className = "res-text"; var a = document.createElement("strong"); a.textContent = t.title; var b = document.createElement("small"); b.textContent = t.artist + " · " + mmss(t.duration_ms); txt.appendChild(a); txt.appendChild(b);
         var load = document.createElement("button"); load.type = "button"; load.className = "res-load"; load.textContent = "Load"; load.disabled = !prem || !t.playable;
         load.addEventListener("click", function () { loadTrack(t); });
-        li.appendChild(img); li.appendChild(txt); li.appendChild(load); results.appendChild(li);
+        li.appendChild(img); li.appendChild(txt); li.appendChild(load);
+        if (Tools()) { var more = document.createElement("span"); more.className = "res-more"; var pb = document.createElement("button"), qb = document.createElement("button"); pb.type = qb.type = "button"; pb.className = qb.className = "res-sub"; pb.textContent = "Prep"; qb.textContent = "Queue"; pb.disabled = qb.disabled = !prem || !t.playable; pb.title = "Prepare as the next track on Deck B"; qb.title = "Add to the up next list"; pb.addEventListener("click", function () { Tools().prep(trackObj(t)); }); qb.addEventListener("click", function () { Tools().enqueue(trackObj(t)); }); more.appendChild(pb); more.appendChild(qb); li.appendChild(more); }
+        results.appendChild(li);
       });
+    }
+    function trackObj(t) { return { uri: t.uri, title: t.title, artist: t.artist, artwork: t.art || t.artwork || "", duration_ms: t.duration_ms }; }
+    // load a Spotify track on Deck A (the live deck). The track that was playing goes into the Previous history.
+    function playTrack(t, startMs, quiet, noHistory) {
+      var prev = cur.track; if (SP) SP.activate();
+      if (!noHistory && Tools() && prev && prev.uri && prev.uri.indexOf("preview") === -1 && prev.uri !== t.uri) Tools().pushHistory(prev);
+      command("load-track", "a", { uri: t.uri, position_ms: startMs || 0 }, "search");
+      cur.track = trackObj(t); C.byId.a.el.title.textContent = t.title + " · " + t.artist; paintCues(); showTempo();
+      if (!quiet) say("a", (startMs ? "Starting " : "Loading ") + t.title + (startMs ? " at " + fmt(startMs) : "") + "…");
     }
     function loadTrack(t) {
       if (!inNinja()) {                                                        // opening or searching never switches modes; Load asks first
         pendingTrack = t; setStatus("<p><b>" + esc(t.title) + "</b> is ready. Press <b>Switch to SpotifyNinja</b> above to load it on Deck A.</p>");
         var p = $("sn-prompt"); if (p) { p.scrollIntoView({ block: "nearest" }); p.classList.add("is-flash"); setTimeout(function () { p.classList.remove("is-flash"); }, 1200); } return;
       }
-      SP.activate(); command("load-track", "a", { uri: t.uri, position_ms: 0 }, "search");
-      cur.track = { uri: t.uri, title: t.title, artist: t.artist, artwork: t.art || "" }; C.byId.a.el.title.textContent = t.title + " · " + t.artist; paintCues();
-      say("a", "Loading " + t.title + "…"); if (menuApi) menuApi.close();
+      playTrack(t, 0); if (menuApi) menuApi.close();
     }
     form.addEventListener("submit", function (e) { e.preventDefault(); var v = q.value.trim(); if (v.length < 2 || !SP || !SP.connected()) return; Array.prototype.forEach.call(chips.children, function (c) { c.setAttribute("aria-pressed", "false"); }); runSearch(v, "“" + v + "”"); });
-    function onSpotifyTab() { if (SP && SP.connected() && !results.children.length) runGenre(genreIdx < 0 ? 0 : genreIdx); }
+    function onSpotifyTab() { if (SP && SP.connected() && !results.children.length) { if (srcNow === "search") runGenre(genreIdx < 0 ? 0 : genreIdx); else setSource(srcNow); } }
     window.addEventListener("gsdj:spotify", function () { renderAll(); var pane = $("sp-pane"); if (pane && !pane.hidden) onSpotifyTab(); });
 
     /* ---------- mode switching ---------- */
@@ -355,8 +395,11 @@
       mode: function () { return mode; }, active: inNinja, enter: enter, exit: exit,
       packet: { validate: validate, command: command, actions: ACTIONS.slice(), version: V },
       openPane: function () { if (menuApi) menuApi.open("a", "spotify"); }, onSpotifyTab: onSpotifyTab,
-      surface: { cur: function () { return cur; }, pos: shownPos }
+      surface: { cur: function () { return cur; }, pos: shownPos },
+      macros: macros, saveMacros: saveMacros, say: say, fmt: fmt, esc: esc,
+      core: { cuesFor: cuesFor, hotCue: hotCue, cueButton: cueButton, tapTempo: tapTempo, tempoFor: tempoFor, beatJump: beatJump, playTrack: playTrack, drawTimeline: drawTimeline, real: real, PREP_MSG: PREP_MSG, paintCues: paintCues, showTempo: showTempo }
     };
+    try { window.dispatchEvent(new CustomEvent("gsdj-ninja-ready")); } catch (e) {}
     reflect();
     // back from the Spotify login page: open the Spotify tab so the result is visible
     var fromLogin = location.hash === "#spotify";

@@ -82,6 +82,36 @@
       }
       el.addEventListener("click", tap); el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tap(); } });
     });
+
+    /* ---------- Sync and Nudge (v22), beside the tempo slider ---------- */
+    function other(d) { return d.id === "a" ? C.byId.b : C.byId.a; }
+    function say(d, m) { if (C.toast) C.toast(d, m); else C.say(m); }
+    function syncTempo(d) {
+      var o = other(d);
+      if (C.settings.decks === 1) { say(d, "Turn on 2 decks in the settings wheel to sync."); return; }
+      if (!d.bpm || !o.bpm) { say(d, "Both decks need a tempo first. Tap the BPM number four times, or load a library track."); return; }
+      var heard = o.bpm * C.rate(o), best = null;
+      [heard, heard / 2, heard * 2].forEach(function (c) { var pct = (c / d.bpm - 1) * 100; if (Math.abs(pct) <= 8 && (best == null || Math.abs(pct) < Math.abs(best))) best = pct; });
+      if (best == null) { say(d, "These tempos are too far apart to sync. Tempo only moves 8%."); return; }
+      var sl = $("tempo-" + d.id); sl.value = (Math.round(best * 10) / 10).toFixed(1); sl.dispatchEvent(new Event("input", { bubbles: true }));
+      say(d, "Deck " + d.id.toUpperCase() + " tempo matched to deck " + o.id.toUpperCase() + ": " + (d.bpm * C.rate(d)).toFixed(1) + " BPM. Sync matches tempo, so use Nudge to line up the beats.");
+    }
+    var NUDGE = 0.05, held = [];
+    function nudgeEnd(d) { if (d.nudge) { d.nudge = 0; if (!d.dragging) d.audio.playbackRate = C.rate(d); } }
+    C.decks.forEach(function (d) {
+      var host = $("tempo-" + d.id).parentNode, row = document.createElement("div"); row.className = "tempo-btns"; row.setAttribute("role", "group"); row.setAttribute("aria-label", "Deck " + d.id.toUpperCase() + " sync and nudge");
+      row.innerHTML = '<button type="button" class="tmini tm-sync" aria-label="Sync: match this deck\'s tempo to the other deck">Sync</button><button type="button" class="tmini tm-slow" aria-label="Nudge slower. Hold to slow the track a little.">◂</button><button type="button" class="tmini tm-fast" aria-label="Nudge faster. Hold to speed the track up a little.">▸</button>';
+      host.appendChild(row);
+      row.querySelector(".tm-sync").addEventListener("click", function () { syncTempo(d); });
+      [[".tm-slow", -1], [".tm-fast", 1]].forEach(function (x) {
+        var b = row.querySelector(x[0]);
+        function start(e) { if (e && e.preventDefault) e.preventDefault(); if (d.dragging) return; d.nudge = x[1] * NUDGE; d.audio.playbackRate = C.rate(d) * (1 + d.nudge); if (held.indexOf(d) === -1) held.push(d); b.classList.add("is-down"); }
+        function end() { b.classList.remove("is-down"); nudgeEnd(d); }
+        b.addEventListener("pointerdown", start); ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) { b.addEventListener(ev, end); });
+        b.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); if (!d.nudge) start(); } }); b.addEventListener("keyup", end);
+      });
+    });
+    window.addEventListener("blur", function () { C.decks.forEach(nudgeEnd); });
   }
   if (window.GSDJCtl) init(); else window.addEventListener("gsdj-ctl-ready", init, { once: true });
 })();

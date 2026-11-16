@@ -517,3 +517,106 @@ body.is-controller .site-footer { display: none; }
 }
 .wheel-center { background: rgba(8,10,16,.94); }
 .tc-why { min-height: 2.4em; }
+
+/* ====== v22: Ninja controls, Prep Deck, Up next queue, Sync and Nudge ====== */
+/* the two ninja icons are masks, so they take any accent color */
+.nj-star, .nj-ninja { display: inline-block; flex: none; background: var(--nj, var(--k-a, #ffc933)); -webkit-mask: url(../assets/ninja/shuriken.png) center / contain no-repeat; mask: url(../assets/ninja/shuriken.png) center / contain no-repeat; }
+.nj-ninja { -webkit-mask-image: url(../assets/ninja/ninja.png); mask-image: url(../assets/ninja/ninja.png); width: 44px; height: 41px; }
+.sn-ninja { width: 40px; height: 37px; margin-bottom: .1rem; }
+.sn-prompt-head { display: flex; align-items: center; gap: .7rem; }
+@keyframes nj-turn { to { transform: rotate(360deg); } }
+.ctl[data-sp-playing="1"] .nj-spin { animation: nj-turn 6s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .ctl[data-sp-playing="1"] .nj-spin { animation: none; } }
+html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
+
+/* SpotifyNinja accents: black and gold. Live is gold, Next (the Prep Deck) is Spotify green. */
+.ctl[data-controller-mode="spotify-ninja"] { --k-a: #ffc933; --k-b: #1ed760; --nj: #ffc933; }
+.ctl[data-controller-mode="spotify-ninja"] .deck-a { --dk: #ffc933; }
+.ctl[data-controller-mode="spotify-ninja"] .deck-b { --dk: #1ed760; }
+.ninja-badge { background: rgba(255,201,51,.12); box-shadow: inset 0 0 0 1px rgba(255,201,51,.55); }
+.ninja-badge i.nj-star { width: 15px; height: 15px; border-radius: 0; box-shadow: none; background: var(--nj, #ffc933); }
+.sn-active { box-shadow: inset 0 0 0 1px rgba(255,201,51,.6); }
+.plat-label .nj-plat { display: none; position: absolute; inset: 14%; width: auto; height: auto; background: linear-gradient(135deg, #ffc933, #fff1b8); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .plat-label .sun-mark { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .plat-label .nj-plat { display: block; }
+.track-btn .tb-star { display: none; width: 20px; height: 20px; background: #0a0b0f; }
+.ctl[data-controller-mode="spotify-ninja"] .track-btn .tb-star { display: block; }
+.tc-star { width: 16px; height: 16px; vertical-align: -3px; margin-right: .25rem; }
+
+/* Ninja BPM and Ninja Macros live where the tempo slider and the EQ were */
+.nbpm, .nm, .np-hint-x { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-tempo > :not(.nbpm) { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .nbpm { display: grid; gap: .3rem; justify-items: center; text-align: center; }
+.nbpm label { font-size: .6rem; }
+.nbpm small { font-size: .5rem; line-height: 1.25; opacity: .7; text-transform: none; letter-spacing: .02em; max-width: 5.5rem; }
+.nbpm-tap { min-width: 60px; min-height: 52px; border-radius: 16px; border: 0; background: var(--nj); color: #0a0b0f; font-family: var(--mono); font-weight: 800; letter-spacing: .1em; font-size: .8rem; box-shadow: 0 0 0 3px color-mix(in srgb, var(--nj) 30%, transparent); }
+.nbpm-tap:active { transform: scale(.95); filter: brightness(1.15); }
+.nbpm-out { font-size: 1.05rem; font-weight: 800; color: var(--nj); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq > :not(.nm), .ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq2 > :not(.nm) { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq > .nm { display: grid; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq2 > .nm { display: grid; }
+.nm-l { font-size: .6rem; letter-spacing: .05em; text-align: center; }
+.nm-o { color: var(--nj); font-weight: 800; display: block; font-variant-numeric: tabular-nums; }
+.opt-eq2 .nm .nm-o { display: inline; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq .nm { min-width: 2.6rem; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .opt-eq2 { display: grid; }
+.ctl[data-controller-mode="spotify-ninja"][data-eq="1"] #deck-a .opt-eq2 { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #loop-a[inert] { opacity: 1; filter: none; pointer-events: none; }
+
+/* Ninja Pads and Ninja FX: the sampler and FX drawers on deck A */
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .deck-drawers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .drw-pat, .ctl[data-controller-mode="spotify-ninja"] #deck-b .deck-drawers, .ctl[data-controller-mode="spotify-ninja"] #deck-b .opt-tempo, .ctl[data-controller-mode="spotify-ninja"] #deck-b .opt-eq, .ctl[data-controller-mode="spotify-ninja"] #deck-b .opt-eq2, .ctl[data-controller-mode="spotify-ninja"] #deck-b .lp-toggle, .ctl[data-controller-mode="spotify-ninja"] #deck-b .lp-step:not(.bj), .ctl[data-controller-mode="spotify-ninja"] .center .opt-fx { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .opt-loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ninja-pads, .ninja-fx { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .drawer-samp > :not(.ninja-pads):not(.dx-top), .ctl[data-controller-mode="spotify-ninja"] #deck-a .drawer-fxu > :not(.ninja-fx):not(.dx-top) { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .drawer-samp .dx-top > :not(.dx-close), .ctl[data-controller-mode="spotify-ninja"] #deck-a .drawer-fxu .dx-top > :not(.dx-close) { display: none; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .dx-top { justify-content: flex-end; position: absolute; right: .7rem; top: .6rem; z-index: 2; }
+.ctl[data-controller-mode="spotify-ninja"] #deck-a .ninja-pads, .ctl[data-controller-mode="spotify-ninja"] #deck-a .ninja-fx { display: flex; flex: 1; min-height: 0; flex-direction: column; gap: .5rem; }
+.np-top { display: flex; align-items: center; gap: .6rem; padding-right: 2.6rem; flex-wrap: wrap; }
+.np-title { font-family: var(--font-display); font-size: 1rem; color: var(--nj); }
+.np-banks { display: flex; gap: .3rem; }
+.np-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+.np-grid[data-n="6"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ninja-pads .pd-pad[aria-pressed="true"] { background: var(--pc); color: #0a0b0f; box-shadow: 0 0 18px color-mix(in srgb, var(--pc) 60%, transparent); }
+.ninja-pads .pd-pad[aria-pressed="true"] i { color: #0a0b0f; }
+.np-hint { font-size: .62rem; color: var(--k-mute); line-height: 1.3; }
+.nfx-tiles { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(5.2rem, 1fr)); grid-auto-rows: minmax(52px, 1fr); gap: .5rem; }
+.nfx.is-hit { background: var(--dk); color: #0a0b0f; } .nfx.is-hit b { color: #0a0b0f; }
+.nfx[aria-pressed="true"] { background: var(--dk); color: #0a0b0f; } .nfx[aria-pressed="true"] b { color: #0a0b0f; }
+
+/* Prep Deck (deck B in SpotifyNinja) */
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .cue[aria-pressed="true"] { background: var(--dk); color: #0a0b0f; box-shadow: 0 0 14px color-mix(in srgb, var(--dk) 60%, transparent); }
+.ctl[data-controller-mode="spotify-ninja"] #deck-b .cue-btn, .ctl[data-controller-mode="spotify-ninja"] #deck-b .play-btn { min-width: 5rem; }
+
+/* Up next panel in the deck menu, and the extra buttons in result rows */
+.dm-queue { margin: .6rem 0; border-radius: 14px; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
+.dm-queue summary { min-height: 44px; display: flex; align-items: center; padding: 0 1rem; cursor: pointer; font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.dq-body { display: grid; gap: .5rem; padding: 0 .8rem .8rem; }
+.dq-bar { display: flex; gap: .4rem; }
+.dm-queue .chip { min-height: 36px; padding: 0 .8rem; border-radius: 999px; border: 0; background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; }
+.dm-queue .chip[aria-pressed="true"] { background: var(--k-a, var(--a)); color: #0a0b0f; font-weight: 800; }
+.dq-list { display: grid; gap: .35rem; }
+.dq-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem; align-items: center; padding: .4rem .6rem; border-radius: 10px; background: rgba(255,255,255,.05); }
+.dq-list strong, .dq-list small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .dq-list small { opacity: .65; font-size: .72rem; }
+.res-more { display: flex; gap: .3rem; }
+.res-sub { min-height: 36px; padding: 0 .7rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.28); background: transparent; color: #fff; font-family: var(--mono); font-size: .68rem; font-weight: 700; }
+.res-sub:disabled { opacity: .4; } .res-sub:active { background: var(--k-a, var(--a)); color: #0a0b0f; }
+.lib-list li { display: flex; gap: .4rem; align-items: stretch; } .lib-item { flex: 1; min-width: 0; } .lib-q { flex: none; }
+.sn-src { margin-bottom: .2rem; }
+.sn-search[hidden], .dm-chips[hidden] { display: none; }
+.sn-hint .chip { min-height: 32px; padding: 0 .7rem; border-radius: 999px; border: 0; background: var(--k-a, var(--a)); color: #0a0b0f; font-weight: 800; margin-left: .3rem; }
+@media (max-width: 30rem) { .res-list li .res-more, .res-list li > .res-sub { grid-column: 2 / -1; justify-self: start; } }
+
+/* Sync and Nudge, beside the tempo slider */
+.tempo-btns { display: grid; grid-template-columns: repeat(3, auto); gap: .2rem; justify-content: center; }
+.tmini { min-width: 34px; min-height: 32px; padding: 0 .35rem; border-radius: 8px; border: 1px solid rgba(255,255,255,.24); background: rgba(255,255,255,.08); color: var(--k-text); font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .04em; }
+.tmini.is-down, .tmini:active { background: var(--dk); color: #0a0b0f; border-color: transparent; }
+.ctl[data-controller-mode="spotify-ninja"] .tempo-btns { display: none; }
+@media (orientation: landscape) and (max-height: 34rem) { .tmini { min-height: 26px; min-width: 30px; font-size: .55rem; } .nbpm-tap { min-height: 40px; min-width: 50px; } .nbpm small { display: none; } .np-hint { display: none; } }
+.ctl[data-controller-mode="spotify-ninja"][data-sampler="off"] #deck-a .drw-samp, .ctl[data-controller-mode="spotify-ninja"][data-fxu="off"] #deck-a .drw-fx { display: inline-flex; align-items: center; justify-content: center; }
+.dm-queue { flex: none; } .dq-body { max-height: 34dvh; overflow: auto; }
+.tempo-btns { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; max-width: 5.6rem; }
+.tempo-btns .tm-sync { grid-column: 1 / -1; }
+.tmini { min-width: 0; min-height: 30px; }
+@media (max-width: 40rem) and (orientation: portrait) { .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body { min-height: 9.4rem; } }
+@media (max-width: 40rem) { .nbpm small { display: none; } }

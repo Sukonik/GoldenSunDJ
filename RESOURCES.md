@@ -152,7 +152,7 @@ Official references:
 - [Authorization Code with PKCE](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow) (the login flow for a static site; no client secret)
 - [Scopes](https://developer.spotify.com/documentation/web-api/concepts/scopes) and [Redirect URI rules](https://developer.spotify.com/documentation/web-api/concepts/redirect_uri)
 
-Setup used by GoldenSunDJ: Redirect URI `https://sukonik.github.io/GoldenSunDJ/controller/spotify-callback.html`; scopes `streaming user-read-private user-read-email user-read-playback-state user-modify-playback-state` now, and `playlist-read-private`, `user-library-read`, `user-read-currently-playing` later for playlists and liked music. Spotify requires Premium for the `streaming` scope.
+Setup used by GoldenSunDJ: Redirect URI `https://sukonik.github.io/GoldenSunDJ/controller/spotify-callback.html`; scopes `streaming user-read-private user-read-email user-read-playback-state user-modify-playback-state` (v22 adds read-only `playlist-read-private user-library-read`) now, and `playlist-read-private`, `user-library-read`, `user-read-currently-playing` later for playlists and liked music. Spotify requires Premium for the `streaming` scope.
 
 Design: the controller emits plain JSON packets; an adapter turns supported ones into Spotify playback commands. Spotify keeps its audio protected, so GoldenSunDJ never downloads, decodes, records or caches it, and tempo, EQ, FX, true scratching and two live decks stay GoldenSun-only. Research references named in the handoff (kept as ideas, not dependencies): SpotAPI, djay, Serato DJ, rekordbox and the music-hackathon projects. I did not verify links for SpotAPI or the hackathon projects.
 
@@ -174,3 +174,7 @@ Suno, DistroKid, YouTube, Spotify and SoundCloud (links today, deeper hooks plan
 ---
 
 *Want to add a resource? Put it in the right section with a one-line "why it matters" and the license if it is code.*
+
+
+### Ninja icons (v22)
+The shuriken and ninja character (white knockout PNGs supplied by the project owner) live in `assets/ninja/` and are used as CSS masks so they take the theme accent. Spotify's developer policy still forbids mixing, segueing or overlapping Spotify content, so the Ninja controls (Switch, Fade, Pads) only send sequential transport commands.

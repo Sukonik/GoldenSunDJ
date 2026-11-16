@@ -71,8 +71,8 @@ Built to feel great on an **iPad**, and to use as much of the screen as it can.
 The deck menu has a fourth tab, **Spotify**. It never changes anything by itself: opening it only shows the prompt **"Switch to SpotifyNinja Controller?"**. GoldenSun Controller (Library, Load, Audius, the Web Audio engine, scratching) stays the default every time you open the page.
 
 - **Same surface, different adapter.** In SpotifyNinja mode the controller looks the same and its controls send tiny JSON packets (`gsdj:command`, `gsdj:state`, `gsdj:modechange` browser events) to an adapter. The packet contract does not mention Spotify, so another adapter could use it later.
-- **What works in SpotifyNinja:** Play, Cue and hot cues (saved on your device per Spotify track), Master as volume, and a badge showing the mode. Deck A controls Spotify; Deck B is a **Prep Deck** for the next track.
-- **What is switched off (and says so):** tempo, EQ, loops, echo, FX, scratch patterns, the sampler, the crossfader and the platter. Spotify protects its audio, and GoldenSunDJ never downloads, decodes, records or caches it, so these only work with Library, Load and Audius tracks.
+- **A specialized controller, not a disabled one.** Spotify protects its audio, so GoldenSunDJ never touches the sound. Instead every GoldenSun control is rebuilt as a **Ninja control**: it looks and feels like the DJ control, but only sends the transport commands Spotify allows (play, pause, seek, volume, load). Labels and accent colors change when SpotifyNinja is active (**black and gold for the live deck, Spotify green for the next track**), and nothing is left as a dead grey control. The only things that stay unavailable are real tempo change, EQ, effects on the sound, and overlapping two Spotify tracks.
+- **The mode badge** is the shuriken (the *ninja star* icon), beside "SpotifyNinja", inside the Track circle button, and at the center of Deck A's disc (it turns gently while Spotify plays; still when reduced motion or Motion off is set). The ninja character appears in the *Switch to SpotifyNinja Controller?* panel and in the not-connected state. The icons are masks, so they take the accent color (`assets/ninja/`).
 - **Return any time:** *Return to GoldenSun Controller* is in the Spotify tab, and **gear → Controls → Exit Ninja** does the same, without reloading. The mode lives in the browser session only, so a new visit always starts on GoldenSun.
 ### Spotify connection (sign in, search, load)
 
@@ -86,13 +86,44 @@ The **Spotify** tab can connect to your Spotify account, search tracks and load 
    Put the Client ID in `controller/spotify-config.js` (`clientId`), or paste it into the Spotify tab (it is kept in your browser only). A Client ID is public. **No client secret is ever used or stored.** New Spotify apps start in *development mode*, where each account that should be able to log in must be added under **User Management** in the dashboard.
 3. **Sign in once per browser session.** Tap **Connect Spotify**; you are sent to Spotify's own page (your password is only ever typed there) and come back to the Controller.
 
-How it works: Authorization Code with **PKCE** (Spotify's recommended flow for a static site), requesting only `streaming`, `user-read-private`, `user-read-email`, `user-read-playback-state` and `user-modify-playback-state`. Tokens stay in session storage (they are gone when the browser session ends) and refresh automatically. Search uses the Spotify Web API; playback uses the official Web Playback SDK, which makes this page a Spotify device. **Connect Spotify / Switch to SpotifyNinja / Disconnect Spotify / Return to GoldenSun Controller** are all in the tab, and after login it says *Connected as <name>*.
+How it works: Authorization Code with **PKCE** (Spotify's recommended flow for a static site), requesting only `streaming`, `user-read-private`, `user-read-email`, `user-read-playback-state`, `user-modify-playback-state` and (from v22, for Playlists and Liked Songs, read-only) `playlist-read-private` and `user-library-read`. Tokens stay in session storage (they are gone when the browser session ends) and refresh automatically. Search uses the Spotify Web API; playback uses the official Web Playback SDK, which makes this page a Spotify device. **Connect Spotify / Switch to SpotifyNinja / Disconnect Spotify / Return to GoldenSun Controller** are all in the tab, and after login it says *Connected as <name>*.
 
 The tab also has **genre chips** (Gold, Trance, House, Techno, Pulsewave, Synthpop, Eurodance, Nightdrive) that list tracks for each style as soon as you are connected, plus a search box. Spotify limits how many results one search may return, so GoldenSunDJ asks for 10 and automatically falls back to smaller sizes if Spotify says the limit is invalid. Spotify no longer gives apps its 30-second preview clips, so results are listed to **Load** (full track through SpotifyNinja), not previewed.
 
 Tap **Load** on a result: if you are still on GoldenSun Controller, the Spotify tab asks you to press **Switch to SpotifyNinja** first, then loads the track on Deck A. Without a connection, SpotifyNinja runs as a silent preview so you can try the controls.
 
-Honest status: the login, token exchange (including the PKCE check), search, device start-up, load and playback commands are tested against **mocked** Spotify servers and a mocked player. They have not yet been run against a live Spotify account. On iPhone and iPad, sign in from a Safari tab first; a Home Screen app may not return to itself after the Spotify login page. Platter scrubbing ("Ninja Scrub"), the Prep Deck and a timeline for Spotify tracks are the next patch.
+Honest status: the login, token exchange (including the PKCE check), search, device start-up, load and playback commands are tested against **mocked** Spotify servers and a mocked player. They have not yet been run against a live Spotify account. On iPhone and iPad, sign in from a Safari tab first; a Home Screen app may not return to itself after the Spotify login page. Ninja Scrub, the timeline, the Prep Deck, the Up next queue, Ninja Switch, Ninja FX and Ninja Pads, and the Playlists and Liked Songs lists are tested the same way (mocked Spotify, headless browser at phone, tablet and landscape sizes), but not yet by hand on a real iPad or iPhone with a Premium account. Fade timing, the feel of the scrub, and Spotify's reaction to quick volume commands are the things to check first.
+
+### Ninja controls (the "imitation crab" DJ controls)
+
+| GoldenSun control | SpotifyNinja version | What it really does |
+|---|---|---|
+| Scratch | **Ninja Scrub** | Drag the disc to preview a position, then seek once on release. Scrub Sensitivity sets how much song one turn covers. |
+| FX | **Ninja FX** | Transport effects: **Smoke Fade** (fade out, then pause), **Shadow Mute** (hold to mute), **Shuriken Skip** (cut to the next track), **Vanish** (pause now, tap again to return) and **Teleport** (jump to your Cue point). |
+| Sampler | **Ninja Pads** | Pads become commands, no sound of their own. Bank *Cues*: Cue 1 to 4, −10 s, +10 s, Mute, Fade. Bank *Moves*: Restart, Repeat, Previous, Next, Shuffle, Up next. |
+| Tempo | **Ninja BPM** | A big **TAP** button (tap four times) and the BPM readout. It powers beat jumps and calculated loop sizes without pretending to change playback speed. |
+| Master | **Spotify Master** | Spotify's playback volume where supported. On iPhone and iPad a web page cannot change Spotify's loudness, so a note points to the device volume buttons. |
+| Crossfader | **Ninja Switch** | Fades the live track down, loads the prepared track at its start point, then fades up. It is sequential, never two tracks at once. Drag the lever to NEXT and let go, or press **Switch** on Deck B. |
+| EQ knobs | **Ninja Macros** | **Jump** (beat jump size), **Fade** (fade length, 0.5 to 8 s) and **Scrub** (sensitivity). They sit where the EQ is and follow the EQ 1 / EQ 2 setting. Saved on your device. |
+| Deck B | **Prep Deck** | The next track: its title, a start point and its four cue slots. See below. |
+
+Ninja FX and Ninja Pads open from the deck buttons even when the Sampler and FX add-ons are off. Fades and mutes are volume commands. They lag a little (Spotify answers over the network) and on iPhone and iPad they may not be audible at all, because iOS ignores web-page volume. Smoke Fade still times the pause.
+
+#### Prep Deck and Up next
+
+- In the Spotify tab every result has **Load** (play now on Deck A), **Prep** (make it the next track on Deck B) and **Queue** (add it to the Up next list). Playlists and Liked Songs (below) have the same buttons.
+- **Deck B** shows the prepared track. Its **start point** defaults to a saved Cue point if the track has one, otherwise 0:00. Change it by **tapping its cue buttons** (they show the cue times saved when that track was on Deck A), **dragging the timeline strip**, or the ⏪ ⏩ buttons (±5 s). **Start** resets to the beginning. **Switch** runs the Ninja Switch.
+- **Up next** is one list: Deck B first, then the queue. It is a panel in the deck menu (open it from the Track circle's *Up next*). Remove tracks with ✕, **Shuffle** mixes the order, **Clear** empties it. When Deck B plays, the next queued track moves up into it.
+- **Previous / Next** (Track circle page 3, and the Moves pads) follow this list. **Next** is a hard cut to what is up next; **Switch** is the faded version. Previous goes back to the start if you are more than 3 seconds in, otherwise to the earlier track. With nothing queued, Next is **dimmed with the reason**, and it never wanders off to another style.
+- GoldenSun Controller has the same **Up next** list for Library and Audius tracks (a **Queue** button beside each), so Previous, Next and Shuffle in the Track circle work there too.
+
+#### Playlists and Liked Songs
+
+The Spotify tab has a source row: **Search**, **Liked Songs**, **Playlists**. They are read-only and need two more permissions (`playlist-read-private`, `user-library-read`). If you connected with an earlier version, the tab shows a **Reconnect Spotify** button once. Playlists open to a track list with a *‹ Playlists* back button.
+
+#### Sync and Nudge (GoldenSun Controller)
+
+Under each deck's tempo slider: **Sync** matches this deck's tempo to the other deck (it also tries half and double time, and says so if the tempos are more than 8% apart; it matches tempo, not beat position). **◂ ▸ Nudge** briefly slows down or speeds up the deck by 5% while you hold it, so you can line the beats up by ear.
 
 ### The Track circle (everyday track controls)
 
@@ -100,8 +131,9 @@ A round **Track** button sits beside the gear in the center strip. It opens a sm
 
 - **Page 1, Transport:** Restart, −10 s, +10 s, Repeat.
 - **Page 2, Level:** Mute and Volume. Volume opens a slider panel under the circle (sliders never sit on the ring).
+- **Page 3, Queue:** Previous, Next, Shuffle and Up next (see *Prep Deck and Up next*).
 - **Normal tracks:** Restart and ±10 s move the track, **Repeat** turns looping on or off (a track now stops at its end when Repeat is off), and Mute and Volume are **per deck** (each deck now has its own volume).
-- **Spotify (SpotifyNinja):** the same buttons send seek, repeat and volume commands to Spotify. LIVE is Deck A; NEXT (Deck B) stays dimmed, with a reason, until the Prep Deck arrives. On iPhone and iPad a web page's volume setting may not change Spotify's loudness, and the panel says so.
+- **Spotify (SpotifyNinja):** the same buttons send seek, repeat and volume commands to Spotify. LIVE is Deck A. NEXT is the Prep Deck: Restart, ±10 s and the page 3 buttons act on its start point and the Up next list; Repeat, Mute and Volume say they belong to the live track. On iPhone and iPad a web page's volume setting may not change Spotify's loudness, and the panel says so.
 - Controls that cannot work are dimmed with a short reason, never silently ignored.
 
 Performance functions stay on the decks, not in the circle: **loops and beat jump** (Loop add-on row), the **timeline** (Wave add-on), **Ninja Scrub** (the disc) and the cues.
@@ -187,6 +219,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v19** | **Spotify connection (Patch 2):** Connect / Disconnect Spotify (Authorization Code with PKCE, no client secret), "Connected as <name>", Spotify search and Load on Deck A, the Web Playback SDK adapter, and the callback page `controller/spotify-callback.html`. Tested against mocked Spotify servers. |
 | **v20** | Spotify search fix ("Invalid limit": results are now requested in sizes Spotify accepts, with automatic fallback) and **genre chips** in the Spotify tab with recommended tracks for the eight NAKO GOLD styles. |
 | **v21** | **Track circle** (two radial pages, explicit TRACK A/B or LIVE/NEXT target with a colored outline), per-deck volume and mute, Repeat, **beat jump**, tap tempo for Spotify, the SpotifyNinja **timeline** and **Ninja Scrub**. First batch of the approved plan. |
+| **v22** | **Batch 2 and the Ninja control set.** Ninja Pads, Ninja FX (Smoke Fade, Shadow Mute, Shuriken Skip, Vanish, Teleport), Ninja BPM, Ninja Macros, Spotify Master and the **Ninja Switch** (a faded, one-track-at-a-time crossfader); the **Prep Deck** and an **Up next** queue with Previous, Next and Shuffle (Spotify and GoldenSun); **Playlists and Liked Songs**; **Sync and Nudge**; the shuriken and ninja icons with black-and-gold SpotifyNinja accents. |
 
 ## Under the hood
 
@@ -207,6 +240,7 @@ js/shell.js           header, drawer, theme picker, weather chip, journey bar
 js/demo-loops.js      synthesized demo loops shared by Mixer and Controller
 assets/brand/         emblem PNGs and the mask used for theme-colored marks
 assets/icons/         the glass app icons (generated by tools/make_glass_icons.py)
+assets/ninja/         the shuriken and ninja icons (white masks, colored in CSS)
 src/tailwind.css      Tailwind entry (animations, utilities)
 .github/workflows/    GitHub Pages deploy
 BRAND.md              brand voice and identity for GoldenSunDJ
@@ -235,7 +269,7 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 - More sources for the Audius tab (Internet Archive, Free To Use), key detection, and a sync button using the detected tempo.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
 - Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
-- **Approved plan, next batches:** *Batch 2* Previous / Next (following a defined queue, dimmed with a reason when there is none), Shuffle, Prep Deck, Spotify queue, playlists and Liked Songs, Sync and Nudge beside the tempo control. *Batch 3 (conditional)* Spotify loop, Fade out / Fade in (to be tested carefully, since volume commands lag and iOS ignores web volume), and GoldenSun Auto-mix for Library, Device and Audius tracks. *Held or dropped:* Spotify "Mix now" and Spotify Auto-mix (held), and Beat gate (dropped for now).
+- **Approved plan, remaining:** *Batch 3 (conditional)* Spotify loop (calculated A to B and beat loops), an automatic end-of-track transition option, Ninja Scrub gesture variations (backspin 8 or 16 s), Fade length and Fade in on the Track circle, and GoldenSun Auto-mix for Library, Device and Audius tracks. *Experimental, only after latency testing:* a beat gate. *Held or dropped:* Spotify "Mix now" and Spotify Auto-mix (held), and anything that overlaps Spotify audio. Spotify's public developer policy does not allow mixing, segueing or overlapping its content.
 
 ## Resources
 

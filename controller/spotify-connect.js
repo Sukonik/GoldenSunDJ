@@ -7,7 +7,8 @@
    spotify-ninja.js owns the controller side and calls the API below. */
 (function () {
   "use strict";
-  var SCOPES = "streaming user-read-private user-read-email user-read-playback-state user-modify-playback-state";
+  var SCOPES = "streaming user-read-private user-read-email user-read-playback-state user-modify-playback-state playlist-read-private user-library-read";
+  var LIBRARY_SCOPES = ["playlist-read-private", "user-library-read"];             // added in v22 for Playlists and Liked Songs; earlier logins must reconnect once
   var AUTH = "https://accounts.spotify.com/authorize", TOKEN = "https://accounts.spotify.com/api/token", API = "https://api.spotify.com/v1";
   var TOK = "gsdj-sp-token", ERR = "gsdj-sp-error", PKCE = "gsdj-sp-pkce", CID = "gsdj-spotify-client-id";
   var me = null, player = null, deviceId = null, readyP = null, last = null, timer = null;
@@ -68,11 +69,20 @@
   function loadUser() {
     return call("GET", "/me").then(function (j) { me = { id: j.id, name: j.display_name || j.id, premium: j.product === "premium", product: j.product, country: j.country }; note(); return me; });
   }
-  function mapTracks(j) {
-    return ((j && j.tracks && j.tracks.items) || []).filter(function (t) { return t && t.uri && !t.is_local; }).map(function (t) {
-      var imgs = (t.album && t.album.images) || [], img = imgs.length ? imgs[imgs.length - 1].url : "";
-      return { uri: t.uri, id: t.id, title: t.name, artist: (t.artists || []).map(function (a) { return a.name; }).join(", "), duration_ms: t.duration_ms, art: img, url: t.external_urls && t.external_urls.spotify, playable: t.is_playable !== false };
-    });
+  function mapOne(t) {
+    if (!t || !t.uri || t.is_local || (t.type && t.type !== "track")) return null;
+    var imgs = (t.album && t.album.images) || [], img = imgs.length ? imgs[imgs.length - 1].url : "";
+    return { uri: t.uri, id: t.id, title: t.name, artist: (t.artists || []).map(function (a) { return a.name; }).join(", "), duration_ms: t.duration_ms, art: img, url: t.external_urls && t.external_urls.spotify, playable: t.is_playable !== false };
+  }
+  function mapTracks(j) { return ((j && j.tracks && j.tracks.items) || []).map(mapOne).filter(Boolean); }
+  function hasScope(sc) { var t = tokens(); return !!(t && t.scope && (" " + t.scope + " ").indexOf(" " + sc + " ") !== -1); }
+  function hasLibrary() { return LIBRARY_SCOPES.every(hasScope); }
+  // Liked Songs and playlists (read only). Items arrive as { track } or, in newer API versions, { item }.
+  function liked(offset) { return call("GET", "/me/tracks?" + new URLSearchParams({ limit: "20", offset: String(offset || 0), market: "from_token" }).toString()).then(function (j) { return ((j && j.items) || []).map(function (x) { return mapOne(x && (x.track || x.item)); }).filter(Boolean); }); }
+  function playlists() { return call("GET", "/me/playlists?limit=20").then(function (j) { return ((j && j.items) || []).filter(Boolean).map(function (p) { var im = p.images || []; return { id: p.id, name: p.name, count: (p.items && p.items.total) || (p.tracks && p.tracks.total) || 0, art: im.length ? im[im.length - 1].url : "", owner: p.owner && p.owner.display_name }; }); }); }
+  function playlistTracks(id) {
+    var q = "?" + new URLSearchParams({ limit: "30", market: "from_token" }).toString(), pick = function (j) { return ((j && j.items) || []).map(function (x) { return mapOne(x && (x.track || x.item)); }).filter(Boolean); };
+    return call("GET", "/playlists/" + encodeURIComponent(id) + "/items" + q).then(pick).catch(function (e) { if (e && (e.status === 404 || e.status === 400)) return call("GET", "/playlists/" + encodeURIComponent(id) + "/tracks" + q).then(pick); throw e; });
   }
   // Spotify limits how many results a search may return (it has changed over time), so ask for 10 and fall back to smaller sizes
   var LIMITS = [10, 5, 3], limitAt = 0;                                  // remember the size that worked
@@ -158,7 +168,7 @@
   var api = {
     configured: function () { return !!clientId(); }, clientId: clientId, setClientId: function (id) { ls(CID, id ? String(id).trim() : null); }, redirectUri: redirectUri, scopes: SCOPES,
     connect: connect, disconnect: disconnect, connected: connected, user: function () { return me; }, loadUser: loadUser, token: token,
-    search: search, ensurePlayer: ensurePlayer, activate: activate, ready: function () { return !!(player && deviceId); }, handle: handle,
+    search: search, liked: liked, playlists: playlists, playlistTracks: playlistTracks, hasLibrary: hasLibrary, ensurePlayer: ensurePlayer, activate: activate, ready: function () { return !!(player && deviceId); }, handle: handle,
     lastError: function () { return ss(ERR); }, clearError: function () { ss(ERR, null); },
     onState: null, onMessage: null
   };

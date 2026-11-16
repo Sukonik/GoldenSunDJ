@@ -1,7 +1,7 @@
 /* GoldenSunDJ Controller: the Track circle (beside the gear in the center strip).
    A radial menu of everyday track controls for ONE deck at a time: the target. The target is shown in the
    button ("TRACK A", "TRACK B", or "LIVE" / "NEXT" in SpotifyNinja) and by a colored outline on that deck.
-   Page 1 is Transport, page 2 is Level. Sliders open in a small panel under the circle, never around the ring.
+   Page 1 is Transport, page 2 is Level, page 3 is Queue (Previous, Next, Shuffle, Up next). Sliders open in a small panel under the circle, never around the ring.
    The same buttons work on normal tracks (through the Web Audio engine) and on Spotify (through gsdj:command packets).
    Performance functions (loops, beat jump, scrub, timeline, cues) stay on the decks themselves. */
 (function () {
@@ -33,23 +33,32 @@
     /* ---------- what each control does, per mode ---------- */
     function hasTrack() { return ninja() ? true : !!deck().audio.src; }
     function reason() {
-      if (ninja()) return target === "b" ? "Next track controls arrive with the Prep Deck." : "";
+      if (ninja()) return "";
       return hasTrack() ? "" : "Load a track on this deck first.";
     }
+    function T() { return window.GSDJNinjaTools || null; }
+    function nav() { return ninja() ? (T() && T().nav) : (window.GSDJDeckMenu && window.GSDJDeckMenu.nav); }
+    var NEXT_ONLY = "That control works on the live track. Switch the target to LIVE.";
     var ITEMS = [
       { page: 0, id: "restart", icon: "⏮", label: "Restart", on: function () { return false; }, tap: function () {
+          if (ninja() && target === "b") { T().setStart(0); return; }
           if (ninja()) { cmd("seek", { position_ms: 0 }); toast("Back to the start."); }
           else { var d = deck(); d.audio.currentTime = 0; d.livePos = null; toast("Back to the start."); } } },
       { page: 0, id: "back", icon: "⏪", label: "−10 s", on: function () { return false; }, tap: function () { skip(-10); } },
       { page: 0, id: "fwd", icon: "⏩", label: "+10 s", on: function () { return false; }, tap: function () { skip(10); } },
-      { page: 0, id: "repeat", icon: "↻", label: "Repeat", on: function () { return ninja() ? live().repeat === "track" : deck().audio.loop; }, tap: function () {
+      { page: 0, id: "repeat", icon: "↻", label: "Repeat", on: function () { return ninja() ? live().repeat === "track" : deck().audio.loop; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () {
           if (ninja()) { var next = live().repeat === "track" ? "off" : "track"; cmd("set-repeat", { state: next }); toast(next === "track" ? "Repeat this track: on." : "Repeat: off."); }
           else { var d = deck(); d.audio.loop = !d.audio.loop; toast(d.audio.loop ? "Repeat on. The track plays again when it ends." : "Repeat off. The track stops when it ends."); C.updatePlayUi(d); } } },
-      { page: 1, id: "mute", icon: "⊘", label: "Mute", on: function () { return ninja() ? spMuted : !!deck().muted; }, tap: function () { toggleMute(); } },
-      { page: 1, id: "volume", icon: "♪", label: "Volume", on: function () { return openSlider === "volume"; }, tap: function () { showSlider(openSlider === "volume" ? null : "volume"); } }
+      { page: 1, id: "mute", icon: "⊘", label: "Mute", on: function () { return ninja() ? spMuted : !!deck().muted; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () { toggleMute(); } },
+      { page: 1, id: "volume", icon: "♪", label: "Volume", on: function () { return openSlider === "volume"; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () { showSlider(openSlider === "volume" ? null : "volume"); } },
+      { page: 2, id: "prev", icon: "⏮", label: "Previous", on: function () { return false; }, why: function () { return ninja() && target === "b" ? NEXT_ONLY : ""; }, tap: function () { var n = nav(); if (n) n.previous(target); } },
+      { page: 2, id: "next", icon: "⏭", label: "Next", on: function () { return false; }, why: function () { var n = nav(); return n && n.hasNext(target) ? "" : (n ? n.nextReason() : "No queue here yet."); }, tap: function () { var n = nav(); if (n) n.next(target); } },
+      { page: 2, id: "shuffle", icon: "⤮", label: "Shuffle", on: function () { var n = nav(); return !!(n && n.shuffleOn()); }, tap: function () { var n = nav(); if (n) { n.shuffle(); toast(n.shuffleOn() ? "Shuffle on." : "Shuffle off."); } } },
+      { page: 2, id: "queue", icon: "☰", label: "Up next", on: function () { return false; }, tap: function () { close(); var m = window.GSDJDeckMenu; if (m) m.open(target, ninja() ? "spotify" : "link", { queue: true }); } }
     ];
-    var PAGE_NAMES = ["Transport", "Level"];
+    var PAGE_NAMES = ["Transport", "Level", "Queue"];
     function skip(sec) {
+      if (ninja() && target === "b") { var ps = T() && T().prepStart(); if (ps) T().setStart(ps.start + sec * 1000); else toast("Choose a next track first. In the Spotify tab, tap Prep."); return; }
       if (ninja()) { var s = live(), p = Math.max(0, Math.min(Math.max(0, s.dur - 50), s.pos + sec * 1000)); cmd("seek", { position_ms: Math.round(p) }); toast((sec > 0 ? "+" : "−") + Math.abs(sec) + " seconds."); return; }
       var d = deck(), dur = d.audio.duration, t = d.audio.currentTime + sec; t = isFinite(dur) && dur > 0 ? Math.max(0, Math.min(dur - 0.05, t)) : Math.max(0, t);
       d.audio.currentTime = t; d.livePos = null; toast((sec > 0 ? "+" : "−") + Math.abs(sec) + " seconds.");
@@ -84,13 +93,13 @@
     /* ---------- drawing the ring ---------- */
     function draw() {
       var items = ITEMS.filter(function (i) { return i.page === page; }), why = reason(); ring.textContent = "";
-      $("tc-target").innerHTML = (ninja() ? (target === "a" ? "LIVE" : "NEXT") : "TRACK " + target.toUpperCase()) + " <i aria-hidden=\"true\">⇄</i>";
+      $("tc-target").innerHTML = (ninja() ? '<i class="nj-star tc-star nj-spin" aria-hidden="true"></i>' + (target === "a" ? "LIVE" : "NEXT") : "TRACK " + target.toUpperCase()) + " <i aria-hidden=\"true\">⇄</i>";
       $("tc-page").textContent = PAGE_NAMES[page]; $("tc-next").textContent = PAGE_NAMES[(page + 1) % PAGE_NAMES.length] + " ▸"; $("tc-why").textContent = why;
       items.forEach(function (it, i) {
         var b = document.createElement("button"); b.type = "button"; b.className = "wheel-item"; b.style.setProperty("--ang", (i * 360 / items.length) + "deg");
-        var off = !!why; b.setAttribute("aria-pressed", !off && it.on() ? "true" : "false"); if (off) { b.setAttribute("aria-disabled", "true"); b.classList.add("is-off"); }
+        var iw = why || (it.why ? it.why() : ""), off = !!iw; b.setAttribute("aria-pressed", !off && it.on() ? "true" : "false"); if (off) { b.setAttribute("aria-disabled", "true"); b.classList.add("is-off"); }
         b.innerHTML = '<b aria-hidden="true">' + it.icon + "</b><span>" + it.label + (it.id === "volume" ? "" : "") + "</span>";
-        b.addEventListener("click", function () { if (off) { toast(why); return; } it.tap(); draw(); });
+        b.addEventListener("click", function () { var w2 = why || (it.why ? it.why() : ""); if (w2) { toast(w2); return; } it.tap(); draw(); });
         ring.appendChild(b);
       });
       var d = deck(); document.querySelectorAll(".deck").forEach(function (x) { x.classList.toggle("is-target", x.id === "deck-" + target); });
@@ -108,7 +117,10 @@
     // the gear wheel and the Track circle never open together
     document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("#wheel-btn") && !box.hidden) close(); }, true);
 
-    window.GSDJTrack = { open: open, close: close, target: function () { return target; }, setTarget: setTarget };
+    function asA(fn) { var keep = target; target = "a"; try { return fn(); } finally { target = keep; } }
+    window.GSDJTrack = { open: open, close: close, target: function () { return target; }, setTarget: setTarget,
+      run: function (id) { var it = ITEMS.filter(function (x) { return x.id === id; })[0]; if (it) asA(function () { it.tap(); }); },          // Ninja Pads use these on the live deck
+      isOn: function (id) { var it = ITEMS.filter(function (x) { return x.id === id; })[0]; return it ? asA(function () { return !!it.on(); }) : false; } };
     paintTarget();
   }
   if (window.GSDJCtl) init(); else window.addEventListener("gsdj-ctl-ready", init, { once: true });
