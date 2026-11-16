@@ -3,4 +3,4 @@
    A Client ID is public (it is sent to Spotify in the login URL), so it is safe to commit.
    NEVER put a client secret here or anywhere in GoldenSunDJ: the PKCE login flow does not use one.
    Leave it empty and visitors (or you) can paste a Client ID in the Spotify tab instead; that copy is kept in this browser only. */
-window.GSDJ_SPOTIFY = { clientId: "" };
+window.GSDJ_SPOTIFY = { clientId: "221b05b4c13342ea81629a3cf9a6b93a" };
