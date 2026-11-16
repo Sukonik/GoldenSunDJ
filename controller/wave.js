@@ -36,6 +36,7 @@
     }
 
     function draw(d) {
+      if (C.el.getAttribute("data-controller-mode") === "spotify-ninja") return;     // the SpotifyNinja timeline draws this strip
       var cv = $("wave-" + d.id); if (!cv || !settings.wave) return;
       var w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
       var dpr = Math.min(2, window.devicePixelRatio || 1);

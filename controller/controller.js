@@ -71,8 +71,8 @@
       var high = actx.createBiquadFilter(); high.type = "highshelf"; high.frequency.value = 4000;
       var flt = actx.createBiquadFilter(); flt.type = "lowpass"; flt.frequency.value = 20000; flt.Q.value = 0.8;
       var an = actx.createAnalyser(); an.fftSize = 256; var cross = actx.createGain();
-      var elg = actx.createGain(); src.connect(elg); elg.connect(low); low.connect(mid); mid.connect(high); high.connect(flt); var gate = actx.createGain(); flt.connect(gate); gate.connect(an); an.connect(cross); cross.connect(master);
-      d.nodes = { gate: gate, elg: elg, low: low, mid: mid, high: high, flt: flt, an: an, cross: cross, data: new Uint8Array(an.fftSize) }; d.built = true;
+      var elg = actx.createGain(); src.connect(elg); elg.connect(low); low.connect(mid); mid.connect(high); high.connect(flt); var gate = actx.createGain(); flt.connect(gate); var vg = actx.createGain(); vg.gain.value = d.muted ? 0 : (d.vol == null ? 1 : d.vol); gate.connect(vg); vg.connect(an); an.connect(cross); cross.connect(master);
+      d.nodes = { vg: vg, gate: gate, elg: elg, low: low, mid: mid, high: high, flt: flt, an: an, cross: cross, data: new Uint8Array(an.fftSize) }; d.built = true;
       ["low", "mid", "high"].forEach(function (b) { d.nodes[b].gain.value = parseFloat($("eq-" + b + "-" + d.id).value); });
       applyCross(); return true;
     } catch (e) { say("Audio routing failed. Playback still works without EQ."); return false; }
@@ -275,8 +275,16 @@
   var LOOPS = [1, 2, 4, 8, 16, 32];
   function loopLen(d) { var bpm = d.bpm || 120; return LOOPS[d.loop.i] * 60 / bpm; }            // in track time
   function snapBeat(d, t) { if (!d.bpm || d.gridOffset == null) return t; var b = 60 / d.bpm; return Math.max(0, Math.round((t - d.gridOffset) / b) * b + d.gridOffset); }
+  function beatJump(d, dir) {                                           // jump by the selected loop length, in beats
+    if (!d.audio.src) { say("Load a track first. Tap Load."); return; }
+    if (!d.bpm) { toast(d, "Tap the BPM number four times to set the tempo, then try again."); return; }
+    var dur = d.audio.duration, step = LOOPS[d.loop.i] * 60 / d.bpm, t = d.audio.currentTime + dir * step;
+    if (isFinite(dur) && dur > 0) t = Math.max(0, Math.min(dur - 0.05, t)); else t = Math.max(0, t);
+    d.audio.currentTime = snapBeat(d, t); d.livePos = null; toast(d, (dir > 0 ? "Jumped ahead " : "Jumped back ") + LOOPS[d.loop.i] + " beat" + (LOOPS[d.loop.i] > 1 ? "s" : "") + ".");
+  }
   function loopUi(d) { $("loop-n-" + d.id).textContent = LOOPS[d.loop.i]; $("loop-" + d.id).setAttribute("aria-pressed", d.loop.on ? "true" : "false"); }
   decks.forEach(function (d) {
+    $("bj-back-" + d.id).addEventListener("click", function () { beatJump(d, -1); }); $("bj-fwd-" + d.id).addEventListener("click", function () { beatJump(d, 1); });
     $("lp-minus-" + d.id).addEventListener("click", function () { d.loop.i = Math.max(0, d.loop.i - 1); if (d.loop.on) d.loop.end = Math.min(d.audio.duration || 1e9, d.loop.start + loopLen(d)); loopUi(d); });
     $("lp-plus-" + d.id).addEventListener("click", function () { d.loop.i = Math.min(LOOPS.length - 1, d.loop.i + 1); if (d.loop.on) d.loop.end = Math.min(d.audio.duration || 1e9, d.loop.start + loopLen(d)); loopUi(d); });
     $("loop-" + d.id).addEventListener("click", function () {
@@ -360,7 +368,7 @@
   $("wheel").addEventListener("click", function (e) { if (e.target === this) openWheel(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("wheel").hidden) openWheel(false); });
 
-  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, snapT: snapT, toast: toast, paintCues: paintCues, saveCues: saveCues, posOf: posOf, setBpm: setBpm, KEY: KEY, SCRATCH_DEFAULT: SCRATCH_DEFAULT, REV_SECONDS: REV_SECONDS,
+  window.GSDJCtl = { $: $, clamp: clamp, fmt: fmt, say: say, decks: decks, byId: byId, settings: settings, hooks: hooks, ensureCtx: ensureCtx, build: build, rate: rate, loops: function () { return LOOPS; }, snapT: snapT, toast: toast, paintCues: paintCues, saveCues: saveCues, posOf: posOf, setBpm: setBpm, KEY: KEY, SCRATCH_DEFAULT: SCRATCH_DEFAULT, REV_SECONDS: REV_SECONDS,
     updatePlayUi: updatePlayUi, applySettings: applySettings, loadSource: loadSource, loopOn: loopOn, el: ctlEl,
     audio: function () { return { ctx: actx, master: master, echoWet: echoWet }; } };
   window.dispatchEvent(new Event("gsdj-ctl-ready"));

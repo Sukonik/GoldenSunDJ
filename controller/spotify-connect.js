@@ -102,14 +102,14 @@
     if (timer) return;
     timer = setInterval(function () {
       if (!last || last.paused) { clearInterval(timer); timer = null; return; }
-      var pos = Math.min(last.duration, last.position + (Date.now() - last.at)); emit({ paused: false, position_ms: pos, duration_ms: last.duration, track: last.track });
+      var pos = Math.min(last.duration, last.position + (Date.now() - last.at)); emit({ paused: false, position_ms: pos, duration_ms: last.duration, track: last.track, repeat: last.repeat });
     }, 500);
   }
   function ensurePlayer() {
     if (readyP) return readyP;
     readyP = loadSDK().then(function () {
       return new Promise(function (res, rej) {
-        player = new window.Spotify.Player({ name: "GoldenSunDJ", volume: 0.8, getOAuthToken: function (cb) { token().then(cb, function () { cb(""); }); } });
+        player = new window.Spotify.Player({ name: "GoldenSunDJ", volume: 0.85, getOAuthToken: function (cb) { token().then(cb, function () { cb(""); }); } });
         player.addListener("ready", function (e) { deviceId = e.device_id; res(deviceId); });
         player.addListener("not_ready", function () { deviceId = null; say("Spotify lost the connection to this device. Reconnecting may help."); });
         player.addListener("initialization_error", function (e) { rej(new Error(e.message || "This browser cannot play Spotify here.")); });
@@ -119,8 +119,8 @@
         player.addListener("player_state_changed", function (s) {
           if (!s) { last = null; emit({ paused: true, position_ms: 0, duration_ms: 0, track: null }); return; }
           var tr = track(s.track_window && s.track_window.current_track);
-          last = { paused: !!s.paused, position: s.position, duration: s.duration, track: tr, at: Date.now() };
-          emit({ paused: last.paused, position_ms: s.position, duration_ms: s.duration, track: tr }); if (!last.paused) pump();
+          last = { paused: !!s.paused, position: s.position, duration: s.duration, track: tr, at: Date.now(), repeat: s.repeat_mode === 2 ? "track" : (s.repeat_mode === 1 ? "context" : "off") };
+          emit({ paused: last.paused, position_ms: s.position, duration_ms: s.duration, track: tr, repeat: last.repeat }); if (!last.paused) pump();
         });
         Promise.resolve(player.connect()).then(function (ok) { if (ok === false) rej(new Error("Spotify could not start the player in this browser.")); });
       });
@@ -147,6 +147,7 @@
         if (p.action === "play") player.resume(); else if (p.action === "pause") player.pause(); else player.togglePlay(); break;
       case "seek": if (need() && last) player.seek(Math.max(0, Math.round(v.position_ms || 0))); break;
       case "set-volume": if (player) player.setVolume(Math.max(0, Math.min(1, v.volume == null ? 0.8 : v.volume))); break;
+      case "set-repeat": if (need()) call("PUT", "/me/player/repeat?" + new URLSearchParams({ state: v.state === "track" ? "track" : "off", device_id: deviceId }).toString()).then(function () { if (last) last.repeat = v.state === "track" ? "track" : "off"; }).catch(function (e) { say("Spotify could not change repeat: " + (e && e.message ? e.message : "error")); }); break;
       case "next": if (need()) player.nextTrack(); break;
       case "previous": if (need()) player.previousTrack(); break;
       case "load-track": if (v.uri) start(v.uri, v.position_ms).catch(function (e) { say(e && e.message ? e.message : "Spotify could not load that track."); }); break;

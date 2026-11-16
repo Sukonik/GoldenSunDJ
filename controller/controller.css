@@ -464,7 +464,8 @@ body.is-controller .site-footer { display: none; }
 .ninja-note { font-family: var(--mono); font-size: .56rem; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.65); text-align: center; line-height: 1.25; }
 .ninja-prep { position: absolute; left: 10%; right: 10%; top: 44%; z-index: 2; padding: .5rem .6rem; border-radius: 12px; background: rgba(10,12,18,.85); font-size: .66rem; letter-spacing: .03em; text-transform: none; pointer-events: none; }
 .ctl:not([data-controller-mode="spotify-ninja"]) .ninja-note, .ctl:not([data-controller-mode="spotify-ninja"]) .ninja-badge { display: none; }
-.ctl[data-controller-mode="spotify-ninja"] .wave-wrap { display: none !important; }
+.ctl[data-controller-mode="spotify-ninja"][data-wave="off"] .wave-wrap { display: none !important; }
+.ctl[data-controller-mode="spotify-ninja"] .wave-zoom { display: none; }
 @media (orientation: landscape) and (max-height: 34rem) { .ninja-badge { font-size: .5rem; padding: .2rem .4rem; } .ninja-badge small { display: none; } .ninja-prep { top: 36%; font-size: .56rem; } }
 
 /* ======== v19: Spotify connection ======== */
@@ -480,3 +481,39 @@ body.is-controller .site-footer { display: none; }
 .sn-hint { min-height: 1.2em; }
 .sn-card input, .sn-setup input { min-height: 44px; }
 .sn-setup ol { list-style: decimal; }
+
+/* ======== v21: Track circle, beat jump, Ninja Scrub, timeline ======== */
+.wheel-btns { display: flex; gap: .6rem; justify-content: center; align-items: center; justify-self: center; }
+.wheel-btns .wheel-btn { position: relative; justify-self: auto; }
+.track-btn { display: grid; place-items: center; align-content: center; gap: 0; padding: 0; line-height: 1; background: linear-gradient(135deg, var(--k-b), var(--k-a)); }
+.track-btn .tb-top { font-family: var(--mono); font-size: .5rem; letter-spacing: .08em; font-weight: 800; }
+.track-btn .tb-id { font-size: 1.1rem; font-weight: 800; }
+.track-btn .tb-id[hidden] { display: none; }
+.deck.is-target { box-shadow: 0 0 0 2px color-mix(in srgb, var(--dk) 70%, transparent), 0 0 26px -6px var(--dk); }
+.tc-scrim { z-index: 210; }
+.tc-box { display: grid; gap: .8rem; justify-items: center; max-height: 100dvh; }
+.tc-wrap { width: min(86vw, 24rem, 56dvh); }
+.tc-side { width: min(92vw, 24rem); display: grid; gap: .6rem; }
+.tc-foot { display: flex; gap: .5rem; justify-content: center; }
+.tc-foot .tbtn { min-height: 44px; padding: 0 1.2rem; }
+.tc-panel { display: grid; gap: .4rem; padding: .8rem 1rem; border-radius: 16px; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.tc-panel[hidden] { display: none; }
+.tc-panel label { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--k-mute); }
+.tc-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .6rem; align-items: center; }
+.tc-row input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--k-a); touch-action: none; }
+.tc-note { font-size: .78rem; line-height: 1.35; color: rgba(255,255,255,.65); }
+.tc-target { min-height: 44px; border-radius: 999px; border: 1px solid var(--k-line); padding: 0 .8rem; background: rgba(255,255,255,.08); color: #fff; font-family: var(--mono); font-weight: 800; font-size: .7rem; letter-spacing: .08em; }
+.tc-target i { font-style: normal; opacity: .7; }
+.tc-why { font-size: .62rem; line-height: 1.25; color: rgba(255,255,255,.65); padding-inline: .6rem; text-align: center; }
+.tc-wrap .wheel-center { gap: .2rem; }
+.wheel-item.is-off { opacity: .35; }
+/* beat jump sits in the loop row */
+.opt-loop { grid-template-columns: 44px minmax(0, 1fr) 44px 44px 44px !important; }
+.bj { font-size: .9rem; }
+@media (orientation: landscape) and (max-height: 34rem) {
+  .tc-box { grid-auto-flow: column; align-items: center; justify-items: stretch; gap: 1rem; }
+  .tc-wrap { width: min(90dvh, 22rem); } .tc-side { width: min(44vw, 18rem); }
+  .wheel-btns { gap: .35rem; } .track-btn .tb-top { font-size: .44rem; }
+}
+.wheel-center { background: rgba(8,10,16,.94); }
+.tc-why { min-height: 2.4em; }

@@ -94,6 +94,22 @@ Tap **Load** on a result: if you are still on GoldenSun Controller, the Spotify 
 
 Honest status: the login, token exchange (including the PKCE check), search, device start-up, load and playback commands are tested against **mocked** Spotify servers and a mocked player. They have not yet been run against a live Spotify account. On iPhone and iPad, sign in from a Safari tab first; a Home Screen app may not return to itself after the Spotify login page. Platter scrubbing ("Ninja Scrub"), the Prep Deck and a timeline for Spotify tracks are the next patch.
 
+### The Track circle (everyday track controls)
+
+A round **Track** button sits beside the gear in the center strip. It opens a small radial menu for **one deck at a time, the target**. The target is written inside the button (**TRACK A**, **TRACK B**, or **LIVE** / **NEXT** in SpotifyNinja) and shown by a **colored outline on that deck**. Touch a deck to target it, or tap the **TRACK A ⇄** label in the middle of the circle to switch.
+
+- **Page 1, Transport:** Restart, −10 s, +10 s, Repeat.
+- **Page 2, Level:** Mute and Volume. Volume opens a slider panel under the circle (sliders never sit on the ring).
+- **Normal tracks:** Restart and ±10 s move the track, **Repeat** turns looping on or off (a track now stops at its end when Repeat is off), and Mute and Volume are **per deck** (each deck now has its own volume).
+- **Spotify (SpotifyNinja):** the same buttons send seek, repeat and volume commands to Spotify. LIVE is Deck A; NEXT (Deck B) stays dimmed, with a reason, until the Prep Deck arrives. On iPhone and iPad a web page's volume setting may not change Spotify's loudness, and the panel says so.
+- Controls that cannot work are dimmed with a short reason, never silently ignored.
+
+Performance functions stay on the decks, not in the circle: **loops and beat jump** (Loop add-on row), the **timeline** (Wave add-on), **Ninja Scrub** (the disc) and the cues.
+
+- **Beat jump** (⏪ ⏩ beside the loop controls): jumps by the loop size (1 to 32 beats). It needs a tempo: Library tracks and detected tracks have one; otherwise **tap the BPM number four times**. In SpotifyNinja, tap tempo works the same way (Spotify gives no tempo) and is saved per track on your device.
+- **Timeline** (SpotifyNinja, with the Wave add-on on): a position bar with cue flags and beat marks. Drag it and the track jumps once when you let go.
+- **Ninja Scrub** (SpotifyNinja): touch the disc and it pauses and previews a position as you turn it (about 12 seconds of song per turn, faster when you spin fast). When you let go it seeks once and resumes if it was playing.
+
 ### Cue and hot cues (the Cue button and the 1 2 3 4 buttons)
 
 These work for **any** track (Library, Load, Audius, demo loops). They are *bookmarks* you place yourself, and the Controller now explains what happened each time with a short message on the deck.
@@ -146,7 +162,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21`.
 
 | Version | What it was |
 | --- | --- |
@@ -170,6 +186,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v18** | **SpotifyNinja shell (Patch 1):** the deck menu's *Link* tab is now **Audius**, and a new **Spotify** tab offers an opt-in SpotifyNinja controller mode with a JSON packet layer and a mock adapter (no Spotify connection yet). |
 | **v19** | **Spotify connection (Patch 2):** Connect / Disconnect Spotify (Authorization Code with PKCE, no client secret), "Connected as <name>", Spotify search and Load on Deck A, the Web Playback SDK adapter, and the callback page `controller/spotify-callback.html`. Tested against mocked Spotify servers. |
 | **v20** | Spotify search fix ("Invalid limit": results are now requested in sizes Spotify accepts, with automatic fallback) and **genre chips** in the Spotify tab with recommended tracks for the eight NAKO GOLD styles. |
+| **v21** | **Track circle** (two radial pages, explicit TRACK A/B or LIVE/NEXT target with a colored outline), per-deck volume and mute, Repeat, **beat jump**, tap tempo for Spotify, the SpotifyNinja **timeline** and **Ninja Scrub**. First batch of the approved plan. |
 
 ## Under the hood
 
@@ -218,6 +235,7 @@ Pushing to `main` runs the **Deploy static site to Pages** workflow: install, `n
 - More sources for the Audius tab (Internet Archive, Free To Use), key detection, and a sync button using the detected tempo.
 - More 3D materials and components for the Controller (knobs, jog rings, faders) in carbon and titanium.
 - Suno, DistroKid, YouTube, Spotify and SoundCloud hooks beyond plain links; a mastering step.
+- **Approved plan, next batches:** *Batch 2* Previous / Next (following a defined queue, dimmed with a reason when there is none), Shuffle, Prep Deck, Spotify queue, playlists and Liked Songs, Sync and Nudge beside the tempo control. *Batch 3 (conditional)* Spotify loop, Fade out / Fade in (to be tested carefully, since volume commands lag and iOS ignores web volume), and GoldenSun Auto-mix for Library, Device and Audius tracks. *Held or dropped:* Spotify "Mix now" and Spotify Auto-mix (held), and Beat gate (dropped for now).
 
 ## Resources
 

@@ -9,7 +9,7 @@
 (function () {
   "use strict";
   var V = 1, MODE_GS = "goldensun", MODE_SN = "spotify-ninja", STORE = "gsdj-controller-mode", CUES = "gsdj-ninja-cues";
-  var ACTIONS = ["play", "pause", "toggle-play", "seek", "next", "previous", "set-volume", "load-track", "save-cue", "clear-cue", "select-prep-track", "activate-prep-track", "exit-ninja"];
+  var ACTIONS = ["play", "pause", "toggle-play", "seek", "next", "previous", "set-volume", "load-track", "set-repeat", "save-cue", "clear-cue", "select-prep-track", "activate-prep-track", "exit-ninja"];
   var CAPS = { seek: true, volume: true, tempo: false, eq: false, scratch: false, two_live_decks: false };
 
   /* ---------- the packet contract ---------- */
@@ -42,8 +42,8 @@
     function real() { return !!(SP && SP.connected() && SP.ready()); }
 
     /* ---------- preview adapter: silent, no network, used until you connect Spotify ---------- */
-    var mock = { paused: true, pos: 0, dur: 213000, vol: 0.85, track: cur.track };
-    function mockState() { return { v: V, type: "state", mode: MODE_SN, connected: false, paused: mock.paused, position_ms: Math.round(mock.pos), duration_ms: mock.dur, track: mock.track, capabilities: CAPS, ts: now() }; }
+    var mock = { paused: true, pos: 0, dur: 213000, vol: 0.85, repeat: "off", track: cur.track };
+    function mockState() { return { v: V, type: "state", mode: MODE_SN, connected: false, paused: mock.paused, position_ms: Math.round(mock.pos), duration_ms: mock.dur, track: mock.track, repeat: mock.repeat, capabilities: CAPS, ts: now() }; }
     function emitMock() { send("gsdj:state", mockState()); }
     function tickMock() { if (mock.paused) { clearInterval(adapterTimer); adapterTimer = null; return; } mock.pos = Math.min(mock.dur, mock.pos + 500); if (mock.pos >= mock.dur) mock.paused = true; emitMock(); }
     function mockPlaying(on) { mock.paused = !on; if (on && !adapterTimer) adapterTimer = setInterval(tickMock, 500); if (!on) { clearInterval(adapterTimer); adapterTimer = null; } emitMock(); }
@@ -53,6 +53,7 @@
         case "play": mockPlaying(true); break;
         case "pause": mockPlaying(false); break;
         case "seek": mock.pos = Math.max(0, Math.min(mock.dur, (p.value && p.value.position_ms) || 0)); emitMock(); break;
+        case "set-repeat": mock.repeat = (p.value && p.value.state) === "track" ? "track" : "off"; emitMock(); break;
         case "set-volume": mock.vol = Math.max(0, Math.min(1, (p.value && p.value.volume) == null ? mock.vol : p.value.volume)); break;
         default: break;
       }
@@ -66,7 +67,7 @@
         case "save-cue": { var cs = cuesFor(cur.track.uri), ms = v.position_ms != null ? v.position_ms : cur.pos; if (v.slot === "primary") cs.p = ms; else cs.c[v.slot | 0] = ms; saveCues(cur.track.uri, cs); paintCues(); break; }
         case "clear-cue": { var c2 = cuesFor(cur.track.uri); c2.c[v.slot | 0] = null; saveCues(cur.track.uri, c2); paintCues(); break; }
         case "exit-ninja": exit(); break;
-        case "load-track": case "play": case "pause": case "toggle-play": case "seek": case "set-volume": case "next": case "previous":
+        case "load-track": case "play": case "pause": case "toggle-play": case "seek": case "set-volume": case "set-repeat": case "next": case "previous":
           if (real()) SP.handle(p); else if (p.action !== "load-track") mockHandle(p); break;
         default: break;                                              // prep-deck actions arrive with the Prep Deck
       }
@@ -82,20 +83,20 @@
     window.addEventListener("gsdj:state", function (e) {
       var s = e.detail; if (!s || s.mode !== MODE_SN) return;
       var trackChanged = !!(s.track && s.track.uri !== cur.track.uri);
-      cur = { paused: s.paused, pos: s.position_ms, dur: s.duration_ms, track: s.track || cur.track, connected: s.connected };
+      cur = { paused: s.paused, pos: s.position_ms, dur: s.duration_ms, track: s.track || cur.track, connected: s.connected, repeat: s.repeat || cur.repeat || "off" };
       if (mode !== MODE_SN) return;
       var a = C.byId.a; a.el.title.textContent = cur.track.title + " · " + cur.track.artist;
       a.el.play.setAttribute("aria-pressed", s.paused ? "false" : "true"); a.el.play.textContent = s.paused ? "Play" : "Pause";
-      a.el.time.textContent = fmt(s.position_ms) + " / " + fmt(s.duration_ms); a.el.bpm.textContent = "--";
-      if (trackChanged) paintCues();
+      if (!scrub) a.el.time.textContent = fmt(s.position_ms) + " / " + fmt(s.duration_ms);
+      showTempo(); if (trackChanged) paintCues(); drawTimeline(); spinOn();
     });
     if (SP) {
-      SP.onState = function (st) { send("gsdj:state", { v: V, type: "state", mode: MODE_SN, connected: true, paused: st.paused, position_ms: Math.round(st.position_ms || 0), duration_ms: Math.round(st.duration_ms || 0), track: st.track || cur.track, capabilities: CAPS, ts: now() }); };
+      SP.onState = function (st) { send("gsdj:state", { v: V, type: "state", mode: MODE_SN, connected: true, paused: st.paused, position_ms: Math.round(st.position_ms || 0), duration_ms: Math.round(st.duration_ms || 0), track: st.track || cur.track, repeat: st.repeat || "off", capabilities: CAPS, ts: now() }); };
       SP.onMessage = function (m) { say("a", m); renderAll(); };
     }
 
     // controls that cannot work with protected audio are switched off, not hidden, with a reason
-    var INERT = ["#deck-a .opt-tempo", "#deck-a .opt-eq", "#deck-a .opt-eq2", "#deck-a .opt-loop", "#deck-a .deck-drawers", "#deck-a .plat-zone", "#deck-b .deck-body", "#deck-b .opt-eq2", "#deck-b .opt-loop", "#deck-b .deck-drawers", "#deck-b .deck-side", ".center .opt-fx", ".center .opt-xfade"];
+    var INERT = ["#deck-a .opt-tempo", "#deck-a .opt-eq", "#deck-a .opt-eq2", "#loop-a", "#deck-a .deck-drawers", "#deck-b .deck-body", "#deck-b .opt-eq2", "#deck-b .opt-loop", "#deck-b .deck-drawers", "#deck-b .deck-side", ".center .opt-fx", ".center .opt-xfade"];
     function setInert(on) {
       INERT.forEach(function (sel) { document.querySelectorAll(sel).forEach(function (el) { if (on) { el.setAttribute("inert", ""); el.setAttribute("aria-disabled", "true"); } else { el.removeAttribute("inert"); el.removeAttribute("aria-disabled"); } }); });
       ["a", "b"].forEach(function (id) { var t = $("toast-" + id); if (t) t.hidden = true; });
@@ -126,10 +127,11 @@
     }
     document.addEventListener("click", function (e) {
       if (!inNinja()) return;
-      var t = e.target.closest && e.target.closest("#play-a, #play-b, .cue, #cue-a, #cue-b"); if (!t) return;
+      var t = e.target.closest && e.target.closest("#play-a, #play-b, .cue, #cue-a, #cue-b, #bj-back-a, #bj-fwd-a, #bj-back-b, #bj-fwd-b, #bpm-a, #bpm-b"); if (!t) return;
       var deckEl = t.closest(".deck"), id = deckEl && deckEl.id === "deck-b" ? "b" : "a";
       e.stopImmediatePropagation(); e.preventDefault();
       if (id === "b") { say("b", "Deck B is the Prep Deck. Choosing the next track arrives in a later update."); return; }
+      if (t.id === "bj-back-a") { beatJump(-1); return; } if (t.id === "bj-fwd-a") { beatJump(1); return; } if (t.id === "bpm-a") { tapTempo(); return; }
       if (t.id === "play-a") { if (SP) SP.activate(); command("toggle-play", "a", {}, "play"); return; }
       var keyboard = e.detail === 0;                                           // pointer taps were already handled on pointerdown
       if (t.id === "cue-a") { if (keyboard) cueButton(); return; }
@@ -146,6 +148,94 @@
     ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) { document.addEventListener(ev, function () { clearTimeout(holdT); }, true); });
     var master = $("master");
     if (master) master.addEventListener("input", function (e) { if (!inNinja()) return; e.stopImmediatePropagation(); command("set-volume", "a", { volume: parseFloat(master.value) / 100 }, "master"); }, true);
+
+
+    /* ---------- tap tempo and beat jump (Spotify gives no tempo, so you tap it; saved per track on this device) ---------- */
+    var TEMPOS = "gsdj-ninja-tempo", taps = [];
+    function tempoStore() { try { return JSON.parse(localStorage.getItem(TEMPOS) || "{}"); } catch (e) { return {}; } }
+    function tempoFor(uri) { return tempoStore()[uri] || null; }
+    function showTempo() { var t = tempoFor(cur.track.uri); C.byId.a.el.bpm.textContent = t ? t.bpm.toFixed(1) : "--"; }
+    function tapTempo() {
+      var n = performance.now(); if (taps.length && n - taps[taps.length - 1] > 2000) taps = [];
+      taps.push(n); if (navigator.vibrate) navigator.vibrate(6);
+      if (taps.length < 4) { say("a", "Keep tapping the beat… (" + taps.length + ")"); return; }
+      taps = taps.slice(-8); var iv = []; for (var i = 1; i < taps.length; i++) iv.push(taps[i] - taps[i - 1]);
+      var bpm = 60000 / (iv.reduce(function (a, b) { return a + b; }, 0) / iv.length); while (bpm < 70) bpm *= 2; while (bpm > 190) bpm /= 2;
+      bpm = Math.round(bpm * 10) / 10; var beat = 60000 / bpm, off = ((cur.pos % beat) + beat) % beat;
+      try { var all = tempoStore(); all[cur.track.uri] = { bpm: bpm, off: off, u: now() }; var ks = Object.keys(all); if (ks.length > 80) ks.sort(function (a, b) { return all[a].u - all[b].u; }).slice(0, ks.length - 80).forEach(function (k) { delete all[k]; }); localStorage.setItem(TEMPOS, JSON.stringify(all)); } catch (e) {}
+      showTempo(); drawTimeline(); say("a", "Tempo set to " + bpm.toFixed(1) + " BPM for this track.");
+    }
+    function beatJump(dir) {
+      var t = tempoFor(cur.track.uri); if (!t) { say("a", "Tap the BPM number four times to set the tempo first, then jump by beats."); return; }
+      var beats = C.loops()[C.byId.a.loop.i], beat = 60000 / t.bpm, np = cur.pos + dir * beats * beat;
+      np = Math.round((np - t.off) / beat) * beat + t.off; np = Math.max(0, Math.min(Math.max(0, cur.dur - 50), np));
+      command("seek", "a", { position_ms: Math.round(np) }, "beat-jump"); say("a", (dir > 0 ? "Jumped ahead " : "Jumped back ") + beats + " beat" + (beats > 1 ? "s" : "") + ".");
+    }
+
+    /* ---------- timeline strip (there is no waveform for Spotify audio, so this shows position, cues and beats) ---------- */
+    var scrub = null;
+    function shownPos() { return scrub ? scrub.pos : cur.pos; }
+    function drawTimeline() {
+      if (mode !== MODE_SN || !C.settings.wave) return;
+      var cv = $("wave-a"); if (!cv) return; var w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
+      var dpr = Math.min(2, window.devicePixelRatio || 1); if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+      var g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+      var cs = getComputedStyle(cv), col = cs.getPropertyValue("--dk").trim() || "#ff9f1c", dur = Math.max(1, cur.dur), pos = Math.max(0, Math.min(dur, shownPos()));
+      var top = 16, bh = 18, by = Math.round(h / 2 - bh / 2) + 2, px = pos / dur * w, tp = tempoFor(cur.track.uri);
+      g.fillStyle = "rgba(255,255,255,.12)"; g.beginPath(); g.roundRect ? g.roundRect(0, by, w, bh, 9) : g.rect(0, by, w, bh); g.fill();
+      g.fillStyle = col; g.beginPath(); g.roundRect ? g.roundRect(0, by, Math.max(bh, px), bh, 9) : g.rect(0, by, px, bh); g.fill();
+      if (tp) { var beat = 60000 / tp.bpm, bar = beat * 4, step = w / (dur / bar) < 7 ? bar * 4 : bar; for (var t = tp.off; t < dur; t += step) { var x = Math.round(t / dur * w); g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(x, by - 4, 1, bh + 8); } }
+      var cs2 = cuesFor(cur.track.uri); g.font = "800 10px " + cs.fontFamily; g.textAlign = "center";
+      for (var i = 0; i < 4; i++) { var c = cs2.c[i]; if (c == null) continue; var cx = Math.round(c / dur * w); g.fillStyle = col; g.fillRect(cx, 0, 2, h); g.fillRect(cx, 0, 14, 13); g.fillStyle = "#0a0b0f"; g.fillText(String(i + 1), cx + 8, 10); }
+      if (cs2.p != null) { var rx = cs2.p / dur * w; g.fillStyle = "#fff"; g.beginPath(); g.moveTo(rx - 5, h); g.lineTo(rx + 5, h); g.lineTo(rx, h - 8); g.fill(); }
+      g.fillStyle = "#fff"; g.fillRect(Math.round(px) - 1, 6, 2, h - 6); g.beginPath(); g.moveTo(px - 5, 0); g.lineTo(px + 5, 0); g.lineTo(px, 6); g.fill();
+      g.font = "700 11px " + cs.fontFamily; var l1 = fmt(pos), l2 = "-" + fmt(Math.max(0, dur - pos)), tw1 = g.measureText(l1).width + 10, tw2 = g.measureText(l2).width + 10;
+      g.fillStyle = "rgba(0,0,0,.6)"; g.fillRect(2, h - 15, tw1, 14); g.fillRect(w - 2 - tw2, h - 15, tw2, 14); g.fillStyle = "#fff"; g.textAlign = "left"; g.fillText(l1, 7, h - 4); g.fillText(l2, w - tw2 + 3, h - 4);
+    }
+    (function wireTimeline() {
+      var cv = $("wave-a"); if (!cv) return; var down = null;
+      function posAt(e) { var r = cv.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * Math.max(1, cur.dur); }
+      function tlDown(e) {
+        var dur = Math.max(1, cur.dur), r = cv.getBoundingClientRect(), x = e.clientX - r.left, cs2 = cuesFor(cur.track.uri);
+        for (var i = 0; i < 4; i++) { var c = cs2.c[i]; if (c != null && Math.abs(c / dur * r.width - x) < 14) { command("seek", "a", { position_ms: c }, "timeline"); say("a", "Jumped to Spotify cue " + (i + 1) + "."); return; } }
+        down = { id: e.pointerId }; try { cv.setPointerCapture(e.pointerId); } catch (x2) {} scrub = { pos: posAt(e), timeline: true }; drawTimeline();
+      }
+      // handled here (not on the canvas) so the GoldenSun waveform handler, which seeks local audio, never sees the touch
+      document.addEventListener("pointerdown", function (e) { if (mode === MODE_SN && e.target === cv) { e.stopImmediatePropagation(); tlDown(e); } }, true);
+      cv.addEventListener("pointermove", function (e) { if (down && scrub && scrub.timeline) { scrub.pos = posAt(e); drawTimeline(); C.byId.a.el.time.textContent = fmt(scrub.pos) + " / " + fmt(cur.dur); } });
+      function up() { if (!down) return; down = null; if (scrub && scrub.timeline) { var p = scrub.pos; scrub = null; command("seek", "a", { position_ms: Math.round(p) }, "timeline"); } }
+      cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", function () { down = null; scrub = null; drawTimeline(); });
+      window.addEventListener("resize", function () { if (mode === MODE_SN) drawTimeline(); });
+    })();
+
+    /* ---------- Ninja Scrub: touch the disc to preview a position, one seek when you let go ---------- */
+    var ang = 0, spinRaf = null, spinPrev = 0, REV_MS = 12000;                  // one turn of the disc is 12 s of the song, faster when you spin fast
+    function discTurn() { C.byId.a.angle = ang; C.byId.a.el.disc.style.transform = "rotate(" + ang.toFixed(1) + "deg)"; }
+    function spinOn() { if (spinRaf == null && mode === MODE_SN && (!cur.paused || scrub)) { spinPrev = performance.now(); spinRaf = requestAnimationFrame(spinTick); } }
+    function spinTick(t) { var dt = Math.min(0.05, (t - spinPrev) / 1000); spinPrev = t; if (mode !== MODE_SN || (cur.paused && !scrub)) { spinRaf = null; return; } if (!scrub || !scrub.disc) { ang += 198 * dt * (cur.paused ? 0 : 1); discTurn(); } spinRaf = requestAnimationFrame(spinTick); }
+    (function wireScrub() {
+      var pl = C.byId.a.el.platter; function angleOf(e) { var r = pl.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI; }
+      document.addEventListener("pointerdown", function (e) { if (mode !== MODE_SN) return; var p = e.target.closest && e.target.closest(".platter"); if (!p) return; e.stopImmediatePropagation(); if (p.id !== "platter-a") { say("b", "Deck B is the Prep Deck. Choosing the next track arrives in a later update."); return; } e.preventDefault(); begin(e); }, true);
+      function begin(e) {
+        if (scrub) return; var was = !cur.paused;
+        scrub = { disc: true, id: e.pointerId, a: angleOf(e), pos: cur.pos, was: was, t: performance.now() };
+        try { pl.setPointerCapture(e.pointerId); } catch (x) {}
+        if (was) command("pause", "a", {}, "scrub"); say("a", "Turn the disc to move through the song. It jumps there when you let go."); spinOn(); drawTimeline();
+      }
+      pl.addEventListener("pointermove", function (e) {
+        if (!scrub || !scrub.disc || e.pointerId !== scrub.id) return; var a = angleOf(e), d = a - scrub.a; if (d > 180) d -= 360; if (d < -180) d += 360; scrub.a = a;
+        var n = performance.now(), dt = Math.max(8, n - scrub.t) / 1000; scrub.t = n; var mult = 1 + Math.min(3, Math.abs(d) / dt / 360);
+        scrub.pos = Math.max(0, Math.min(Math.max(0, cur.dur - 50), scrub.pos + d / 360 * REV_MS * mult)); ang += d; discTurn();
+        C.byId.a.el.time.textContent = fmt(scrub.pos) + " / " + fmt(cur.dur); drawTimeline();
+      });
+      function end(e) {
+        if (!scrub || !scrub.disc) return; if (e && e.pointerId !== undefined && e.pointerId !== scrub.id) return; var s = scrub; scrub = null;
+        try { pl.releasePointerCapture(s.id); } catch (x) {}
+        command("seek", "a", { position_ms: Math.round(s.pos) }, "scrub"); if (s.was) command("play", "a", {}, "scrub"); say("a", "Jumped to " + fmt(s.pos) + "."); spinOn(); drawTimeline();
+      }
+      pl.addEventListener("pointerup", end); pl.addEventListener("pointercancel", end);
+      document.addEventListener("keydown", function (e) { if (mode !== MODE_SN || e.target !== pl) return; if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return; e.stopImmediatePropagation(); e.preventDefault(); command("seek", "a", { position_ms: Math.max(0, Math.min(Math.max(0, cur.dur - 50), Math.round(cur.pos + (e.key === "ArrowRight" ? 5000 : -5000)))) }, "scrub"); }, true);
+    })();
 
     /* ---------- the Spotify tab ---------- */
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -233,7 +323,7 @@
       if (mode === MODE_SN) return; var prev = mode;
       // pause the GoldenSun decks so nothing keeps playing under a play button that now means "Spotify"
       C.decks.forEach(function (d) { if (!d.audio.paused) { d.audio.pause(); C.updatePlayUi(d); } });
-      mode = MODE_SN; addNotes(); setInert(true); reflect();
+      mode = MODE_SN; addNotes(); setInert(true); reflect(); showTempo(); drawTimeline(); spinOn();
       try { sessionStorage.setItem(STORE, MODE_SN); } catch (e) {}
       if (SP && SP.connected()) {                                              // start the real player inside this tap
         SP.activate();
@@ -264,7 +354,8 @@
     window.GSDJNinja = {
       mode: function () { return mode; }, active: inNinja, enter: enter, exit: exit,
       packet: { validate: validate, command: command, actions: ACTIONS.slice(), version: V },
-      openPane: function () { if (menuApi) menuApi.open("a", "spotify"); }, onSpotifyTab: onSpotifyTab
+      openPane: function () { if (menuApi) menuApi.open("a", "spotify"); }, onSpotifyTab: onSpotifyTab,
+      surface: { cur: function () { return cur; }, pos: shownPos }
     };
     reflect();
     // back from the Spotify login page: open the Spotify tab so the result is visible

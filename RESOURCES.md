@@ -156,6 +156,10 @@ Setup used by GoldenSunDJ: Redirect URI `https://sukonik.github.io/GoldenSunDJ/c
 
 Design: the controller emits plain JSON packets; an adapter turns supported ones into Spotify playback commands. Spotify keeps its audio protected, so GoldenSunDJ never downloads, decodes, records or caches it, and tempo, EQ, FX, true scratching and two live decks stay GoldenSun-only. Research references named in the handoff (kept as ideas, not dependencies): SpotAPI, djay, Serato DJ, rekordbox and the music-hackathon projects. I did not verify links for SpotAPI or the hackathon projects.
 
+### Spotify policy boundary
+
+Spotify's developer policy prohibits building systems that segue, mix, remix or overlap Spotify content. So SpotifyNinja stays a **single live player**: no crossfading between two Spotify tracks, no "Mix now", no Spotify Auto-mix, and no two live Spotify decks. Fades, beat gating and anything that blends Spotify audio stay out of the public release unless Spotify approves. GoldenSun Auto-mix for Library, Device and Audius tracks is separate and fine. Re-read the current [Developer Policy](https://developer.spotify.com/policy) before adding any Spotify transition feature.
+
 ## 5. Tools and data we use
 
 - [Open-Meteo](https://open-meteo.com/) — free weather, geocoding and air-quality APIs (no key).

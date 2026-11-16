@@ -128,6 +128,7 @@
         <button type="button" class="lp-step" id="lp-minus-a" aria-label="Shorter loop">−</button>
         <button type="button" class="lp-toggle" id="loop-a" aria-pressed="false">⟲ <span id="loop-n-a">4</span> beats</button>
         <button type="button" class="lp-step" id="lp-plus-a" aria-label="Longer loop">+</button>
+        <button type="button" class="lp-step bj" id="bj-back-a" aria-label="Jump back one loop length">⏪</button><button type="button" class="lp-step bj" id="bj-fwd-a" aria-label="Jump forward one loop length">⏩</button>
       </div>
       <div class="deck-side">
       <div class="opt opt-cues" role="group" aria-label="Deck A hot cues. Bookmarks: tap an empty one to save this spot, tap a saved one to jump there, hold to clear."><button type="button" class="cue" data-cue="0"><b>1</b><small>Save</small></button><button type="button" class="cue" data-cue="1"><b>2</b><small>Save</small></button><button type="button" class="cue" data-cue="2"><b>3</b><small>Save</small></button><button type="button" class="cue" data-cue="3"><b>4</b><small>Save</small></button></div>
@@ -142,9 +143,12 @@
       <div class="opt opt-fx">
         <button type="button" class="tbtn" id="echo-btn" aria-pressed="false">Echo</button>
       </div>
-      <button type="button" class="wheel-btn" id="wheel-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="Controller settings">
+      <div class="wheel-btns">
+  <button type="button" class="wheel-btn track-btn" id="track-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="Track controls"><span class="tb-top">TRACK</span><b class="tb-id" id="track-id">A</b></button>
+  <button type="button" class="wheel-btn" id="wheel-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="Controller settings">
     <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
   </button>
+  </div>
       <div class="master"><label for="master">Master</label><input type="range" id="master" min="0" max="100" value="85"></div>
       <p class="ctl-status" id="ctl-status" role="status" aria-live="polite">Be the music. Tap Play, drag a disc to scratch.</p>
       <div class="opt opt-xfade"><label for="xfade">Crossfader</label><input type="range" id="xfade" min="-100" max="100" value="0" aria-label="Crossfader"><div class="xf-ends"><span>A</span><span>B</span></div></div>
@@ -182,6 +186,7 @@
         <button type="button" class="lp-step" id="lp-minus-b" aria-label="Shorter loop">−</button>
         <button type="button" class="lp-toggle" id="loop-b" aria-pressed="false">⟲ <span id="loop-n-b">4</span> beats</button>
         <button type="button" class="lp-step" id="lp-plus-b" aria-label="Longer loop">+</button>
+        <button type="button" class="lp-step bj" id="bj-back-b" aria-label="Jump back one loop length">⏪</button><button type="button" class="lp-step bj" id="bj-fwd-b" aria-label="Jump forward one loop length">⏩</button>
       </div>
       <div class="deck-side">
       <div class="opt opt-cues" role="group" aria-label="Deck B hot cues. Bookmarks: tap an empty one to save this spot, tap a saved one to jump there, hold to clear."><button type="button" class="cue" data-cue="0"><b>1</b><small>Save</small></button><button type="button" class="cue" data-cue="1"><b>2</b><small>Save</small></button><button type="button" class="cue" data-cue="2"><b>3</b><small>Save</small></button><button type="button" class="cue" data-cue="3"><b>4</b><small>Save</small></button></div>
@@ -221,5 +226,6 @@
 <script src="spotify-config.js"></script>
 <script src="spotify-connect.js"></script>
 <script src="spotify-ninja.js"></script>
+<script src="trackcircle.js"></script>
 </body>
 </html>
