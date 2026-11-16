@@ -177,8 +177,15 @@
       var cf = $("sn-cid-form"); if (cf) cf.addEventListener("submit", function (ev) { ev.preventDefault(); var v = $("sn-cid").value.trim(); if (!/^[A-Za-z0-9]{16,64}$/.test(v)) { setStatus('<p class="sn-err">That does not look like a Spotify Client ID (letters and numbers, usually 32 characters).</p>'); return; } SP.setClientId(v); renderAll(); });
       var cp = $("sn-copy"); if (cp) cp.addEventListener("click", function () { var t = $("sn-ru").textContent; (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { cp.textContent = "Copied"; }, function () { cp.textContent = "Select and copy"; }); });
     }
+    var GENRES = [["Gold", 'genre:"edm"'], ["Trance", 'genre:"trance"'], ["House", 'genre:"house"'], ["Techno", 'genre:"techno"'], ["Pulsewave", 'genre:"synthwave"'], ["Synthpop", 'genre:"synth-pop"'], ["Eurodance", 'genre:"eurodance"'], ["Nightdrive", "night drive synthwave"]], chips = $("sn-chips"), genreIdx = -1;
+    GENRES.forEach(function (g, i) { var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = g[0]; b.addEventListener("click", function () { runGenre(i); }); chips.appendChild(b); });
+    function runSearch(query, label) {
+      if (!SP || !SP.connected()) return; hint.textContent = "Finding " + label + "…"; results.textContent = "";
+      SP.search(query).then(showResults).catch(function (er) { hint.textContent = er && er.status === 403 ? "Spotify said this account is not allowed to use the app yet. In development mode, add the account under User Management in the Spotify Dashboard." : "Search is unavailable right now. " + (er && er.message ? er.message : ""); });
+    }
+    function runGenre(i) { genreIdx = i; Array.prototype.forEach.call(chips.children, function (c, k) { c.setAttribute("aria-pressed", k === i ? "true" : "false"); }); runSearch(GENRES[i][1], GENRES[i][0] + " tracks"); }
     function renderSearch() {
-      var on = !!(SP && SP.connected()); q.disabled = !on; form.querySelector("button").disabled = !on;
+      var on = !!(SP && SP.connected()); q.disabled = !on; form.querySelector("button").disabled = !on; Array.prototype.forEach.call(chips.children, function (c) { c.disabled = !on; });
       hint.textContent = on ? (SP.user() && !SP.user().premium ? "Premium is required to play. You can still search." : "Search Spotify, then tap Load. Playing a Spotify track uses SpotifyNinja mode.") : "Connect Spotify above to search and load tracks, the same way as Audius.";
     }
     function renderAll() {
@@ -210,8 +217,9 @@
       cur.track = { uri: t.uri, title: t.title, artist: t.artist, artwork: t.art || "" }; C.byId.a.el.title.textContent = t.title + " · " + t.artist; paintCues();
       say("a", "Loading " + t.title + "…"); if (menuApi) menuApi.close();
     }
-    form.addEventListener("submit", function (e) { e.preventDefault(); var v = q.value.trim(); if (v.length < 2 || !SP || !SP.connected()) return; hint.textContent = "Searching…"; results.textContent = ""; SP.search(v).then(showResults).catch(function (er) { hint.textContent = er && er.status === 403 ? "Spotify said this account is not allowed to use the app yet. In development mode, add the account under User Management in the Spotify Dashboard." : "Search is unavailable right now. " + (er && er.message ? er.message : ""); }); });
-    window.addEventListener("gsdj:spotify", function () { renderAll(); });
+    form.addEventListener("submit", function (e) { e.preventDefault(); var v = q.value.trim(); if (v.length < 2 || !SP || !SP.connected()) return; Array.prototype.forEach.call(chips.children, function (c) { c.setAttribute("aria-pressed", "false"); }); runSearch(v, "“" + v + "”"); });
+    function onSpotifyTab() { if (SP && SP.connected() && !results.children.length) runGenre(genreIdx < 0 ? 0 : genreIdx); }
+    window.addEventListener("gsdj:spotify", function () { renderAll(); var pane = $("sp-pane"); if (pane && !pane.hidden) onSpotifyTab(); });
 
     /* ---------- mode switching ---------- */
     function reflect() {
@@ -256,7 +264,7 @@
     window.GSDJNinja = {
       mode: function () { return mode; }, active: inNinja, enter: enter, exit: exit,
       packet: { validate: validate, command: command, actions: ACTIONS.slice(), version: V },
-      openPane: function () { if (menuApi) menuApi.open("a", "spotify"); }
+      openPane: function () { if (menuApi) menuApi.open("a", "spotify"); }, onSpotifyTab: onSpotifyTab
     };
     reflect();
     // back from the Spotify login page: open the Spotify tab so the result is visible

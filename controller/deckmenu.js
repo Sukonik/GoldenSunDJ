@@ -22,7 +22,7 @@
       '<div class="sn-prompt" id="sn-prompt"><strong>Switch to SpotifyNinja Controller?</strong><p>Use the GoldenSunDJ surface to control Spotify playback, seek positions, cue points, track preparation and playlists. Spotify keeps its audio protected, so some GoldenSun effects are unavailable in this mode.</p><div class="sn-btns"><button type="button" class="btn" id="sn-switch">Switch to SpotifyNinja</button><button type="button" class="btn btn--ghost" id="sn-keep">Keep GoldenSun Controller</button></div></div>' +
       '<div class="sn-active" id="sn-active" hidden><strong>SpotifyNinja is active.</strong><p id="sn-active-text">Deck A controls Spotify. Deck B prepares what plays next.</p><div class="sn-btns"><button type="button" class="btn btn--ghost" id="sn-return">Return to GoldenSun Controller</button></div></div>' +
       '<form class="dm-search sn-search" id="sn-search" role="search"><label class="visually-hidden" for="sn-q">Search Spotify</label><input id="sn-q" type="search" placeholder="Search Spotify songs and artists" autocomplete="off" enterkeyhint="search" disabled><button class="btn" type="submit" disabled>Search</button></form>' +
-      '<p class="dm-note sn-hint" id="sn-hint" role="status"></p><ul class="res-list" id="sn-results"></ul>' +
+      '<div class="dm-chips" id="sn-chips" role="group" aria-label="Recommended styles"></div><p class="dm-note sn-hint" id="sn-hint" role="status"></p><ul class="res-list" id="sn-results"></ul>' +
       '<div class="sn-status" id="sn-status" role="status"></div></section>' +
       '</div>';
     document.body.appendChild(menu);
@@ -32,6 +32,7 @@
       menu.querySelectorAll(".dm-tabs [role=tab]").forEach(function (t) { t.setAttribute("aria-selected", t.getAttribute("data-tab") === name ? "true" : "false"); });
       menu.querySelectorAll(".dm-pane").forEach(function (p) { p.hidden = p.getAttribute("data-pane") !== name; });
       if (name === "link" && !$("res-list").children.length) recommend(0);
+      if (name === "spotify" && window.GSDJNinja && window.GSDJNinja.onSpotifyTab) window.GSDJNinja.onSpotifyTab();
     }
     menu.querySelectorAll(".dm-tabs [role=tab]").forEach(function (t) { t.addEventListener("click", function () { tab(t.getAttribute("data-tab")); }); });
     function open(d, from, first) { cur = d; opener = from; title.textContent = "Deck " + d.id.toUpperCase(); menu.hidden = false; tab(first || "library"); $("dm-close").focus(); }

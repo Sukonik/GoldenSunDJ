@@ -68,13 +68,23 @@
   function loadUser() {
     return call("GET", "/me").then(function (j) { me = { id: j.id, name: j.display_name || j.id, premium: j.product === "premium", product: j.product, country: j.country }; note(); return me; });
   }
-  function search(q) {
-    return call("GET", "/search?" + new URLSearchParams({ q: q, type: "track", limit: "25", market: "from_token" }).toString()).then(function (j) {
-      return ((j && j.tracks && j.tracks.items) || []).filter(function (t) { return t && t.uri && !t.is_local; }).map(function (t) {
-        var imgs = (t.album && t.album.images) || [], img = imgs.length ? imgs[imgs.length - 1].url : "";
-        return { uri: t.uri, id: t.id, title: t.name, artist: (t.artists || []).map(function (a) { return a.name; }).join(", "), duration_ms: t.duration_ms, art: img, url: t.external_urls && t.external_urls.spotify, playable: t.is_playable !== false };
-      });
+  function mapTracks(j) {
+    return ((j && j.tracks && j.tracks.items) || []).filter(function (t) { return t && t.uri && !t.is_local; }).map(function (t) {
+      var imgs = (t.album && t.album.images) || [], img = imgs.length ? imgs[imgs.length - 1].url : "";
+      return { uri: t.uri, id: t.id, title: t.name, artist: (t.artists || []).map(function (a) { return a.name; }).join(", "), duration_ms: t.duration_ms, art: img, url: t.external_urls && t.external_urls.spotify, playable: t.is_playable !== false };
     });
+  }
+  // Spotify limits how many results a search may return (it has changed over time), so ask for 10 and fall back to smaller sizes
+  var LIMITS = [10, 5, 3], limitAt = 0;                                  // remember the size that worked
+  function search(q, offset) {
+    var i = limitAt;
+    function go() {
+      return call("GET", "/search?" + new URLSearchParams({ q: q, type: "track", limit: String(LIMITS[i]), offset: String(offset || 0), market: "from_token" }).toString()).then(function (j) { limitAt = i; return mapTracks(j); }).catch(function (e) {
+        if (e && e.status === 400 && /limit/i.test(e.message || "") && i < LIMITS.length - 1) { i++; return go(); }
+        throw e;
+      });
+    }
+    return go();
   }
 
   /* ---------- playback (Web Playback SDK) ---------- */

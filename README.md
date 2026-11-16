@@ -88,6 +88,8 @@ The **Spotify** tab can connect to your Spotify account, search tracks and load 
 
 How it works: Authorization Code with **PKCE** (Spotify's recommended flow for a static site), requesting only `streaming`, `user-read-private`, `user-read-email`, `user-read-playback-state` and `user-modify-playback-state`. Tokens stay in session storage (they are gone when the browser session ends) and refresh automatically. Search uses the Spotify Web API; playback uses the official Web Playback SDK, which makes this page a Spotify device. **Connect Spotify / Switch to SpotifyNinja / Disconnect Spotify / Return to GoldenSun Controller** are all in the tab, and after login it says *Connected as <name>*.
 
+The tab also has **genre chips** (Gold, Trance, House, Techno, Pulsewave, Synthpop, Eurodance, Nightdrive) that list tracks for each style as soon as you are connected, plus a search box. Spotify limits how many results one search may return, so GoldenSunDJ asks for 10 and automatically falls back to smaller sizes if Spotify says the limit is invalid. Spotify no longer gives apps its 30-second preview clips, so results are listed to **Load** (full track through SpotifyNinja), not previewed.
+
 Tap **Load** on a result: if you are still on GoldenSun Controller, the Spotify tab asks you to press **Switch to SpotifyNinja** first, then loads the track on Deck A. Without a connection, SpotifyNinja runs as a silent preview so you can try the controls.
 
 Honest status: the login, token exchange (including the PKCE check), search, device start-up, load and playback commands are tested against **mocked** Spotify servers and a mocked player. They have not yet been run against a live Spotify account. On iPhone and iPad, sign in from a Safari tab first; a Home Screen app may not return to itself after the Spotify login page. Platter scrubbing ("Ninja Scrub"), the Prep Deck and a timeline for Spotify tracks are the next patch.
@@ -144,7 +146,7 @@ To inspect on a Mac, connect the iPad by cable and use Safari's *Develop* menu. 
 
 ## Version history
 
-Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19`.
+Each version is tagged in git (`git checkout v3`). The tags currently exist on the maintainer's machine; push them with `git push origin v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20`.
 
 | Version | What it was |
 | --- | --- |
@@ -167,6 +169,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v17** | **Phone landscape layout:** a purpose-built landscape arrangement for iPhones (big discs, side column for cues and Play/Cue, compact EQ, slimmer header), tested in full screen and inside Safari. Fixes the cramped, scrolling, "locked" feel on a sideways phone. |
 | **v18** | **SpotifyNinja shell (Patch 1):** the deck menu's *Link* tab is now **Audius**, and a new **Spotify** tab offers an opt-in SpotifyNinja controller mode with a JSON packet layer and a mock adapter (no Spotify connection yet). |
 | **v19** | **Spotify connection (Patch 2):** Connect / Disconnect Spotify (Authorization Code with PKCE, no client secret), "Connected as <name>", Spotify search and Load on Deck A, the Web Playback SDK adapter, and the callback page `controller/spotify-callback.html`. Tested against mocked Spotify servers. |
+| **v20** | Spotify search fix ("Invalid limit": results are now requested in sizes Spotify accepts, with automatic fallback) and **genre chips** in the Spotify tab with recommended tracks for the eight NAKO GOLD styles. |
 
 ## Under the hood
 
