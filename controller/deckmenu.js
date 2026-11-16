@@ -38,7 +38,7 @@
     menu.querySelectorAll(".dm-tabs [role=tab]").forEach(function (t) { t.addEventListener("click", function () { tab(t.getAttribute("data-tab")); }); });
     function open(d, from, first, opts) { cur = d; opener = from; title.textContent = "Deck " + d.id.toUpperCase(); menu.hidden = false; tab(first || "library"); refreshQueue(); if (opts && opts.queue) { var q = $("dm-queue"); q.open = true; q.scrollIntoView({ block: "nearest" }); } $("dm-close").focus(); }
     function close() { token++; building = false; setBusy(false); menu.hidden = true; if (opener) opener.focus(); }
-    window.GSDJDeckMenu = { open: function (deckId, tabName, opts) { open(C.byId[deckId] || C.decks[0], null, tabName, opts); }, close: close, tab: tab, el: menu, refreshQueue: refreshQueue, nav: nav };
+    window.GSDJDeckMenu = { open: function (deckId, tabName, opts) { open(C.byId[deckId] || C.decks[0], null, tabName, opts); }, close: close, tab: tab, el: menu, refreshQueue: refreshQueue };
     $("dm-close").addEventListener("click", close);
     menu.addEventListener("click", function (e) { if (e.target === menu) close(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !menu.hidden) close(); });
@@ -72,6 +72,7 @@
       shuffle: function () { GQ.shuffle = !GQ.shuffle; if (GQ.shuffle && GQ.items.length > 1) shuf(GQ.items); refreshQueue(); },
       shuffleOn: function () { return GQ.shuffle; }
     };
+    window.GSDJDeckMenu.nav = nav;
     function gsView() { return { label: "Up next", items: GQ.items.map(function (x, i) { return { title: x.title, sub: x.kind === "genre" ? "Library" : x.kind === "audius" ? "Audius" : "Your file", remove: function () { GQ.items.splice(i, 1); refreshQueue(); } }; }), shuffle: GQ.shuffle, onShuffle: function () { nav.shuffle(); }, onClear: GQ.items.length ? function () { GQ.items = []; refreshQueue(); } : null, empty: "Nothing queued. Tap Queue beside a track in Library or Audius. Next and Previous follow this list." }; }
     function refreshQueue() {
       var N = window.GSDJNinja, v = N && N.active() && window.GSDJNinjaTools ? window.GSDJNinjaTools.queueView() : gsView(), body = $("dq-body"); if (!body) return;
