@@ -96,10 +96,10 @@
     function smokeFade() { iosNote(); var L = N.macros.fade; say("Smoke Fade over " + L + " seconds."); fadeTo(0, L).then(function (ok) { if (!ok) return; cmd("pause", "a", {}, "smoke-fade"); setTimeout(function () { setVol(baseVol()); }, 500); }); }
     function fadeToggle() { iosNote(); var L = N.macros.fade; if (curVol > 0.05) { say("Fading out over " + L + " seconds."); fadeTo(0, L); } else { say("Fading in over " + L + " seconds."); fadeTo(baseVol(), L); } }
     var FX = [
-      { id: "smoke", icon: "☁", label: "Smoke Fade", tip: "Fade out, then pause", tap: smokeFade },
+      { id: "smoke", icon: "≈", label: "Smoke Fade", tip: "Fade out, then pause", tap: smokeFade },
       { id: "shadow", icon: "◐", label: "Shadow Mute", tip: "Hold to mute", hold: true },
       { id: "skip", icon: "✦", label: "Shuriken Skip", tip: "Cut to the next track", tap: function () { if (!hasNext()) { say(nextReason()); return; } next(); } },
-      { id: "vanish", icon: "◌", label: "Vanish", tip: "Pause now. Tap again to return", tap: function () { cmd("toggle-play", "a", {}, "vanish"); }, on: function () { return cur().paused; } },
+      { id: "vanish", icon: "◌", label: "Vanish", tip: "Pause now. Tap again to return", tap: function () { cmd("toggle-play", "a", {}, "vanish"); }, on: function () { return cur().paused && N.core.real(); } },
       { id: "teleport", icon: "⇱", label: "Teleport", tip: "Jump to your Cue point", tap: teleport }
     ];
 
@@ -332,7 +332,7 @@
     var scratchOn = false, patTimer = null;
     function setScratch(v) {
       scratchOn = v; ctl.setAttribute("data-ninja-scratch", v ? "1" : ""); var b = $("pat-a"); if (b) b.setAttribute("aria-pressed", v ? "true" : "false");
-      say(v ? "Ninja Scratch on. Touch the disc and move it. Flick forward for a Chirp, flick back for a Backspin, zig-zag for a Scribble. More on the Scratch pads." : "Ninja Scratch off. The disc is Ninja Scrub again.");
+      say(v ? "Ninja Scratch on. Touch the disc and move it; hold it still to hold the groove. Flick forward for a Chirp, flick back for a Backspin, zig-zag for a Scribble. More on the Scratch pads." : "Ninja Scratch off. The disc is Ninja Scrub again.");
     }
     document.addEventListener("click", function (e) { if (!on()) return; var t = e.target.closest && e.target.closest("#pat-a, #pat-b"); if (!t) return; e.stopImmediatePropagation(); e.preventDefault(); if (t.id === "pat-a") setScratch(!scratchOn); }, true);
     function cancelPattern() { if (patTimer) { clearInterval(patTimer); patTimer = null; } }

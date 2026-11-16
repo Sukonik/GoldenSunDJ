@@ -656,3 +656,36 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 .ctl[data-controller-mode="spotify-ninja"] #deck-a .deck-drawers { grid-auto-flow: column; }
 .np-grid[data-n="8"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 40rem) { .np-banks .bank-num { min-width: 2.6rem; } .np-top { gap: .4rem; } }
+
+/* ====== v24: button polish and drawer formatting (phone and desktop) ====== */
+.ctl button, .dm button, .tc-scrim button, .wheel-scrim button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+.ctl button { transition: transform .08s ease, background-color .12s ease, box-shadow .12s ease, filter .12s ease; }
+.ctl .tbtn:active, .ctl .cue:active, .ctl .pd-pad:active, .ctl .fxt:active, .ctl .lp-step:active, .ctl .tmini:active, .ctl .wheel-item:active, .dm .res-sub:active, .dm .chip:active, .dm .res-load:active, .dm .lib-item:active { transform: scale(.96); }
+.ctl :focus-visible, .dm :focus-visible, .wheel-scrim :focus-visible { outline: 2px solid var(--k-a, #ffc933); outline-offset: 2px; }
+@media (hover: hover) {
+  .ctl .tbtn:hover, .ctl .cue:hover, .ctl .lp-step:hover, .ctl .tmini:hover { filter: brightness(1.18); }
+  .ctl .pd-pad:hover, .ctl .fxt:hover { filter: brightness(1.2); }
+  .dm .res-sub:hover, .dm .chip:hover { background: rgba(255,255,255,.16); }
+  .dm .res-load:hover, .dm .lib-go:hover { filter: brightness(1.08); }
+}
+/* drawers: the close button gets its own row height so it never sits on a tile; pads and tiles keep a sensible size */
+.np-top { min-height: 3rem; }
+.np-banks { flex-wrap: wrap; }
+.np-banks .bank-num { width: auto; min-width: 3.4rem; height: 40px; padding: 0 .9rem; border-radius: 999px; white-space: nowrap; font-size: .8rem; line-height: 1; }
+.np-grid { grid-template-rows: repeat(2, minmax(0, 9.5rem)); align-content: center; }
+.nfx-tiles { grid-template-columns: repeat(auto-fit, minmax(5.6rem, 1fr)); grid-auto-rows: minmax(64px, 9.5rem); align-content: center; }
+.nfx { padding: .4rem .3rem; } .nfx span { font-size: .66rem; line-height: 1.2; text-align: center; overflow-wrap: anywhere; }
+.pd-pad span { overflow-wrap: anywhere; text-align: center; line-height: 1.15; }
+.np-hint { margin-top: auto; }
+@media (max-width: 40rem) {
+  .drawer-x { top: 4.1rem; }
+  .np-grid { gap: .45rem; } .np-grid .pd-pad span { font-size: .85rem; }
+  .nfx-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem; }
+}
+@media (min-width: 64rem) { .np-grid, .nfx-tiles { max-width: 46rem; margin-inline: auto; width: 100%; } }
+@media (max-width: 40rem) and (orientation: landscape) { .np-grid { grid-template-rows: repeat(2, minmax(0, 6rem)); } .nfx-tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: minmax(52px, 6rem); } }
+/* menus: lists keep readable tap targets and never overflow */
+.res-text strong, .res-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.res-load, .lib-go { min-height: 44px; }
+.dm-chips { gap: .45rem; } .dm-chips .chip { min-height: 40px; }
+.dm-tabs button { min-height: 44px; }

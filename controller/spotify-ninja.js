@@ -228,14 +228,14 @@
         var layer = !!(Tools() && Tools().scratchActive());                       // Ninja Scratch: a live scratch layer instead of preview-then-jump
         scrub = { disc: true, id: e.pointerId, a: angleOf(e), pos: cur.pos, was: was, t: performance.now(), layer: layer, v: 0, revs: [], lastD: 0, sent: null };
         try { pl.setPointerCapture(e.pointerId); } catch (x) {}
-        if (layer) { scrub.timer = setInterval(function () { if (scrub && scrub.layer && scrub.sent !== scrub.pos) { scrub.sent = scrub.pos; command("seek", "a", { position_ms: Math.round(scrub.pos) }, "scratch"); } }, 110); }
+        if (layer) { /* seeks go out even while your finger rests: holding the disc holds the groove */ scrub.timer = setInterval(function () { if (scrub && scrub.layer) { scrub.sent = scrub.pos; command("seek", "a", { position_ms: Math.round(scrub.pos) }, "scratch"); } }, 110); }
         else { if (was) command("pause", "a", {}, "scrub"); say("a", "Turn the disc to move through the song. It jumps there when you let go. Flick it backward for a Backspin."); }
         spinOn(); drawTimeline();
       }
       pl.addEventListener("pointermove", function (e) {
         if (!scrub || !scrub.disc || e.pointerId !== scrub.id) return; var a = angleOf(e), d = a - scrub.a; if (d > 180) d -= 360; if (d < -180) d += 360; scrub.a = a;
         var n = performance.now(), dt = Math.max(8, n - scrub.t) / 1000; scrub.t = n; var mult = 1 + Math.min(3, Math.abs(d) / dt / 360);
-        scrub.v = scrub.v * 0.6 + (d / dt) * 0.4; if (Math.abs(d) > 1 && Math.sign(d) !== Math.sign(scrub.lastD)) { scrub.revs.push(n); scrub.lastD = d; } scrub.revs = scrub.revs.filter(function (x) { return n - x < 900; });
+        scrub.v = scrub.v * 0.6 + (d / dt) * 0.4; if (Math.abs(d) > 1 && Math.sign(d) !== Math.sign(scrub.lastD)) { scrub.revs.push(n); scrub.lastD = d; if (scrub.layer && navigator.vibrate) navigator.vibrate(4); } scrub.revs = scrub.revs.filter(function (x) { return n - x < 900; });
         scrub.pos = Math.max(0, Math.min(Math.max(0, cur.dur - 50), scrub.pos + d / 360 * ((scrub.layer ? 3000 : REV_MS) / macros.sens) * mult)); ang += d; discTurn();
         C.byId.a.el.time.textContent = fmt(scrub.pos) + " / " + fmt(cur.dur); drawTimeline();
       });
