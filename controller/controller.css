@@ -660,7 +660,7 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 /* ====== v24: button polish and drawer formatting (phone and desktop) ====== */
 .ctl button, .dm button, .tc-scrim button, .wheel-scrim button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 .ctl button { transition: transform .08s ease, background-color .12s ease, box-shadow .12s ease, filter .12s ease; }
-.ctl .tbtn:active, .ctl .cue:active, .ctl .pd-pad:active, .ctl .fxt:active, .ctl .lp-step:active, .ctl .tmini:active, .ctl .wheel-item:active, .dm .res-sub:active, .dm .chip:active, .dm .res-load:active, .dm .lib-item:active { transform: scale(.96); }
+.ctl .tbtn:active, .ctl .cue:active, .ctl .pd-pad:active, .ctl .fxt:active, .ctl .lp-step:active, .ctl .tmini:active, .dm .res-sub:active, .dm .chip:active, .dm .res-load:active, .dm .lib-item:active { transform: scale(.96); }
 .ctl :focus-visible, .dm :focus-visible, .wheel-scrim :focus-visible { outline: 2px solid var(--k-a, #ffc933); outline-offset: 2px; }
 @media (hover: hover) {
   .ctl .tbtn:hover, .ctl .cue:hover, .ctl .lp-step:hover, .ctl .tmini:hover { filter: brightness(1.18); }
@@ -689,3 +689,7 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 .res-load, .lib-go { min-height: 44px; }
 .dm-chips { gap: .45rem; } .dm-chips .chip { min-height: 40px; }
 .dm-tabs button { min-height: 44px; }
+
+/* v24.1: wheel items are positioned with a transform, so they must never get the press-scale or a transform transition (it moved them out from under the finger) */
+.wheel-item, .ctl .wheel-item, .wheel-scrim .wheel-item { transition: background-color .12s ease, box-shadow .12s ease, opacity .12s ease !important; }
+.wheel-item:active { filter: brightness(1.25); }
