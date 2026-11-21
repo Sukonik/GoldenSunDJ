@@ -770,7 +770,7 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 
 /* ====== v27: phone portrait layout. The disc gets the width; tempo is a slim slider beside it; the tempo buttons sit in one row under it;
    EQ becomes three wide sliders under that. ====== */
-@media (max-width: 40rem) and (orientation: portrait) {
+@media not all and (orientation: landscape) and (max-height: 34rem) {
   .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body { min-height: 21rem; grid-template-columns: minmax(0, 1fr) 48px; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "plat tlab" "plat tsl" "tools tools"; gap: .3rem .6rem; align-items: stretch; }
   .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body > .plat-zone { grid-area: plat; }
   .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .opt-tempo { display: contents; }

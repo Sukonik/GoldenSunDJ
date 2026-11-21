@@ -247,6 +247,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v25** | **Fix:** the settings wheel and Track circle buttons did nothing on phones after v24. The new press-scale feedback replaced the transform that positions each wheel button, so a button jumped away while pressed and the tap was lost. Wheel buttons now only brighten when pressed. |
 | **v26** | **Tempo and EQ pass.** Tempo slider ±10% in 1% steps with ticks, readout and ± buttons, double-tap reset; **Tempo Overdrive** (typed or dialed −80% to +80%, wide-range Sync); EQ dB readouts and double-tap reset; larger touch targets and a layout that fits small phones in portrait and landscape. README snapshot of v25. |
 | **v27** | **Phone portrait layout.** The disc now takes the full width (about 270 to 320 px instead of 170), tempo is a slim half-height slider beside it, the −, readout, +, Sync and Nudge buttons sit in one row under it (spread to the edges), and EQ is three wide sliders with big round thumbs and the dB value above each. |
+| **v28** | **UI-UX review pass.** The big-disc layout from v27 now applies to iPad, tablet and desktop too (not only phones in portrait): the disc grows from about 183 px to 356 px (two decks, 1180 px wide) or 482 px on a 1440 px screen, with the tempo slider beside it, the tempo buttons in one row beneath, and wide EQ sliders. Landscape phones and SpotifyNinja keep their own layouts. Checked at 360, 390, 428, 820, 844, 1024, 1180 and 1440 px wide with no overlapping controls. |
 
 ## Under the hood
 
