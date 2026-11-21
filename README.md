@@ -246,6 +246,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v24** | **Button polish.** Ninja Pads and Ninja FX drawers reformatted (bank chips no longer clip, the close button never covers a tile, tiles keep a sensible size on phone, tablet and desktop), consistent press, hover and focus states and no tap flash or double-tap zoom on every button, and a stronger **Ninja Scratch**: hold the disc still and the groove holds (stuck-record stutter), with a small haptic tick on each direction change where the device supports it. |
 | **v25** | **Fix:** the settings wheel and Track circle buttons did nothing on phones after v24. The new press-scale feedback replaced the transform that positions each wheel button, so a button jumped away while pressed and the tap was lost. Wheel buttons now only brighten when pressed. |
 | **v26** | **Tempo and EQ pass.** Tempo slider ±10% in 1% steps with ticks, readout and ± buttons, double-tap reset; **Tempo Overdrive** (typed or dialed −80% to +80%, wide-range Sync); EQ dB readouts and double-tap reset; larger touch targets and a layout that fits small phones in portrait and landscape. README snapshot of v25. |
+| **v27** | **Phone portrait layout.** The disc now takes the full width (about 270 to 320 px instead of 170), tempo is a slim half-height slider beside it, the −, readout, +, Sync and Nudge buttons sit in one row under it (spread to the edges), and EQ is three wide sliders with big round thumbs and the dB value above each. |
 
 ## Under the hood
 

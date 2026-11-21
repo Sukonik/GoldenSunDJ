@@ -767,3 +767,36 @@ html[data-motion="off"] .ctl[data-sp-playing="1"] .nj-spin { animation: none; }
 .opt-eq2 .eql { display: flex; align-items: baseline; gap: .25rem; min-width: 0; white-space: nowrap; }
 @media (max-width: 40rem) { .opt-eq2 .eql { min-width: 2.4rem; } .opt-eq2 label { grid-template-columns: auto minmax(2.2rem, 1fr); } }
 @media (orientation: landscape) and (max-height: 34rem) { .opt-eq2 label { grid-template-columns: auto minmax(2.6rem, 1fr); gap: .25rem; } .opt-eq2 input[type="range"] { min-height: 34px; } .opt-eq2 input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; } }
+
+/* ====== v27: phone portrait layout. The disc gets the width; tempo is a slim slider beside it; the tempo buttons sit in one row under it;
+   EQ becomes three wide sliders under that. ====== */
+@media (max-width: 40rem) and (orientation: portrait) {
+  .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body { min-height: 21rem; grid-template-columns: minmax(0, 1fr) 48px; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "plat tlab" "plat tsl" "tools tools"; gap: .3rem .6rem; align-items: stretch; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body > .plat-zone { grid-area: plat; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .opt-tempo { display: contents; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .opt-tempo > label { grid-area: tlab; align-self: end; justify-self: center; font-size: .6rem; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tslider { grid-area: tsl; align-self: center; justify-self: center; width: 44px; height: 100%; min-height: 4rem; max-height: 8.5rem; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tslider .vslider { width: 44px; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tempo-read { grid-area: tools; justify-self: start; align-self: center; display: flex; gap: .3rem; max-width: none; width: auto; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tempo-read output { order: 0; width: 4.1rem; min-width: 0; grid-column: auto; font-size: 1rem; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tempo-read .tstep { width: 42px; height: 42px; max-width: none; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tempo-btns { grid-area: tools; justify-self: end; align-self: center; display: flex; gap: .3rem; width: auto; max-width: none; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tempo-btns .tm-sync { grid-column: auto; min-width: 4.2rem; }
+  .ctl[data-tempo="on"]:not([data-controller-mode="spotify-ninja"]) .tempo-btns .tmini { min-height: 42px; min-width: 38px; font-size: .75rem; }
+  /* EQ: three wide sliders, name and value above each */
+  .ctl:not([data-controller-mode="spotify-ninja"]) .deck-body .opt-eq { display: none !important; }
+  .ctl[data-eq="1"]:not([data-controller-mode="spotify-ninja"]) .opt-eq2, .ctl[data-eq="2"]:not([data-controller-mode="spotify-ninja"]) .opt-eq2 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
+  .ctl[data-eq="off"] .opt-eq2 { display: none; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .opt-eq2 label { grid-template-columns: 1fr; grid-template-rows: auto auto; gap: .1rem; justify-items: stretch; font-size: .72rem; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .opt-eq2 .eql { justify-content: center; min-width: 0; font-size: .75rem; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .opt-eq2 .eqv { font-size: .72rem; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .opt-eq2 input[type="range"] { min-height: 50px; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .opt-eq2 input[type="range"]::-webkit-slider-runnable-track { height: 12px; border-radius: 6px; }
+  .ctl:not([data-controller-mode="spotify-ninja"]) .opt-eq2 input[type="range"]::-webkit-slider-thumb { width: 34px; height: 34px; margin-top: -11px; }
+}
+.opt-eq2 input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; }
+.opt-eq2 input[type="range"]::-webkit-slider-runnable-track { height: 12px; border-radius: 6px; background: rgba(255,255,255,.16); }
+.opt-eq2 input[type="range"]::-moz-range-track { height: 12px; border-radius: 6px; background: rgba(255,255,255,.16); }
+.opt-eq2 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 34px; height: 34px; margin-top: -11px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, var(--dk) 70%); box-shadow: 0 2px 10px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.4); }
+.opt-eq2 input[type="range"]::-moz-range-thumb { width: 34px; height: 34px; border: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, var(--dk) 70%); }
+@media (orientation: landscape) and (max-height: 34rem) { .opt-eq2 input[type="range"]::-webkit-slider-thumb { width: 28px; height: 28px; margin-top: -8px; } .opt-eq2 input[type="range"]::-webkit-slider-runnable-track { height: 12px; } }
