@@ -91,9 +91,9 @@
       if (C.settings.decks === 1) { say(d, "Turn on 2 decks in the settings wheel to sync."); return; }
       if (!d.bpm || !o.bpm) { say(d, "Both decks need a tempo first. Tap the BPM number four times, or load a library track."); return; }
       var heard = o.bpm * C.rate(o), best = null;
-      [heard, heard / 2, heard * 2].forEach(function (c) { var pct = (c / d.bpm - 1) * 100; if (Math.abs(pct) <= 8 && (best == null || Math.abs(pct) < Math.abs(best))) best = pct; });
-      if (best == null) { say(d, "These tempos are too far apart to sync. Tempo only moves 8%."); return; }
-      var sl = $("tempo-" + d.id); sl.value = (Math.round(best * 10) / 10).toFixed(1); sl.dispatchEvent(new Event("input", { bubbles: true }));
+      [heard, heard / 2, heard * 2].forEach(function (c) { var pct = (c / d.bpm - 1) * 100; if (Math.abs(pct) <= C.tempoLimit() && (best == null || Math.abs(pct) < Math.abs(best))) best = pct; });
+      if (best == null) { say(d, C.settings.overdrive ? "These tempos are more than 80% apart, too far to sync." : "These tempos are more than 10% apart. Turn on Tempo Overdrive in the settings wheel to sync tempos this far apart."); return; }
+      C.setTempo(d, best);
       say(d, "Deck " + d.id.toUpperCase() + " tempo matched to deck " + o.id.toUpperCase() + ": " + (d.bpm * C.rate(d)).toFixed(1) + " BPM. Sync matches tempo, so use Nudge to line up the beats.");
     }
     var NUDGE = 0.05, held = [];

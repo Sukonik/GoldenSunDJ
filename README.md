@@ -178,6 +178,16 @@ Tip: turn on **Tips** (gear → Add-ons) for short hints about these buttons. A 
 
 **Ideas for a later update (cues):** custom names for cues, a color per cue, cue points that follow the detected beat grid after a tempo correction, jumping to a cue on a streamed track without a pause while it buffers (faster once saved on the device), and cue-based looping.
 
+### Snapshot: v25, the first complete release (2026-11-21)
+
+This is the reference version tested by hand on iPhone and iPad: **GoldenSun Controller** (two decks, Library, Load and Audius tracks, scratch with patterns, tempo detection and tap tempo, EQ 1 and EQ 2, hot cues, loops, Wave, Sampler, FX, Sync and Nudge, Auto-mix, Up next with Previous, Next and Shuffle, Track circle, 8 themes) and **SpotifyNinja Controller** (Spotify sign-in with PKCE, search, genre chips, Liked Songs and Playlists, the Ninja control set: Scrub, Scratch, FX, Pads, BPM, Macros, Switch, Loop, Auto-next, Prep Deck). To return to it exactly: `git checkout v25`. Everything after it builds on top.
+
+### Tempo, Tempo Overdrive and EQ sliders (v26)
+
+- **Tempo slider:** −10% to +10% in **1% steps** (it used to be ±8% in 0.1% steps), taller and wider with a tick for every 1% and a bright center line. The tempo **readout** sits between **−** and **+** buttons (tap and hold to repeat). **Double-tap the slider** to return to 0%. Sync, Nudge and tap tempo are unchanged beside it.
+- **Tempo Overdrive** (gear → Controls → **Overdrive**): off by default. When on, tap a deck's tempo number to open the **Overdrive panel**: a wide **−80% to +80%** slider with the ±10% fine zone marked, ±1 and ±10 steppers, quick chips (−50 −25 −10 0 +10 +25 +50) and an exact number box (decimals allowed). Beyond ±10% the readout turns **magenta** and shows the BPM you are really playing. **Sync** then matches tempos up to 80% apart (it also tries half and double time); without Overdrive it tells you when tempos are more than 10% apart. Turning Overdrive off brings tempos back inside ±10%. At −80% a track plays at one fifth speed; very slow or fast speeds sound rough and the browser decides how well pitch is kept.
+- **EQ sliders:** bigger thumbs and thicker tracks, a **dB value next to every name** (for example *Mid +4 dB*, colored when not flat), and **double-tap to reset to 0**. In portrait the decks are taller so the tempo and EQ controls and the disc fit together; on small landscape phones everything shrinks to fit without overlapping.
+
 ### Test it on an iPad
 
 1. Open <https://sukonik.github.io/GoldenSunDJ/controller/> in Safari on the iPad.
@@ -235,6 +245,7 @@ Each version is tagged in git (`git checkout v3`). The tags currently exist on t
 | **v23** | **Batch 3.** **Ninja Scratch** (a scratch layer: live seeks, flicks, scribble, Scratch pads), Backspin 8/16 s, Ninja Loop (beat and A–B), Fade and Fade length, Auto-next, GoldenSun **Auto-mix**, a draggable Prep disc, cleaner result rows and matching Ninja branding on Deck B. |
 | **v24** | **Button polish.** Ninja Pads and Ninja FX drawers reformatted (bank chips no longer clip, the close button never covers a tile, tiles keep a sensible size on phone, tablet and desktop), consistent press, hover and focus states and no tap flash or double-tap zoom on every button, and a stronger **Ninja Scratch**: hold the disc still and the groove holds (stuck-record stutter), with a small haptic tick on each direction change where the device supports it. |
 | **v25** | **Fix:** the settings wheel and Track circle buttons did nothing on phones after v24. The new press-scale feedback replaced the transform that positions each wheel button, so a button jumped away while pressed and the tap was lost. Wheel buttons now only brighten when pressed. |
+| **v26** | **Tempo and EQ pass.** Tempo slider ±10% in 1% steps with ticks, readout and ± buttons, double-tap reset; **Tempo Overdrive** (typed or dialed −80% to +80%, wide-range Sync); EQ dB readouts and double-tap reset; larger touch targets and a layout that fits small phones in portrait and landscape. README snapshot of v25. |
 
 ## Under the hood
 
